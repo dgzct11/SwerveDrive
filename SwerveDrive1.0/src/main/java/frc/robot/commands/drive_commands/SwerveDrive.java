@@ -4,12 +4,20 @@
 
 package frc.robot.commands.drive_commands;
 
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
+import frc.robot.subsystems.DriveTrain;
 
 public class SwerveDrive extends CommandBase {
   /** Creates a new SwerveDrive. */
-  public SwerveDrive() {
+  DriveTrain driveTrain;
+  XboxController xboxController;
+  public SwerveDrive(DriveTrain dt, XboxController xb) {
     // Use addRequirements() here to declare subsystem dependencies.
+    driveTrain = dt;
+    xboxController = xb;
+    addRequirements(driveTrain);
   }
 
   // Called when the command is initially scheduled.
@@ -18,7 +26,9 @@ public class SwerveDrive extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    
+  }
 
   // Called once the command ends or is interrupted.
   @Override
