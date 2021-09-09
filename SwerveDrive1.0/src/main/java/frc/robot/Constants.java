@@ -33,5 +33,6 @@ public final class Constants {
     public static final double[] rightFrontCenter = {-Constants.left_right_wheel_distance/2,-Constants.front_back_wheel_distance/2};
     public static final double[] rightBackCenter = {Constants.left_right_wheel_distance/2,-Constants.front_back_wheel_distance/2};
     public static final double spin_angle = RobotContainer.to360(Math.toDegrees(Math.atan2(Constants.left_right_wheel_distance/2, Constants.front_back_wheel_distance/2)));
+    public static final int xbox_port = 0;
 
 }
