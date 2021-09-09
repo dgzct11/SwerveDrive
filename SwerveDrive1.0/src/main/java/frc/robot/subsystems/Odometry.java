@@ -11,11 +11,13 @@ import frc.robot.functional.Circle;
 public class Odometry extends SubsystemBase {
   /** Creates a new Odometry. */
   public Odometry() {
-    
+
   }
   public  Position currentPosition = new Position(0,0,0);
   DriveTrain driveTrain;
+  //the position of every Talon thrust
   double[] previousPositionsThrust = new double[4];
+  //the position of every Talon directional
   double[] previousPositionsDirectional = new double[4];
   public Odometry(DriveTrain dt) {
     driveTrain = dt;
@@ -24,7 +26,9 @@ public class Odometry extends SubsystemBase {
   }
   public void updatePosition(){
     double[] currentPositionsThrust = driveTrain.getThrustPositions();
-    double[] currentPositionDirectional = driveTrain.getDirectionalPositions();
+    //double[] currentPositionDirectional = driveTrain.getDirectionalPositions();
+    
+    //if the robot is spinning on its axis the only value that will change is the angle
     if(driveTrain.spinning){
       double distanceChange = 0;
       for(int i = 0; i<4; i++)
@@ -33,6 +37,8 @@ public class Odometry extends SubsystemBase {
       double angleChange = Math.toDegrees(distanceChange/Constants.distance_wheel_center);
       currentPosition.addAngle(angleChange);
     }
+
+    //if the current turning circle is infinitely large, the robot is strafing
     else if (Double.isInfinite(driveTrain.currentCircleRadius)){
       double distanceChange = 0;
       for(int i = 0; i<4; i++)
@@ -42,6 +48,9 @@ public class Odometry extends SubsystemBase {
       double dy = Math.sin(Math.toDegrees(driveTrain.currentStrafeAngle))*distanceChange;
       currentPosition.add(dx, dy);
     }
+
+    //if the turning circle is not infinitely small, 
+    //the angle and position will change according to the radius of the turning circle
     else{
       double angleChange = 0;
       for(int i =0; i<4; i++)
