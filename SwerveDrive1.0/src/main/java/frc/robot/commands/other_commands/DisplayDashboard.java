@@ -2,22 +2,15 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.drive_commands;
+package frc.robot.commands.other_commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.XboxRemote;
-
-public class SwerveDrive extends CommandBase {
-  /** Creates a new SwerveDrive. */
-  DriveTrain driveTrain;
-  XboxRemote xbox;
-  public SwerveDrive(DriveTrain dt, XboxRemote xr) {
+public class DisplayDashboard extends CommandBase {
+  /** Creates a new DisplayDashboard. */
+  //TODO
+  public DisplayDashboard() {
     // Use addRequirements() here to declare subsystem dependencies.
-    driveTrain = dt;
-    xbox = xr;
-    addRequirements(driveTrain);
   }
 
   // Called when the command is initially scheduled.
@@ -26,12 +19,7 @@ public class SwerveDrive extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-      double strafeAngle = xbox.getLeftAngle();
-      double speed = xbox.getLeftMagnitude();
-      double circleRadius = 1/xbox.getRightX();
-      driveTrain.drive(strafeAngle, speed, circleRadius);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override

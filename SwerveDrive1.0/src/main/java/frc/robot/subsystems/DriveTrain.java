@@ -29,6 +29,10 @@ public class DriveTrain extends SubsystemBase {
 
   //utility variables
   public double currentStrafeAngle = 0;
+  public double currentCircleRadius = 0;
+  public boolean spinning = false;
+  public double[] currentCircleCenter = new double[2];
+  public double[] currentWheelDistanceFromCircleCenter = new double[4];
   public DriveTrain() {
     //configure sensors for each motor controller
     leftFrontDirection.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
@@ -46,39 +50,50 @@ public class DriveTrain extends SubsystemBase {
 
   public void drive(double strafeAngle,double speed, double circleRadius){
     //if stick is really far to the left, set each motor tangential to a circle with the center at the robots center.
+    currentCircleRadius = circleRadius;
+    currentStrafeAngle = strafeAngle;
     if(Math.abs(circleRadius)>Constants.spin_threshold){
       
-      leftFrontDirection.setSelectedSensorPosition(Constants.spin_angle*Constants.pos_units_per_degree);
-    leftBackDirection.setSelectedSensorPosition(-Constants.spin_angle*Constants.pos_units_per_degree);
-    rightFrontDirection.setSelectedSensorPosition(-Constants.spin_angle*Constants.pos_units_per_degree);
-    rightBackDirection.setSelectedSensorPosition(Constants.spin_angle*Constants.pos_units_per_degree);
+        leftFrontDirection.setSelectedSensorPosition(Constants.spin_angle*Constants.pos_units_per_degree);
+        leftBackDirection.setSelectedSensorPosition(-Constants.spin_angle*Constants.pos_units_per_degree);
+        rightFrontDirection.setSelectedSensorPosition(-Constants.spin_angle*Constants.pos_units_per_degree);
+        rightBackDirection.setSelectedSensorPosition(Constants.spin_angle*Constants.pos_units_per_degree);
 
-    leftFrontThrust.set(ControlMode.PercentOutput, speed);
-    leftBackThrust.set(ControlMode.PercentOutput, speed);
-    rightFrontThrust.set(ControlMode.PercentOutput, speed);
-    rightBackThrust.set(ControlMode.PercentOutput, speed);
-    return;
+        leftFrontThrust.set(ControlMode.PercentOutput, speed);
+        leftBackThrust.set(ControlMode.PercentOutput, speed);
+        rightFrontThrust.set(ControlMode.PercentOutput, speed);
+        rightBackThrust.set(ControlMode.PercentOutput, speed);
+    
     }
-
-    currentStrafeAngle = strafeAngle;
     
-    double[] angles_speeds = calcAngles(circleRadius);
+    else if(! (Math.abs(circleRadius) == Double.POSITIVE_INFINITY)){
+        double[] angles_speeds = calcAngles(circleRadius);
 
-    leftFrontDirection.setSelectedSensorPosition((angles_speeds[0])*Constants.pos_units_per_degree);
-    leftBackDirection.setSelectedSensorPosition(angles_speeds[1]*Constants.pos_units_per_degree);
-    rightFrontDirection.setSelectedSensorPosition(angles_speeds[2]*Constants.pos_units_per_degree);
-    rightBackDirection.setSelectedSensorPosition(angles_speeds[3]*Constants.pos_units_per_degree);
+        leftFrontDirection.setSelectedSensorPosition((angles_speeds[0])*Constants.pos_units_per_degree);
+        leftBackDirection.setSelectedSensorPosition(angles_speeds[1]*Constants.pos_units_per_degree);
+        rightFrontDirection.setSelectedSensorPosition(angles_speeds[2]*Constants.pos_units_per_degree);
+        rightBackDirection.setSelectedSensorPosition(angles_speeds[3]*Constants.pos_units_per_degree);
+      
+        leftFrontThrust.set(ControlMode.PercentOutput, speed*angles_speeds[4]);
+        leftBackThrust.set(ControlMode.PercentOutput, speed*angles_speeds[5]);
+        rightFrontThrust.set(ControlMode.PercentOutput, speed*angles_speeds[6]);
+        rightBackThrust.set(ControlMode.PercentOutput, speed*angles_speeds[7]);
+      
+    }
+    else{
+        leftFrontThrust.set(ControlMode.PercentOutput, speed);
+        leftBackThrust.set(ControlMode.PercentOutput, speed);
+        rightFrontThrust.set(ControlMode.PercentOutput, speed);
+        rightBackThrust.set(ControlMode.PercentOutput, speed);
+    }
     
-    leftFrontThrust.set(ControlMode.PercentOutput, speed*angles_speeds[4]);
-    leftBackThrust.set(ControlMode.PercentOutput, speed*angles_speeds[5]);
-    rightFrontThrust.set(ControlMode.PercentOutput, speed*angles_speeds[6]);
-    rightBackThrust.set(ControlMode.PercentOutput, speed*angles_speeds[7]);
   }
 
   public double[] calcAngles(double circleRadius){
     double[] result = new double[8];
     Line robotCenterLinePerpendicular = new Line(currentStrafeAngle+90,Constants.center);
     double[] circleCenter = {Math.cos(Math.toRadians(currentStrafeAngle+90))*circleRadius,Math.sin(Math.toRadians(currentStrafeAngle+90))*circleRadius};
+    currentCircleCenter = circleCenter;
     Line leftFront = new Line(currentStrafeAngle,Constants.leftFrontCenter);
     Line leftBack = new Line(currentStrafeAngle, Constants.leftBackCenter);
     Line rightFront = new Line(currentStrafeAngle,Constants.rightFrontCenter);
@@ -93,6 +108,10 @@ public class DriveTrain extends SubsystemBase {
     double leftBackRadius = RobotContainer.distance(leftBackP, circleCenter);
     double rightFrontRadius = RobotContainer.distance(rightFrontP, circleCenter);
     double rightBackRadius = RobotContainer.distance(rightBackP, circleCenter);
+    currentWheelDistanceFromCircleCenter[0] = leftFrontRadius;
+    currentWheelDistanceFromCircleCenter[1] = leftBackRadius;
+    currentWheelDistanceFromCircleCenter[2] = rightFrontRadius;
+    currentWheelDistanceFromCircleCenter[3] = rightBackRadius;
     double maxRadius  = Math.max(Math.max(Math.max(leftFrontRadius, leftBackRadius),rightFrontRadius),rightBackRadius);
 
   // result's order is leftF angle, leftB angle, rightF angle, rightB angle, 
@@ -111,7 +130,25 @@ public class DriveTrain extends SubsystemBase {
   }
 
   
+  public double[] getThrustPositions(){
+    double[] result = new double[4];
+    result[0] = leftFrontThrust.getSelectedSensorPosition();
+    result[1] = leftBackThrust.getSelectedSensorPosition();
+    result[2] = rightFrontThrust.getSelectedSensorPosition();
+    result[3] = rightBackThrust.getSelectedSensorPosition();
+    return result;
 
+  }
+   
+  public double[] getDirectionalPositions(){
+    double[] result = new double[4];
+    result[0] = leftFrontDirection.getSelectedSensorPosition();
+    result[1] = leftBackDirection.getSelectedSensorPosition();
+    result[2] = rightFrontDirection.getSelectedSensorPosition();
+    result[3] = rightBackDirection.getSelectedSensorPosition();
+    return result;
+
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

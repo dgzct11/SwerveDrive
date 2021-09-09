@@ -25,6 +25,11 @@ public final class Constants {
     public static final int right_front_thrust_port = 0;
     public static final int xbox_port = 0;
 
+    //xbox bindings
+    //TODO
+    public static final int left_x_axis = 0;
+    public static final int left_y_axis = 0;
+    public static final int right_x_axis = 0;
 
     //robot spacific constants
 
@@ -36,6 +41,7 @@ public final class Constants {
     public static final double[] leftBackCenter = {left_right_wheel_distance/2,front_back_wheel_distance/2};
     public static final double[] rightFrontCenter = {-left_right_wheel_distance/2,-front_back_wheel_distance/2};
     public static final double[] rightBackCenter = {left_right_wheel_distance/2,-front_back_wheel_distance/2};
+    public static final double distance_wheel_center = RobotContainer.distance(center, leftFrontCenter);
     public static final double spin_angle = RobotContainer.to360(Math.toDegrees(Math.atan2(Constants.left_right_wheel_distance/2, Constants.front_back_wheel_distance/2)));
     
 
@@ -43,6 +49,7 @@ public final class Constants {
     public static final double spin_threshold = 0;
    
     public static final double rotation_dampener = 0;
+    
    
    
     

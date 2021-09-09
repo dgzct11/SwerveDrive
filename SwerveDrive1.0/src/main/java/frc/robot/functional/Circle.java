@@ -18,6 +18,13 @@ public class Circle extends Segment {
         endPoint = _endPoint;
         length = RobotContainer.getArcLength(this);
     }
+    public Circle(double[] _center, double _radius, double[] _startPoint){
+        center = _center;
+        radius = _radius;
+        startPoint = _startPoint;
+       
+        length = RobotContainer.getArcLength(this);
+    }
 
     public Position getPosition(double distance){
         double angleDiff = distance/(2*Math.PI*radius) * 360;
@@ -31,6 +38,17 @@ public class Circle extends Segment {
         }
    
         return new Position(radius*Math.cos(Math.toRadians(startAngle - angleDiff))+center[0], radius*Math.sin(Math.toRadians(startAngle - angleDiff))+center[1], (startAngle-angleDiff-270)%360);
+ 
+
+    }
+
+    public Position getPositionFromAngle(double angle){
+        
+
+        double startAngle = getAngle(startPoint);
+        
+        
+        return new Position(radius*Math.cos(Math.toRadians(startAngle + angle))+center[0], radius*Math.sin(Math.toRadians(startAngle + angle))+center[1], (startAngle+angle-270)%360);
  
 
     }

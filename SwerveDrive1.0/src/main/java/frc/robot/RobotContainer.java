@@ -8,9 +8,11 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.drive_commands.SwerveDrive;
 import frc.robot.functional.Circle;
 import frc.robot.functional.Line;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.XboxRemote;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -21,12 +23,12 @@ public class RobotContainer {
   
   //subsystems
   public DriveTrain driveTrain = new DriveTrain();
-  
-  //devices
-  public XboxController xboxController = new XboxController(Constants.xbox_port);
+  public XboxRemote xboxRemote = new XboxRemote(new XboxController(Constants.xbox_port));
+ 
   
   public RobotContainer() {
     // Configure the button bindings
+    driveTrain.setDefaultCommand(new SwerveDrive(driveTrain, xboxRemote));
     configureButtonBindings();
   }
 
