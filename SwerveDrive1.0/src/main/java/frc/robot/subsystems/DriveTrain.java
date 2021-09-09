@@ -14,6 +14,9 @@ import frc.robot.RobotContainer;
 import frc.robot.functional.Line;
 
 public class DriveTrain extends SubsystemBase {
+
+
+
   /** Creates a new DriveTrain. */
   public TalonSRX leftFrontDirection = new TalonSRX(Constants.left_front_direction_port);
   public TalonSRX leftFrontThrust = new TalonSRX(Constants.left_front_thrust_port);
@@ -28,13 +31,21 @@ public class DriveTrain extends SubsystemBase {
   public TalonSRX rightBackThrust = new TalonSRX(Constants.right_back_thrust_port);
 
   //utility variables
+  //circle refers to circular path of rotation when turning
   public double currentStrafeAngle = 0;
   public double currentCircleRadius = 0;
   public boolean spinning = false;
   public double[] currentCircleCenter = new double[2];
   public double[] currentWheelDistanceFromCircleCenter = new double[4];
-  public DriveTrain() {
-    //configure sensors for each motor controller
+
+
+
+
+
+  public Odometry odometry;
+
+  public DriveTrain(Odometry od) {
+    //configure sensors for each motor controller to sensor in Falcon500
     leftFrontDirection.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     leftFrontThrust.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
 
@@ -46,13 +57,18 @@ public class DriveTrain extends SubsystemBase {
 
     rightBackDirection.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     rightBackThrust.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    odometry = od;
   }
 
+
+
   public void drive(double strafeAngle,double speed, double circleRadius){
-    //if stick is really far to the left, set each motor tangential to a circle with the center at the robots center.
+   
     currentCircleRadius = circleRadius;
     currentStrafeAngle = strafeAngle;
-    if(Math.abs(circleRadius)>Constants.spin_threshold){
+
+    //when robot spins (pure spinning)
+    if(Math.abs(circleRadius)<Constants.spin_threshold){
       
         leftFrontDirection.setSelectedSensorPosition(Constants.spin_angle*Constants.pos_units_per_degree);
         leftBackDirection.setSelectedSensorPosition(-Constants.spin_angle*Constants.pos_units_per_degree);
@@ -65,7 +81,7 @@ public class DriveTrain extends SubsystemBase {
         rightBackThrust.set(ControlMode.PercentOutput, speed);
     
     }
-    
+    // strafing + turning
     else if(! (Math.abs(circleRadius) == Double.POSITIVE_INFINITY)){
         double[] angles_speeds = calcAngles(circleRadius);
 
@@ -80,46 +96,59 @@ public class DriveTrain extends SubsystemBase {
         rightBackThrust.set(ControlMode.PercentOutput, speed*angles_speeds[7]);
       
     }
+    //only strafing
     else{
         leftFrontThrust.set(ControlMode.PercentOutput, speed);
         leftBackThrust.set(ControlMode.PercentOutput, speed);
         rightFrontThrust.set(ControlMode.PercentOutput, speed);
         rightBackThrust.set(ControlMode.PercentOutput, speed);
     }
-    
+   odometry.updatePosition(); 
   }
 
   public double[] calcAngles(double circleRadius){
+
     double[] result = new double[8];
+
+    //line going through robot center in the direction of the strafe angle
     Line robotCenterLinePerpendicular = new Line(currentStrafeAngle+90,Constants.center);
-    double[] circleCenter = {Math.cos(Math.toRadians(currentStrafeAngle+90))*circleRadius,Math.sin(Math.toRadians(currentStrafeAngle+90))*circleRadius};
+    
+    //center of turning circle
+    double[] circleCenter = {Math.cos(Math.toRadians(currentStrafeAngle+90))*circleRadius,  Math.sin(Math.toRadians(currentStrafeAngle+90))*circleRadius};
     currentCircleCenter = circleCenter;
+
+
     Line leftFront = new Line(currentStrafeAngle,Constants.leftFrontCenter);
     Line leftBack = new Line(currentStrafeAngle, Constants.leftBackCenter);
     Line rightFront = new Line(currentStrafeAngle,Constants.rightFrontCenter);
     Line rightBack = new Line(currentStrafeAngle, Constants.rightBackCenter);
 
+    //poitns of intersection between each line above and the robot center line.
     double[] leftFrontP = robotCenterLinePerpendicular.getIntersection(leftFront);
     double[] leftBackP = robotCenterLinePerpendicular.getIntersection(leftBack);
     double[] rightFrontP = robotCenterLinePerpendicular.getIntersection(rightFront);
     double[] rightBackP = robotCenterLinePerpendicular.getIntersection(rightBack);
 
+    //distance between circle center and wheel center
     double leftFrontRadius = RobotContainer.distance(leftFrontP, circleCenter);
     double leftBackRadius = RobotContainer.distance(leftBackP, circleCenter);
     double rightFrontRadius = RobotContainer.distance(rightFrontP, circleCenter);
     double rightBackRadius = RobotContainer.distance(rightBackP, circleCenter);
+
+
     currentWheelDistanceFromCircleCenter[0] = leftFrontRadius;
     currentWheelDistanceFromCircleCenter[1] = leftBackRadius;
     currentWheelDistanceFromCircleCenter[2] = rightFrontRadius;
     currentWheelDistanceFromCircleCenter[3] = rightBackRadius;
+
     double maxRadius  = Math.max(Math.max(Math.max(leftFrontRadius, leftBackRadius),rightFrontRadius),rightBackRadius);
 
-  // result's order is leftF angle, leftB angle, rightF angle, rightB angle, 
-  //leftF thrust, leftB thrust, rightF thrust, rightB thrust
-    result[0] = currentStrafeAngle + RobotContainer.to360(Math.toDegrees(Math.atan2(RobotContainer.distance(Constants.leftFrontCenter, leftFrontP), leftFrontRadius)))*(circleRadius>0 ? -1:1);
-    result[1] = currentStrafeAngle + RobotContainer.to360(Math.toDegrees(Math.atan2(RobotContainer.distance(Constants.leftBackCenter, leftBackP), leftBackRadius)))*(circleRadius>0 ? 1:-1);
-    result[2] = currentStrafeAngle + RobotContainer.to360(Math.toDegrees(Math.atan2(RobotContainer.distance(Constants.rightFrontCenter, rightFrontP), rightFrontRadius)))*(circleRadius>0 ? -1:1);
-    result[3] = currentStrafeAngle + RobotContainer.to360(Math.toDegrees(Math.atan2(RobotContainer.distance(Constants.rightBackCenter, rightBackP),rightBackRadius)))*(circleRadius>0 ? 1:-1);
+  // result's order is leftF angle (0), leftB angle (1), rightF angle (2), rightB angle(3), 
+  //leftF thrust (4), leftB thrust (5), rightF thrust (6), rightB thrust (7)
+    result[0] = currentStrafeAngle + RobotContainer.to360(Math.toDegrees(Math.atan2(RobotContainer.distance(Constants.leftFrontCenter, leftFrontP), leftFrontRadius))) * (circleRadius>0 ? -1:1);
+    result[1] = currentStrafeAngle + RobotContainer.to360(Math.toDegrees(Math.atan2(RobotContainer.distance(Constants.leftBackCenter, leftBackP), leftBackRadius))) * (circleRadius>0 ? 1:-1);
+    result[2] = currentStrafeAngle + RobotContainer.to360(Math.toDegrees(Math.atan2(RobotContainer.distance(Constants.rightFrontCenter, rightFrontP), rightFrontRadius))) * (circleRadius>0 ? -1:1);
+    result[3] = currentStrafeAngle + RobotContainer.to360(Math.toDegrees(Math.atan2(RobotContainer.distance(Constants.rightBackCenter, rightBackP),rightBackRadius))) * (circleRadius>0 ? 1:-1);
     
     //thrust = radius/maxradius * speed
     result[4] = leftFrontRadius/maxRadius;
