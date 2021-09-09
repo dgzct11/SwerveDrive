@@ -12,6 +12,7 @@ import frc.robot.commands.drive_commands.SwerveDrive;
 import frc.robot.functional.Circle;
 import frc.robot.functional.Line;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Odometry;
 import frc.robot.subsystems.XboxRemote;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -22,7 +23,8 @@ import frc.robot.subsystems.XboxRemote;
 public class RobotContainer {
   
   //subsystems
-  public DriveTrain driveTrain = new DriveTrain();
+  public Odometry od = new Odometry();
+  public DriveTrain driveTrain = new DriveTrain(od);
   public XboxRemote xboxRemote = new XboxRemote(new XboxController(Constants.xbox_port));
  
   

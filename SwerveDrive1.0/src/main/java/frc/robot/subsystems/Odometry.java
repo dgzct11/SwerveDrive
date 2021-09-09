@@ -10,6 +10,9 @@ import frc.robot.functional.Position;
 import frc.robot.functional.Circle;
 public class Odometry extends SubsystemBase {
   /** Creates a new Odometry. */
+  public Odometry() {
+    
+  }
   public  Position currentPosition = new Position(0,0,0);
   DriveTrain driveTrain;
   double[] previousPositionsThrust = new double[4];
