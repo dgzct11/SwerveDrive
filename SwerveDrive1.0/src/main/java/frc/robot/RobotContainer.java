@@ -8,12 +8,18 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 
 import edu.wpi.first.wpilibj2.command.Command;
+
 import frc.robot.commands.drive_commands.SwerveDrive;
+import frc.robot.commands.drive_commands.SwitchDriveMode;
 import frc.robot.functional.Circle;
 import frc.robot.functional.Line;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Odometry;
 import frc.robot.subsystems.XboxRemote;
+
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.button.Button;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -25,8 +31,12 @@ public class RobotContainer {
   //subsystems
   public Odometry od = new Odometry();
   public DriveTrain driveTrain = new DriveTrain(od);
-  public XboxRemote xboxRemote = new XboxRemote(new XboxController(Constants.xbox_port));
+  public XboxController xboxController = new XboxController(Constants.xbox_port);
+  public XboxRemote xboxRemote = new XboxRemote(xboxController);
  
+  //buttons
+  Button xButtonSwitchDrive = new JoystickButton(xboxController, Constants.x_button_num);
+
   
   public RobotContainer() {
     // Configure the button bindings
@@ -40,7 +50,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+    xButtonSwitchDrive.whenPressed(new SwitchDriveMode(driveTrain, xboxRemote));
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -98,4 +110,26 @@ public class RobotContainer {
   public static double angleFromSlope(double[] start, double[] end){
     return Math.toDegrees(Math.atan2((end[1] - start[1]), end[0] - start[0]));
   }
+  public static double magnitutde(double[] vector){
+    return Math.sqrt((vector[0]*vector[0]) + (vector[1]*vector[1]));
+  }
+  public static double angleDistance(double targetAngle){
+    double angle = navxTo360(NavXGyro.ahrs.getYaw());
+    double distance = Math.abs(targetAngle - angle)%360;
+    if (distance > 180) distance = 360 - distance;
+    return distance;
+  }
+  public static double angleDistance2(double targetAngle, double angle){
+    
+    double distance = Math.abs(targetAngle - angle)%360;
+    if (distance > 180) distance = 360 - distance;
+    return distance;
+  }
+
+
+  public static double floorMod(double x, double y){
+    if(x<0)
+        return y - Math.abs(x)%y;
+    return x%y;
+}
 }

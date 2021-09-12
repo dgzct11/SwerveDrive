@@ -6,18 +6,10 @@ package frc.robot.commands.drive_commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.XboxRemote;
-
-public class SwerveDrive extends CommandBase {
-  /** Creates a new SwerveDrive. */
-  DriveTrain driveTrain;
-  XboxRemote xbox;
-  public SwerveDrive(DriveTrain dt, XboxRemote xr) {
+public class FieldOrientedDrive extends CommandBase {
+  /** Creates a new FieldOrientedDrive. */
+  public FieldOrientedDrive() {
     // Use addRequirements() here to declare subsystem dependencies.
-    driveTrain = dt;
-    xbox = xr;
-    addRequirements(driveTrain);
   }
 
   // Called when the command is initially scheduled.
@@ -26,12 +18,7 @@ public class SwerveDrive extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-      double strafeAngle = xbox.getLeftAngle();
-      double speed = xbox.getLeftMagnitude();
-      double rotateSpeed = xbox.getRightX();
-      driveTrain.rotateDrive(strafeAngle, speed, rotateSpeed);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override

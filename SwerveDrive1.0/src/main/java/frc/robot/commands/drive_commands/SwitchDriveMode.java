@@ -5,33 +5,38 @@
 package frc.robot.commands.drive_commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-
+import frc.robot.Constants;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.XboxRemote;
 
-public class SwerveDrive extends CommandBase {
-  /** Creates a new SwerveDrive. */
+public class SwitchDriveMode extends CommandBase {
+  /** Creates a new SwitchDriveMode. */
   DriveTrain driveTrain;
-  XboxRemote xbox;
-  public SwerveDrive(DriveTrain dt, XboxRemote xr) {
+  XboxRemote xboxRemote;
+  public SwitchDriveMode(DriveTrain dt, XboxRemote xr) {
     // Use addRequirements() here to declare subsystem dependencies.
     driveTrain = dt;
-    xbox = xr;
+    xboxRemote = xr;
     addRequirements(driveTrain);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    if(Constants.drive_mode == 0){
+      Constants.drive_mode  ++;
+      driveTrain.setDefaultCommand(new SteerDrive(driveTrain, xboxRemote));
+
+    }
+    if(Constants.drive_mode == 1){
+      Constants.drive_mode = 0;
+      driveTrain.setDefaultCommand(new SwerveDrive(driveTrain, xboxRemote));
+    }
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-      double strafeAngle = xbox.getLeftAngle();
-      double speed = xbox.getLeftMagnitude();
-      double rotateSpeed = xbox.getRightX();
-      driveTrain.rotateDrive(strafeAngle, speed, rotateSpeed);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -40,6 +45,6 @@ public class SwerveDrive extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

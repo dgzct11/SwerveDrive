@@ -49,6 +49,9 @@ public final class Constants {
     public static final double spin_threshold = 0;
    
     public static final double rotation_dampener = 0;
+    public static final double rotate_dampaner = 0;
+    public static final int x_button_num = 1;
+    public static int drive_mode = 0;
     
    
    

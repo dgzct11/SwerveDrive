@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.functional.Position;
 import frc.robot.functional.Circle;
 public class Odometry extends SubsystemBase {
@@ -24,7 +25,39 @@ public class Odometry extends SubsystemBase {
     previousPositionsDirectional = driveTrain.getDirectionalPositions();
     previousPositionsThrust = driveTrain.getThrustPositions();
   }
+
   public void updatePosition(){
+    //get current Vector for center 
+    //avarage of all vectors removes rotational component
+    double[] angles = driveTrain.getAngles();
+    double[] deltaPositions = driveTrain.getThrustPositions();
+    for(int i = 0; i<4; i++)
+      deltaPositions[i] -= previousPositionsThrust[i];
+    
+    double[] avgVector = new double[2];
+    double[][] displacementVectors = new double[4][2];
+    double avgRotationMag = 0;
+    for(int i = 0; i<4; i++){
+      displacementVectors[i][0] = Math.sin(Math.toRadians(angles[i]))*Math.abs(deltaPositions[i]);
+      displacementVectors[i][1] =  Math.cos(Math.toRadians(angles[i]))*Math.abs(deltaPositions[i]);
+      avgVector[0] += displacementVectors[i][0]/4;
+      avgVector[1] += displacementVectors[i][1]/4;
+      displacementVectors[i][0] -= avgVector[0];
+      displacementVectors[i][1] -= avgVector[1];
+      avgRotationMag += RobotContainer.magnitutde(displacementVectors[i])/4;
+    }
+    double angleDiff = Math.toDegrees(avgRotationMag/Constants.distance_wheel_center);
+    
+    currentPosition.add(avgVector[0], avgVector[1]);
+    currentPosition.addAngle(angleDiff);
+    
+  
+    
+    //get current rotational vector
+
+  }
+
+  public void updateArcPosition(){
     double[] currentPositionsThrust = driveTrain.getThrustPositions();
     //double[] currentPositionDirectional = driveTrain.getDirectionalPositions();
     
@@ -66,5 +99,6 @@ public class Odometry extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    updatePosition();
   }
 }

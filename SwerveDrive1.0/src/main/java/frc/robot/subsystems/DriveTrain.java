@@ -6,10 +6,12 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.functional.Line;
 
@@ -60,9 +62,31 @@ public class DriveTrain extends SubsystemBase {
     odometry = od;
   }
 
+  public void rotateDrive(double strafeAngle, double speed, double rotateSpeed){
+    //positive rotate speed is left turn, negative rotate speed is right turn
+    double strafeXComponent = Math.sin(Math.toRadians(strafeAngle))*speed;
+    double strafeYComponent = Math.cos(Math.toRadians(strafeAngle))*speed;
+    double rotationComponent = Constants.rotate_dampaner*rotateSpeed;
+    double[] leftFrontVector = {strafeXComponent-rotationComponent, strafeYComponent-rotationComponent};
+    double[] leftBackVector = {strafeXComponent - rotationComponent, strafeYComponent+rotationComponent};
+    double[] rightFrontVector = {strafeXComponent+rotationComponent, strafeYComponent + rotationComponent};
+    double[] rightBackVector = {strafeXComponent + rotationComponent, strafeYComponent - rotationComponent};
+    double[] angles = {RobotContainer.stickTo360(leftFrontVector[0], leftFrontVector[1]),
+                       RobotContainer.stickTo360(leftBackVector[0], leftBackVector[1]),
+                       RobotContainer.stickTo360(rightFrontVector[0], rightFrontVector[1]),
+                       RobotContainer.stickTo360(rightBackVector[0], rightBackVector[1])};
+    double[] speeds = {RobotContainer.magnitutde(leftFrontVector),
+                       RobotContainer.magnitutde(leftBackVector),
+                       RobotContainer.magnitutde(rightFrontVector),
+                       RobotContainer.magnitutde(rightBackVector)};
+    setDirectionalAngles(angles);
+    setThrustSpeeds(speeds);
+    
+  }
 
+ 
 
-  public void drive(double strafeAngle,double speed, double circleRadius){
+  public void arcDrive(double strafeAngle,double speed, double circleRadius){
    
     currentCircleRadius = circleRadius;
     currentStrafeAngle = strafeAngle;
@@ -159,6 +183,39 @@ public class DriveTrain extends SubsystemBase {
   }
 
   
+
+  //setters
+  public void setThrustSpeeds(double[] speeds){
+    leftFrontThrust.set(ControlMode.PercentOutput, speeds[0]);
+    leftBackThrust.set(ControlMode.PercentOutput, speeds[1]);
+    rightFrontThrust.set(ControlMode.PercentOutput, speeds[2]);
+    rightBackThrust.set(ControlMode.PercentOutput, speeds[3]);
+  }
+  public void setDirectionalAngles(double[] angles){
+    double[] currentAngles = getAngles();
+    double[] currentPositions = getDirectionalPositions();
+    
+    leftFrontDirection.set(TalonSRXControlMode.Position, 
+    (currentPositions[0] + 
+    RobotContainer.angleDistance2(angles[0], currentAngles[0])*Constants.pos_units_per_degree * 
+    (RobotContainer.shouldTurnLeft(currentAngles[0], angles[0]) ? 1:-1)));
+    
+    leftBackDirection.set(TalonSRXControlMode.Position, 
+    (currentPositions[1] + 
+    RobotContainer.angleDistance2(angles[1], currentAngles[1])*Constants.pos_units_per_degree * 
+    (RobotContainer.shouldTurnLeft(currentAngles[1], angles[1]) ? 1:-1)));
+   
+    rightFrontDirection.set(TalonSRXControlMode.Position, 
+    (currentPositions[2] + 
+    RobotContainer.angleDistance2(angles[2], currentAngles[2])*Constants.pos_units_per_degree * 
+    (RobotContainer.shouldTurnLeft(currentAngles[2], angles[2]) ? 1:-1)));
+   
+    rightBackDirection.set(TalonSRXControlMode.Position, 
+    (currentPositions[3] + 
+    RobotContainer.angleDistance2(angles[3], currentAngles[3])*Constants.pos_units_per_degree * 
+    (RobotContainer.shouldTurnLeft(currentAngles[3], angles[3]) ? 1:-1)));
+  }
+  //getters
   public double[] getThrustPositions(){
     double[] result = new double[4];
     result[0] = leftFrontThrust.getSelectedSensorPosition();
@@ -172,14 +229,44 @@ public class DriveTrain extends SubsystemBase {
   public double[] getDirectionalPositions(){
     double[] result = new double[4];
     result[0] = leftFrontDirection.getSelectedSensorPosition();
+
     result[1] = leftBackDirection.getSelectedSensorPosition();
     result[2] = rightFrontDirection.getSelectedSensorPosition();
     result[3] = rightBackDirection.getSelectedSensorPosition();
     return result;
 
   }
+  public double[] getAngles(){
+    double[] result = getDirectionalPositions();
+    for(int i = 0; i<result.length; i++){
+      result[i] = RobotContainer.floorMod(result[i]/Constants.pos_units_per_degree, 360);
+    }
+    return result;
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    //corrects angles of directional motor encoders
+    
+    if(leftFrontDirection.getSelectedSensorPosition()/Constants.pos_units_per_degree>360)
+     leftFrontDirection.setSelectedSensorPosition(leftFrontDirection.getSelectedSensorPosition()%(360*Constants.pos_units_per_degree));
+    else if(leftFrontDirection.getSelectedSensorPosition()<0)
+     leftFrontDirection.setSelectedSensorPosition((360*Constants.pos_units_per_degree+leftFrontDirection.getSelectedSensorPosition())%(360*Constants.pos_units_per_degree));
+
+    if(leftBackDirection.getSelectedSensorPosition()/Constants.pos_units_per_degree>360)
+     leftBackDirection.setSelectedSensorPosition(leftBackDirection.getSelectedSensorPosition()%(360*Constants.pos_units_per_degree));
+    else if(leftBackDirection.getSelectedSensorPosition()<0)
+     leftBackDirection.setSelectedSensorPosition((360*Constants.pos_units_per_degree+leftBackDirection.getSelectedSensorPosition())%(360*Constants.pos_units_per_degree));
+
+    if(rightFrontDirection.getSelectedSensorPosition()/Constants.pos_units_per_degree>360)
+     rightFrontDirection.setSelectedSensorPosition(rightFrontDirection.getSelectedSensorPosition()%(360*Constants.pos_units_per_degree));
+    else if(rightFrontDirection.getSelectedSensorPosition()<0)
+      rightFrontDirection.setSelectedSensorPosition((360*Constants.pos_units_per_degree+rightFrontDirection.getSelectedSensorPosition())%(360*Constants.pos_units_per_degree));
+
+    if(rightBackDirection.getSelectedSensorPosition()/Constants.pos_units_per_degree>360) 
+      rightBackDirection.setSelectedSensorPosition(rightBackDirection.getSelectedSensorPosition()%(360*Constants.pos_units_per_degree));
+    else if(rightBackDirection.getSelectedSensorPosition()<0) 
+     rightBackDirection.setSelectedSensorPosition((360*Constants.pos_units_per_degree+rightBackDirection.getSelectedSensorPosition())%(360*Constants.pos_units_per_degree));
+
   }
 }
