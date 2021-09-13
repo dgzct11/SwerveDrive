@@ -11,9 +11,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.commands.drive_commands.SwerveDrive;
 import frc.robot.commands.drive_commands.SwitchDriveMode;
+import frc.robot.commands.other_commands.DisplayDashboard;
 import frc.robot.functional.Circle;
 import frc.robot.functional.Line;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.NavXGyro;
 import frc.robot.subsystems.Odometry;
 import frc.robot.subsystems.XboxRemote;
 
@@ -33,6 +35,7 @@ public class RobotContainer {
   public DriveTrain driveTrain = new DriveTrain(od);
   public XboxController xboxController = new XboxController(Constants.xbox_port);
   public XboxRemote xboxRemote = new XboxRemote(xboxController);
+
  
   //buttons
   Button xButtonSwitchDrive = new JoystickButton(xboxController, Constants.x_button_num);
@@ -40,6 +43,8 @@ public class RobotContainer {
   
   public RobotContainer() {
     // Configure the button bindings
+    NavXGyro.ahrs.reset();
+    xboxRemote.setDefaultCommand(new DisplayDashboard(driveTrain));
     driveTrain.setDefaultCommand(new SwerveDrive(driveTrain, xboxRemote));
     configureButtonBindings();
   }

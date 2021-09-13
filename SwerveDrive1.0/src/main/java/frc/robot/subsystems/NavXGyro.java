@@ -8,14 +8,16 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
-
+import frc.robot.Constants;
 public class NavXGyro extends SubsystemBase {
   /** Creates a new NavXGyro. */
   //TODO
-  public AHRS ahrs = new AHRS(spi_port_id);
-  public NavXGyro() {}
+  public static AHRS ahrs = new AHRS(Constants.mxp_port);
+  public NavXGyro() {
+    ahrs.reset();
+  }
 
-  public void getAngle(){
+  public static double getAngle(){
     return RobotContainer.navxTo360(ahrs.getAngle());
   }
   @Override

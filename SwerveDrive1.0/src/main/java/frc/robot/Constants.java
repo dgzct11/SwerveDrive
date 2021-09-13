@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.SPI.Port;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -51,7 +53,10 @@ public final class Constants {
     public static final double rotation_dampener = 0;
     public static final double rotate_dampaner = 0;
     public static final int x_button_num = 1;
+    public static final Port mxp_port = null;
     public static int drive_mode = 0;
+    public static int right_y_axis;
+    public static boolean in_auto;
     
    
    

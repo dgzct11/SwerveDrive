@@ -21,6 +21,11 @@ public class XboxRemote extends SubsystemBase {
     double x = xboxController.getRawAxis(Constants.left_y_axis);
     return RobotContainer.to360(Math.toDegrees(Math.atan2(y,x)));
   }
+  public double getRightAngle(){
+    double y = -xboxController.getRawAxis(Constants.right_x_axis);
+    double x = xboxController.getRawAxis(Constants.right_y_axis);
+    return RobotContainer.to360(Math.toDegrees(Math.atan2(y,x)));
+  }
   public double getLeftMagnitude(){
     return Math.sqrt(Math.pow(xboxController.getRawAxis(Constants.left_x_axis), 2) + Math.pow(xboxController.getRawAxis(Constants.left_y_axis), 2));
   }

@@ -4,13 +4,18 @@
 
 package frc.robot.commands.other_commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.DriveTrain;
 
 public class DisplayDashboard extends CommandBase {
   /** Creates a new DisplayDashboard. */
   //TODO
-  public DisplayDashboard() {
+  DriveTrain driveTrain;
+  public DisplayDashboard(DriveTrain dt) {
     // Use addRequirements() here to declare subsystem dependencies.
+    driveTrain = dt;
+    addRequirements(driveTrain);
   }
 
   // Called when the command is initially scheduled.
@@ -19,7 +24,13 @@ public class DisplayDashboard extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    double[] angles = driveTrain.getAngles();
+    SmartDashboard.putNumber("LF Angle", angles[0]);
+    SmartDashboard.putNumber("LB Angle", angles[1]);
+    SmartDashboard.putNumber("RF Angle", angles[2]);
+    SmartDashboard.putNumber("RB Angle", angles[3]);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
