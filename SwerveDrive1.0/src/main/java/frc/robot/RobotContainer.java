@@ -148,4 +148,11 @@ public class RobotContainer {
         return y - Math.abs(x)%y;
     return x%y;
 }
+
+public static double angleToPoint(double[] start, double[] end){
+  double dx = end[0]-start[0];
+  double dy = end[1]-start[1];
+  return to360(Math.toDegrees(Math.atan2(-dx, dy)));
+
+}
 }

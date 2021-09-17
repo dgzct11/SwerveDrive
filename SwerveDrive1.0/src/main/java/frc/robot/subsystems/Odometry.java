@@ -10,10 +10,7 @@ import frc.robot.RobotContainer;
 import frc.robot.functional.Position;
 import frc.robot.functional.Circle;
 public class Odometry extends SubsystemBase {
-  /** Creates a new Odometry. */
-  public Odometry() {
-
-  }
+ 
   public  Position currentPosition = new Position(0,0,0);
   DriveTrain driveTrain;
   //the position of every Talon thrust
@@ -25,7 +22,12 @@ public class Odometry extends SubsystemBase {
     previousPositionsDirectional = driveTrain.getDirectionalPositions();
     previousPositionsThrust = driveTrain.getThrustPositions();
   }
-
+  public void reset(){
+    currentPosition = new Position(0, 0, 0);
+  }
+  public Position getPosition(){
+    return currentPosition;
+  }
   public void updatePosition(){
     //get current Vector for center 
     //avarage of all vectors removes rotational component
