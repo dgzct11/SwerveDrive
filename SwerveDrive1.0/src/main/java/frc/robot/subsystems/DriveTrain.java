@@ -22,6 +22,7 @@ public class DriveTrain extends SubsystemBase {
 
 
   private ShuffleboardTab tab = Shuffleboard.getTab("PID DriveTrain Constants");
+  
   private NetworkTableEntry kpDirEntry = tab.add("Directional KP", 0).getEntry();
   private NetworkTableEntry kiDirEntry = tab.add("Directional KI", 0).getEntry();
   private NetworkTableEntry kdDirEntry = tab.add("Directional KD", 0).getEntry();
@@ -31,6 +32,12 @@ public class DriveTrain extends SubsystemBase {
   private NetworkTableEntry kiThEntry = tab.add("Thrust KI", 0).getEntry();
   private NetworkTableEntry kdThEntry = tab.add("Thrust KD", 0).getEntry();
   private NetworkTableEntry kfThEntry = tab.add("Thrust KF", 0).getEntry();
+
+  private ShuffleboardTab directionalAngles = Shuffleboard.getTab("Directional Angles");
+  private NetworkTableEntry lfdAngle = directionalAngles.add("Left Front Angle", 0).getEntry();
+  private NetworkTableEntry lbdAngle = directionalAngles.add("Left Back Angle", 0).getEntry();
+  private NetworkTableEntry rfdAngle = directionalAngles.add("Right Front Angle", 0).getEntry();
+  private NetworkTableEntry rbdAngle = directionalAngles.add("Right Back Angle", 0).getEntry();
 
   /** Creates a new DriveTrain. */
   public TalonSRX lfd = new TalonSRX(Constants.left_front_direction_port);
@@ -83,7 +90,15 @@ public class DriveTrain extends SubsystemBase {
     rbd.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     rbt.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
 
-    
+    lfd.setSelectedSensorPosition(0);
+    lft.setSelectedSensorPosition(0);
+    lbd.setSelectedSensorPosition(0);
+    lbt.setSelectedSensorPosition(0);
+    rfd.setSelectedSensorPosition(0);
+    rft.setSelectedSensorPosition(0);
+    rbd.setSelectedSensorPosition(0);
+    rbt.setSelectedSensorPosition(0);
+
     lfd.config_kP(slotIdx, kpDir);
     lbd.config_kP(slotIdx, kpDir);
     rfd.config_kP(slotIdx, kpDir);
@@ -134,6 +149,12 @@ public class DriveTrain extends SubsystemBase {
     kiThEntry.setDouble(kiTh);
     kdThEntry.setDouble(kdTh);
     kfThEntry.setDouble(kfTh);
+
+    lfdAngle.setDouble(0);
+    lbdAngle.setDouble(0);
+    rfdAngle.setDouble(0);
+    rbdAngle.setDouble(0);
+    
     
 
     odometry = od;
@@ -291,6 +312,11 @@ public class DriveTrain extends SubsystemBase {
     (currentPositions[3] + 
     RobotContainer.angleDistance2(angles[3], currentAngles[3])*Constants.pos_units_per_degree * 
     (RobotContainer.shouldTurnLeft(currentAngles[3], angles[3]) ? 1:-1)));
+
+    lfdAngle.setDouble(angles[0]);
+    lbdAngle.setDouble(angles[1]);
+    rfdAngle.setDouble(angles[2]);
+    rbdAngle.setDouble(angles[3]);
   }
   //getters
   public double[] getThrustPositions(){
@@ -355,5 +381,15 @@ public class DriveTrain extends SubsystemBase {
     kiTh = kiThEntry.getDouble(kiTh);
     kdTh = kdThEntry.getDouble(kdTh);
     kfTh = kfThEntry.getDouble(kfTh);
+
+    //gets angles from ShuffleBoard
+    //set angles to those from shuffle board.
+    double[] currentAngles = getAngles();
+    double angles[] = {lfdAngle.getDouble(currentAngles[0]),
+      lbdAngle.getDouble(currentAngles[1]),
+      rfdAngle.getDouble(currentAngles[2]),
+      rbdAngle.getDouble(currentAngles[3])};
+    setDirectionalAngles(angles);
+    
   }
 }

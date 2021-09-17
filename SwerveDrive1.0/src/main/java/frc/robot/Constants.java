@@ -17,22 +17,41 @@ import edu.wpi.first.wpilibj.SPI.Port;
 public final class Constants {
 
     //ports
-    public static final int left_front_direction_port = 0;
-    public static final int left_front_thrust_port = 0;
-    public static final int right_back_direction_port = 0;
-    public static final int right_back_thrust_port = 0;
-    public static final int left_back_direction_port = 0;
-    public static final int left_back_thrust_port = 0;
-    public static final int right_front_direction_port = 0;
-    public static final int right_front_thrust_port = 0;
     public static final int xbox_port = 0;
+    public static final Port mxp_port = Port.kMXP;
+    
+    public static final int left_front_direction_port = 7;
+    public static final int left_front_thrust_port = 8;
+    public static final int right_back_direction_port = 3;
+    public static final int right_back_thrust_port = 4;
+    public static final int left_back_direction_port = 1;
+    public static final int left_back_thrust_port = 2;
+    public static final int right_front_direction_port = 5;
+    public static final int right_front_thrust_port = 6;
+   
+    
 
     //xbox bindings
-    //TODO
+    
     public static final int left_x_axis = 0;
-    public static final int left_y_axis = 0;
-    public static final int right_x_axis = 0;
+    public static final int left_y_axis = 1;
+    public static final int right_x_axis = 4;
+    public static final int right_y_axis = 5;
 
+    public static final int a_button_num = 1;
+    public static final int b_button_num = 2;
+    public static final int x_button_num = 3;
+    public static final int y_button_num = 4;
+
+    public static final int left_pad_num = 270;
+    public static final int right_pad_num = 90;
+    public static final int up_pad_num = 0;
+    public static final int down_pad_num = 180;
+    public static int start_button_num = 8;
+    public static int back_button_num = 7;  
+    public static final int lb_button_num = 5;
+    public static final int rb_button_num = 6;
+    
     //robot spacific constants
 
     public static final double pos_units_per_degree = 0;
@@ -48,23 +67,14 @@ public final class Constants {
     
 
     // control modifiers
-    public static final double spin_threshold = 0;
-   
-    public static final double rotation_dampener = 0;
+    public static final double spin_threshold = 0.5;
     public static final double rotate_dampaner = 0;
-    public static final int x_button_num = 1;
-    public static final Port mxp_port = null;
-    public static final int left_pad_num = 0;
-    public static final int right_pad_num = 0;
-    public static final int up_pad_num = 0;
-    public static final int down_pad_num = 0;
-    public static final int start_button_num = 0;
-    public static final int back_button_num = 0;
-    public static final int rb_button_num = 0;
-    public static final int lb_button_num = 0;
+  
+    
+    // state variables
+    
     public static int drive_mode = 0;
-    public static int right_y_axis;
-    public static boolean in_auto;
+    public static boolean in_auto = false;
     
    
    
