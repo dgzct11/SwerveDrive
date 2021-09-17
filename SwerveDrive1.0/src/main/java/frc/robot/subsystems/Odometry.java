@@ -17,6 +17,14 @@ public class Odometry extends SubsystemBase {
   double[] previousPositionsThrust = new double[4];
   //the position of every Talon directional
   double[] previousPositionsDirectional = new double[4];
+  public Odometry(){
+
+  }
+  public void setDriveTrain(DriveTrain dt){
+    driveTrain = dt;
+    previousPositionsDirectional = driveTrain.getDirectionalPositions();
+    previousPositionsThrust = driveTrain.getThrustPositions();
+  }
   public Odometry(DriveTrain dt) {
     driveTrain = dt;
     previousPositionsDirectional = driveTrain.getDirectionalPositions();

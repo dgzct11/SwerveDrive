@@ -33,6 +33,7 @@ public class RobotContainer {
   //subsystems
   public Odometry od = new Odometry();
   public DriveTrain driveTrain = new DriveTrain(od);
+ 
   public XboxController xboxController = new XboxController(Constants.xbox_port);
   public XboxRemote xboxRemote = new XboxRemote(xboxController);
   
@@ -55,6 +56,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     NavXGyro.ahrs.reset();
+    od.setDriveTrain(driveTrain);
     xboxRemote.setDefaultCommand(new DisplayDashboard(driveTrain));
     driveTrain.setDefaultCommand(new SwerveDrive(driveTrain, xboxRemote));
     configureButtonBindings();
