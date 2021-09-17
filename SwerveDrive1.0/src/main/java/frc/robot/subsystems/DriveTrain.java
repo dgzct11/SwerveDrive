@@ -21,7 +21,7 @@ import frc.robot.functional.Line;
 public class DriveTrain extends SubsystemBase {
 
 
-  private ShuffleboardTab tab = Shuffleboard.getTab("Drive");
+  private ShuffleboardTab tab = Shuffleboard.getTab("PID DriveTrain Constants");
   private NetworkTableEntry kpDirEntry = tab.add("Directional KP", 0).getEntry();
   private NetworkTableEntry kiDirEntry = tab.add("Directional KI", 0).getEntry();
   private NetworkTableEntry kdDirEntry = tab.add("Directional KD", 0).getEntry();
