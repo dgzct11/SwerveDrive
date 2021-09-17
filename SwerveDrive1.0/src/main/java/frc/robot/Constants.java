@@ -54,9 +54,10 @@ public final class Constants {
     
     //robot spacific constants
 
-    public static final double pos_units_per_degree = 0;
-    public static final double left_right_wheel_distance = 0;
-    public static final int front_back_wheel_distance = 0;
+    public static final double pos_units_per_degree = 74.152;
+    public static final double left_right_wheel_distance = 0.581;
+    public static final double max_pos_units = 6178;
+    public static final double front_back_wheel_distance = 0.581;
     public static final double[] center = {0,0};
     public static final double[] leftFrontCenter = {-left_right_wheel_distance/2,front_back_wheel_distance/2};
     public static final double[] leftBackCenter = {left_right_wheel_distance/2,front_back_wheel_distance/2};
@@ -68,7 +69,7 @@ public final class Constants {
 
     // control modifiers
     public static final double spin_threshold = 0.5;
-    public static final double rotate_dampaner = 0;
+    public static final double rotate_dampaner = 1;
   
     
     // state variables

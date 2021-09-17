@@ -57,8 +57,14 @@ public class RobotContainer {
     // Configure the button bindings
     NavXGyro.ahrs.reset();
     od.setDriveTrain(driveTrain);
-    xboxRemote.setDefaultCommand(new DisplayDashboard(driveTrain));
-    driveTrain.setDefaultCommand(new SwerveDrive(driveTrain, xboxRemote));
+    DisplayDashboard dd = new DisplayDashboard(driveTrain, xboxRemote);
+
+    xboxRemote.setDefaultCommand(dd);
+    dd.addRequirements(xboxRemote);
+    SwerveDrive sd = new SwerveDrive(driveTrain, xboxRemote);
+    driveTrain.setDefaultCommand(sd);
+    sd.addRequirements(driveTrain);
+    
     configureButtonBindings();
   }
 

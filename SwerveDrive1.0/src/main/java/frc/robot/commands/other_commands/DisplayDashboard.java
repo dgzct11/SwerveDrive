@@ -7,15 +7,16 @@ package frc.robot.commands.other_commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.XboxRemote;
 
 public class DisplayDashboard extends CommandBase {
   /** Creates a new DisplayDashboard. */
   //TODO
   DriveTrain driveTrain;
-  public DisplayDashboard(DriveTrain dt) {
+  public DisplayDashboard(DriveTrain dt, XboxRemote xr) {
     // Use addRequirements() here to declare subsystem dependencies.
     driveTrain = dt;
-    addRequirements(driveTrain);
+    addRequirements(xr);
   }
 
   // Called when the command is initially scheduled.
@@ -30,6 +31,17 @@ public class DisplayDashboard extends CommandBase {
     SmartDashboard.putNumber("LB Angle", angles[1]);
     SmartDashboard.putNumber("RF Angle", angles[2]);
     SmartDashboard.putNumber("RB Angle", angles[3]);
+    double[] dirPositions = driveTrain.getDirectionalPositions();
+    SmartDashboard.putNumber("LF Position", dirPositions[0]);
+    SmartDashboard.putNumber("LB Position", dirPositions[1]);
+    SmartDashboard.putNumber("RF Position", dirPositions[2]);
+    SmartDashboard.putNumber("RB Position", dirPositions[3]);
+
+    /*SmartDashboard.putNumber("KP", driveTrain.kpDir);
+    SmartDashboard.putNumber("KI", driveTrain.kiDir);
+    SmartDashboard.putNumber("KD", driveTrain.kdDir);
+    SmartDashboard.putNumber("KF", driveTrain.kfDir);
+*/
   }
 
   // Called once the command ends or is interrupted.

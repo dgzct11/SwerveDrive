@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -56,12 +57,12 @@ public class DriveTrain extends SubsystemBase {
   public double kpDir = 0;
   public double kiDir = 0;
   public double kdDir = 0;
-  public double kfDir = 0;
+  public double kfDir = 0.5;
 
   public double kpTh = 0;
   public double kiTh = 0;
   public double kdTh = 0;
-  public double kfTh = 0;
+  public double kfTh = 0.5;
   public int slotIdx = 1;
   //circle refers to circular path of rotation when turning
   public double currentStrafeAngle = 0;
@@ -79,17 +80,25 @@ public class DriveTrain extends SubsystemBase {
   public DriveTrain(Odometry od) {
     //configure sensors for each motor controller to sensor in Falcon500
     lfd.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    //lfd.setNeutralMode(NeutralMode.Brake);
     lft.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
 
     lbd.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    //lbd.setNeutralMode(NeutralMode.Brake);
     lbt.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
 
     rfd.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-    rft.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    //rfd.setNeutralMode(NeutralMode.Brake);
 
+    rft.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    rft.setInverted(true);
+
+    
     rbd.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    //rbd.setNeutralMode(NeutralMode.Brake);
     rbt.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
 
+    
     lfd.setSelectedSensorPosition(0);
     lft.setSelectedSensorPosition(0);
     lbd.setSelectedSensorPosition(0);
@@ -99,6 +108,7 @@ public class DriveTrain extends SubsystemBase {
     rbd.setSelectedSensorPosition(0);
     rbt.setSelectedSensorPosition(0);
 
+    
     lfd.config_kP(slotIdx, kpDir);
     lbd.config_kP(slotIdx, kpDir);
     rfd.config_kP(slotIdx, kpDir);
@@ -162,6 +172,7 @@ public class DriveTrain extends SubsystemBase {
 
   public void rotateDrive(double strafeAngle, double speed, double rotateSpeed){
     //positive rotate speed is left turn, negative rotate speed is right turn
+    rotateSpeed = 0;
     double strafeXComponent = Math.sin(Math.toRadians(strafeAngle))*speed;
     double strafeYComponent = Math.cos(Math.toRadians(strafeAngle))*speed;
     double rotationComponent = Constants.rotate_dampaner*rotateSpeed;
@@ -185,7 +196,7 @@ public class DriveTrain extends SubsystemBase {
  
 
   public void arcDrive(double strafeAngle,double speed, double circleRadius){
-   
+   /*
     currentCircleRadius = circleRadius;
     currentStrafeAngle = strafeAngle;
 
@@ -225,7 +236,7 @@ public class DriveTrain extends SubsystemBase {
         rft.set(ControlMode.PercentOutput, speed);
         rbt.set(ControlMode.PercentOutput, speed);
     }
-   
+   */
   }
 
   public double[] calcAngles(double circleRadius){
@@ -294,24 +305,24 @@ public class DriveTrain extends SubsystemBase {
     double[] currentPositions = getDirectionalPositions();
     
     lfd.set(TalonSRXControlMode.Position, 
-    (currentPositions[0] + 
+    ((currentPositions[0] + 
     RobotContainer.angleDistance2(angles[0], currentAngles[0])*Constants.pos_units_per_degree * 
-    (RobotContainer.shouldTurnLeft(currentAngles[0], angles[0]) ? 1:-1)));
+    (RobotContainer.shouldTurnLeft(currentAngles[0], angles[0]) ? 1:-1))));
     
     lbd.set(TalonSRXControlMode.Position, 
-    (currentPositions[1] + 
+    ((currentPositions[1] + 
     RobotContainer.angleDistance2(angles[1], currentAngles[1])*Constants.pos_units_per_degree * 
-    (RobotContainer.shouldTurnLeft(currentAngles[1], angles[1]) ? 1:-1)));
+    (RobotContainer.shouldTurnLeft(currentAngles[1], angles[1]) ? 1:-1))));
    
     rfd.set(TalonSRXControlMode.Position, 
-    (currentPositions[2] + 
+    ((currentPositions[2] + 
     RobotContainer.angleDistance2(angles[2], currentAngles[2])*Constants.pos_units_per_degree * 
-    (RobotContainer.shouldTurnLeft(currentAngles[2], angles[2]) ? 1:-1)));
+    (RobotContainer.shouldTurnLeft(currentAngles[2], angles[2]) ? 1:-1))));
    
     rbd.set(TalonSRXControlMode.Position, 
-    (currentPositions[3] + 
+    ((currentPositions[3] + 
     RobotContainer.angleDistance2(angles[3], currentAngles[3])*Constants.pos_units_per_degree * 
-    (RobotContainer.shouldTurnLeft(currentAngles[3], angles[3]) ? 1:-1)));
+    (RobotContainer.shouldTurnLeft(currentAngles[3], angles[3]) ? 1:-1))));
 
     lfdAngle.setDouble(angles[0]);
     lbdAngle.setDouble(angles[1]);
@@ -372,6 +383,7 @@ public class DriveTrain extends SubsystemBase {
      rbd.setSelectedSensorPosition((360*Constants.pos_units_per_degree+rbd.getSelectedSensorPosition())%(360*Constants.pos_units_per_degree));
 
     //gets constants from shuffle board
+    /*
     kpDir = kpDirEntry.getDouble(kpDir);
     kiDir = kiDirEntry.getDouble(kiDir);
     kdDir = kdDirEntry.getDouble(kdDir);
@@ -381,15 +393,17 @@ public class DriveTrain extends SubsystemBase {
     kiTh = kiThEntry.getDouble(kiTh);
     kdTh = kdThEntry.getDouble(kdTh);
     kfTh = kfThEntry.getDouble(kfTh);
-
+/*
     //gets angles from ShuffleBoard
     //set angles to those from shuffle board.
+    /*
     double[] currentAngles = getAngles();
     double angles[] = {lfdAngle.getDouble(currentAngles[0]),
       lbdAngle.getDouble(currentAngles[1]),
       rfdAngle.getDouble(currentAngles[2]),
       rbdAngle.getDouble(currentAngles[3])};
     setDirectionalAngles(angles);
+    */
     
   }
 }
