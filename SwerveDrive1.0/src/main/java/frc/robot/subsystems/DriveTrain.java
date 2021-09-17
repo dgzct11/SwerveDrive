@@ -9,6 +9,9 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -18,6 +21,16 @@ import frc.robot.functional.Line;
 public class DriveTrain extends SubsystemBase {
 
 
+  private ShuffleboardTab tab = Shuffleboard.getTab("Drive");
+  private NetworkTableEntry kpDirEntry = tab.add("Directional KP", 0).getEntry();
+  private NetworkTableEntry kiDirEntry = tab.add("Directional KI", 0).getEntry();
+  private NetworkTableEntry kdDirEntry = tab.add("Directional KD", 0).getEntry();
+  private NetworkTableEntry kfDirEntry = tab.add("Directional KF", 0).getEntry();
+
+  private NetworkTableEntry kpThEntry = tab.add("Thrust KP", 0).getEntry();
+  private NetworkTableEntry kiThEntry = tab.add("Thrust KI", 0).getEntry();
+  private NetworkTableEntry kdThEntry = tab.add("Thrust KD", 0).getEntry();
+  private NetworkTableEntry kfThEntry = tab.add("Thrust KF", 0).getEntry();
 
   /** Creates a new DriveTrain. */
   public TalonSRX lfd = new TalonSRX(Constants.left_front_direction_port);
@@ -70,7 +83,7 @@ public class DriveTrain extends SubsystemBase {
     rbd.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     rbt.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
 
-    /*
+    
     lfd.config_kP(slotIdx, kpDir);
     lbd.config_kP(slotIdx, kpDir);
     rfd.config_kP(slotIdx, kpDir);
@@ -111,7 +124,18 @@ public class DriveTrain extends SubsystemBase {
     rft.config_kF(slotIdx, kfTh);
     rbt.config_kF(slotIdx, kfTh);
 
-*/
+    //display constants to shuffle board
+    kpDirEntry.setDouble(kpDir);
+    kiDirEntry.setDouble(kiDir);
+    kdDirEntry.setDouble(kdDir);
+    kfDirEntry.setDouble(kiDir);
+
+    kpThEntry.setDouble(kpTh);
+    kiThEntry.setDouble(kiTh);
+    kdThEntry.setDouble(kdTh);
+    kfThEntry.setDouble(kfTh);
+    
+
     odometry = od;
   }
 
@@ -321,5 +345,15 @@ public class DriveTrain extends SubsystemBase {
     else if(rbd.getSelectedSensorPosition()<0) 
      rbd.setSelectedSensorPosition((360*Constants.pos_units_per_degree+rbd.getSelectedSensorPosition())%(360*Constants.pos_units_per_degree));
 
+    //gets constants from shuffle board
+    kpDir = kpDirEntry.getDouble(kpDir);
+    kiDir = kiDirEntry.getDouble(kiDir);
+    kdDir = kdDirEntry.getDouble(kdDir);
+    kfDir = kfDirEntry.getDouble(kfDir);
+
+    kpTh = kpThEntry.getDouble(kpTh);
+    kiTh = kiThEntry.getDouble(kiTh);
+    kdTh = kdThEntry.getDouble(kdTh);
+    kfTh = kfThEntry.getDouble(kfTh);
   }
 }
