@@ -26,7 +26,7 @@ public class SteerDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double strafeAngle = xbox.getLeftAngle();
+      double strafeAngle = xbox.getLeftAngle();
       double speed = xbox.getLeftMagnitude();
       double circleRadius = 1/xbox.getRightX();
       driveTrain.arcDrive(strafeAngle, speed, circleRadius);

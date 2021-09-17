@@ -35,11 +35,22 @@ public class RobotContainer {
   public DriveTrain driveTrain = new DriveTrain(od);
   public XboxController xboxController = new XboxController(Constants.xbox_port);
   public XboxRemote xboxRemote = new XboxRemote(xboxController);
-
+  
  
   //buttons
   Button xButtonSwitchDrive = new JoystickButton(xboxController, Constants.x_button_num);
+  Button leftPad = new POVButton(xboxController, Constants.left_pad_num);
+  Button rightPad = new POVButton(xboxController, Constants.right_pad_num);
+  Button upPad = new POVButton(xboxController, Constants.up_pad_num);
+  Button downPad = new POVButton(xboxController, Constants.down_pad_num);
 
+
+  Button startButtonIncreaseK = new JoystickButton(xboxController, Constants.start_button_num);
+  Button endButtonDecreaseK = new JoystickButton(xboxController, Constants.back_button_num);
+
+  Button rightButtonIncMotor = new JoystickButton(xboxController, Constants.rb_button_num);
+  Button leftButtonDecMotor = new JoystickButton(xboxController, Constants.lb_button_num);
+  
   
   public RobotContainer() {
     // Configure the button bindings

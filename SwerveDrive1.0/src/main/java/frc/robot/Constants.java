@@ -54,6 +54,14 @@ public final class Constants {
     public static final double rotate_dampaner = 0;
     public static final int x_button_num = 1;
     public static final Port mxp_port = null;
+    public static final int left_pad_num = 0;
+    public static final int right_pad_num = 0;
+    public static final int up_pad_num = 0;
+    public static final int down_pad_num = 0;
+    public static final int start_button_num = 0;
+    public static final int back_button_num = 0;
+    public static final int rb_button_num = 0;
+    public static final int lb_button_num = 0;
     public static int drive_mode = 0;
     public static int right_y_axis;
     public static boolean in_auto;

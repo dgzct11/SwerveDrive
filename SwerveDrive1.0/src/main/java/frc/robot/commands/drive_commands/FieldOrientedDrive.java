@@ -31,10 +31,9 @@ public class FieldOrientedDrive extends CommandBase {
   public void execute() {
     double strafeAngle = xbox.getLeftAngle();
     double speed = xbox.getLeftMagnitude();
-    double rotateAngle = xbox.getRightAngle();
-    pid.setSetpoint(rotateAngle, NavXGyro.getAngle());
-
-    driveTrain.rotateDrive(strafeAngle, speed, pid.getOutput(NavXGyro.getAngle()) * (RobotContainer.shouldTurnLeft(NavXGyro.getAngle(), rotateAngle)?1:-1));
+    double rotateSpeed = xbox.getRightAngle();
+    double currentAngle = NavXGyro.getAngle();
+    driveTrain.rotateDrive((strafeAngle-currentAngle + 360)%360, speed, rotateSpeed);  
   }
 
   // Called once the command ends or is interrupted.

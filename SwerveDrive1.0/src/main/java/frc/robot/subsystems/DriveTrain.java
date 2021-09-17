@@ -33,6 +33,16 @@ public class DriveTrain extends SubsystemBase {
   public TalonSRX rbt = new TalonSRX(Constants.right_back_thrust_port);
 
   //utility variables
+  public double kpDir = 0;
+  public double kiDir = 0;
+  public double kdDir = 0;
+  public double kfDir = 0;
+
+  public double kpTh = 0;
+  public double kiTh = 0;
+  public double kdTh = 0;
+  public double kfTh = 0;
+  public int slotIdx = 1;
   //circle refers to circular path of rotation when turning
   public double currentStrafeAngle = 0;
   public double currentCircleRadius = 0;
@@ -59,6 +69,49 @@ public class DriveTrain extends SubsystemBase {
 
     rbd.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     rbt.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+
+    /*
+    lfd.config_kP(slotIdx, kpDir);
+    lbd.config_kP(slotIdx, kpDir);
+    rfd.config_kP(slotIdx, kpDir);
+    rbd.config_kP(slotIdx, kpDir);
+
+    lfd.config_kI(slotIdx, kiDir);
+    lbd.config_kI(slotIdx, kiDir);
+    rfd.config_kI(slotIdx, kiDir);
+    rbd.config_kI(slotIdx, kiDir);
+
+    lfd.config_kD(slotIdx, kdDir);
+    lbd.config_kD(slotIdx, kdDir);
+    rfd.config_kD(slotIdx, kdDir);
+    rbd.config_kD(slotIdx, kdDir);
+
+    lfd.config_kF(slotIdx, kfDir);
+    lbd.config_kF(slotIdx, kfDir);
+    rfd.config_kF(slotIdx, kfDir);
+    rbd.config_kF(slotIdx, kfDir);
+
+    lft.config_kP(slotIdx, kpTh);
+    lbt.config_kP(slotIdx, kpTh);
+    rft.config_kP(slotIdx, kpTh);
+    rbt.config_kP(slotIdx, kpTh);
+
+    lft.config_kI(slotIdx, kiTh);
+    lbt.config_kI(slotIdx, kiTh);
+    rft.config_kI(slotIdx, kiTh);
+    rbt.config_kI(slotIdx, kiTh);
+
+    lft.config_kD(slotIdx, kdTh);
+    lbt.config_kD(slotIdx, kdTh);
+    rft.config_kD(slotIdx, kdTh);
+    rbt.config_kD(slotIdx, kdTh);
+
+    lft.config_kF(slotIdx, kfTh);
+    lbt.config_kF(slotIdx, kfTh);
+    rft.config_kF(slotIdx, kfTh);
+    rbt.config_kF(slotIdx, kfTh);
+
+*/
     odometry = od;
   }
 
@@ -127,7 +180,7 @@ public class DriveTrain extends SubsystemBase {
         rft.set(ControlMode.PercentOutput, speed);
         rbt.set(ControlMode.PercentOutput, speed);
     }
-   odometry.updatePosition(); 
+   
   }
 
   public double[] calcAngles(double circleRadius){
