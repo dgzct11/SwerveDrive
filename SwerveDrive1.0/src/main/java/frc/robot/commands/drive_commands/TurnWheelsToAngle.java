@@ -4,36 +4,30 @@
 
 package frc.robot.commands.drive_commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.XboxRemote;
 
-public class SwerveDrive extends CommandBase {
-  /** Creates a new SwerveDrive. */
+public class TurnWheelsToAngle extends CommandBase {
+  /** Creates a new TurnWheelsToAngle. */
   DriveTrain driveTrain;
-  XboxRemote xbox;
-  public SwerveDrive(DriveTrain dt, XboxRemote xr) {
+  double angle;
+  public TurnWheelsToAngle(DriveTrain dt, double a) {
     // Use addRequirements() here to declare subsystem dependencies.
     driveTrain = dt;
-    xbox = xr;
-    addRequirements(driveTrain);
+    angle = a;
+
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    double[] angles = {angle, angle, angle,angle};
+    driveTrain.setDirectionalAngles(angles);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-      double strafeAngle = xbox.getLeftAngle();
-      SmartDashboard.putNumber("Strafe Angle", strafeAngle);
-      double speed = xbox.getLeftMagnitude();
-      double rotateSpeed = xbox.getRightX();
-      driveTrain.rotateDrive(strafeAngle, speed, rotateSpeed);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -42,6 +36,6 @@ public class SwerveDrive extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

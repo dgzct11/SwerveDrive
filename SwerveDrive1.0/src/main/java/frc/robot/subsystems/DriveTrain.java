@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -54,7 +55,7 @@ public class DriveTrain extends SubsystemBase {
   public TalonSRX rbt = new TalonSRX(Constants.right_back_thrust_port);
 
   //utility variables
-  public double kpDir = 0;
+  public double kpDir = 0.1;
   public double kiDir = 0;
   public double kdDir = 0;
   public double kfDir = 0.5;
@@ -173,13 +174,13 @@ public class DriveTrain extends SubsystemBase {
   public void rotateDrive(double strafeAngle, double speed, double rotateSpeed){
     //positive rotate speed is left turn, negative rotate speed is right turn
     rotateSpeed = 0;
-    double strafeXComponent = Math.sin(Math.toRadians(strafeAngle))*speed;
+    double strafeXComponent = -Math.sin(Math.toRadians(strafeAngle))*speed;
     double strafeYComponent = Math.cos(Math.toRadians(strafeAngle))*speed;
     double rotationComponent = Constants.rotate_dampaner*rotateSpeed;
     double[] leftFrontVector = {strafeXComponent-rotationComponent, strafeYComponent-rotationComponent};
-    double[] leftBackVector = {strafeXComponent - rotationComponent, strafeYComponent+rotationComponent};
-    double[] rightFrontVector = {strafeXComponent+rotationComponent, strafeYComponent + rotationComponent};
-    double[] rightBackVector = {strafeXComponent + rotationComponent, strafeYComponent - rotationComponent};
+    double[] leftBackVector = {strafeXComponent + rotationComponent, strafeYComponent-rotationComponent};
+    double[] rightFrontVector = {strafeXComponent-rotationComponent, strafeYComponent + rotationComponent};
+    double[] rightBackVector = {strafeXComponent + rotationComponent, strafeYComponent + rotationComponent};
     double[] angles = {RobotContainer.stickTo360(leftFrontVector[0], leftFrontVector[1]),
                        RobotContainer.stickTo360(leftBackVector[0], leftBackVector[1]),
                        RobotContainer.stickTo360(rightFrontVector[0], rightFrontVector[1]),
@@ -188,6 +189,10 @@ public class DriveTrain extends SubsystemBase {
                        RobotContainer.magnitutde(leftBackVector),
                        RobotContainer.magnitutde(rightFrontVector),
                        RobotContainer.magnitutde(rightBackVector)};
+    SmartDashboard.putNumber("TARGET Left Front Angle", angles[0]);
+    SmartDashboard.putNumber("TARGET Left Back Angle", angles[0]);
+    SmartDashboard.putNumber("TARGET Right Front Angle", angles[0]);
+    SmartDashboard.putNumber("TARGET Right Back Angle", angles[0]);
     setDirectionalAngles(angles);
     setThrustSpeeds(speeds);
     
@@ -300,6 +305,7 @@ public class DriveTrain extends SubsystemBase {
     rft.set(ControlMode.PercentOutput, speeds[2]);
     rbt.set(ControlMode.PercentOutput, speeds[3]);
   }
+
   public void setDirectionalAngles(double[] angles){
     double[] currentAngles = getAngles();
     double[] currentPositions = getDirectionalPositions();
@@ -357,31 +363,35 @@ public class DriveTrain extends SubsystemBase {
     }
     return result;
   }
+
+  public void mod(){
+    if(lfd.getSelectedSensorPosition()/Constants.pos_units_per_degree>360)
+    lfd.setSelectedSensorPosition(lfd.getSelectedSensorPosition()%(360*Constants.pos_units_per_degree));
+   else if(lfd.getSelectedSensorPosition()<0)
+    lfd.setSelectedSensorPosition((360*Constants.pos_units_per_degree+lfd.getSelectedSensorPosition())%(360*Constants.pos_units_per_degree));
+
+   if(lbd.getSelectedSensorPosition()/Constants.pos_units_per_degree>360)
+    lbd.setSelectedSensorPosition(lbd.getSelectedSensorPosition()%(360*Constants.pos_units_per_degree));
+   else if(lbd.getSelectedSensorPosition()<0)
+    lbd.setSelectedSensorPosition((360*Constants.pos_units_per_degree+lbd.getSelectedSensorPosition())%(360*Constants.pos_units_per_degree));
+
+   if(rfd.getSelectedSensorPosition()/Constants.pos_units_per_degree>360)
+    rfd.setSelectedSensorPosition(rfd.getSelectedSensorPosition()%(360*Constants.pos_units_per_degree));
+   else if(rfd.getSelectedSensorPosition()<0)
+     rfd.setSelectedSensorPosition((360*Constants.pos_units_per_degree+rfd.getSelectedSensorPosition())%(360*Constants.pos_units_per_degree));
+
+   if(rbd.getSelectedSensorPosition()/Constants.pos_units_per_degree>360) 
+     rbd.setSelectedSensorPosition(rbd.getSelectedSensorPosition()%(360*Constants.pos_units_per_degree));
+   else if(rbd.getSelectedSensorPosition()<0) 
+    rbd.setSelectedSensorPosition((360*Constants.pos_units_per_degree+rbd.getSelectedSensorPosition())%(360*Constants.pos_units_per_degree));
+
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     //corrects angles of directional motor encoders
     
-    if(lfd.getSelectedSensorPosition()/Constants.pos_units_per_degree>360)
-     lfd.setSelectedSensorPosition(lfd.getSelectedSensorPosition()%(360*Constants.pos_units_per_degree));
-    else if(lfd.getSelectedSensorPosition()<0)
-     lfd.setSelectedSensorPosition((360*Constants.pos_units_per_degree+lfd.getSelectedSensorPosition())%(360*Constants.pos_units_per_degree));
-
-    if(lbd.getSelectedSensorPosition()/Constants.pos_units_per_degree>360)
-     lbd.setSelectedSensorPosition(lbd.getSelectedSensorPosition()%(360*Constants.pos_units_per_degree));
-    else if(lbd.getSelectedSensorPosition()<0)
-     lbd.setSelectedSensorPosition((360*Constants.pos_units_per_degree+lbd.getSelectedSensorPosition())%(360*Constants.pos_units_per_degree));
-
-    if(rfd.getSelectedSensorPosition()/Constants.pos_units_per_degree>360)
-     rfd.setSelectedSensorPosition(rfd.getSelectedSensorPosition()%(360*Constants.pos_units_per_degree));
-    else if(rfd.getSelectedSensorPosition()<0)
-      rfd.setSelectedSensorPosition((360*Constants.pos_units_per_degree+rfd.getSelectedSensorPosition())%(360*Constants.pos_units_per_degree));
-
-    if(rbd.getSelectedSensorPosition()/Constants.pos_units_per_degree>360) 
-      rbd.setSelectedSensorPosition(rbd.getSelectedSensorPosition()%(360*Constants.pos_units_per_degree));
-    else if(rbd.getSelectedSensorPosition()<0) 
-     rbd.setSelectedSensorPosition((360*Constants.pos_units_per_degree+rbd.getSelectedSensorPosition())%(360*Constants.pos_units_per_degree));
-
+   
     //gets constants from shuffle board
     /*
     kpDir = kpDirEntry.getDouble(kpDir);

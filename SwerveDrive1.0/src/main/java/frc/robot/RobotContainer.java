@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.commands.drive_commands.SwerveDrive;
 import frc.robot.commands.drive_commands.SwitchDriveMode;
+import frc.robot.commands.drive_commands.TurnWheelsToAngle;
 import frc.robot.commands.other_commands.DisplayDashboard;
 import frc.robot.functional.Circle;
 import frc.robot.functional.Line;
@@ -61,6 +62,7 @@ public class RobotContainer {
 
     xboxRemote.setDefaultCommand(dd);
     dd.addRequirements(xboxRemote);
+
     SwerveDrive sd = new SwerveDrive(driveTrain, xboxRemote);
     driveTrain.setDefaultCommand(sd);
     sd.addRequirements(driveTrain);
@@ -76,6 +78,10 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     xButtonSwitchDrive.whenPressed(new SwitchDriveMode(driveTrain, xboxRemote));
+    upPad.whenPressed(new TurnWheelsToAngle(driveTrain, 0));
+    leftPad.whenPressed(new TurnWheelsToAngle(driveTrain, 90));
+    downPad.whenPressed(new TurnWheelsToAngle(driveTrain, 180));
+    rightPad.whenPressed(new TurnWheelsToAngle(driveTrain, 270));
   }
 
   /**
