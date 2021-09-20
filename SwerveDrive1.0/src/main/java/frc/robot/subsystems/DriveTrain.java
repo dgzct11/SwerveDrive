@@ -55,16 +55,16 @@ public class DriveTrain extends SubsystemBase {
   public TalonSRX rbt = new TalonSRX(Constants.right_back_thrust_port);
 
   //utility variables
-  public double kpDir = 0.1;
+  public double kpDir = 0.01;
   public double kiDir = 0;
-  public double kdDir = 0;
-  public double kfDir = 0.5;
+  public double kdDir = 0.01;
+  public double kfDir = 0;
 
   public double kpTh = 0;
   public double kiTh = 0;
   public double kdTh = 0;
   public double kfTh = 0.5;
-  public int slotIdx = 1;
+  public int slotIdx = 0;
   //circle refers to circular path of rotation when turning
   public double currentStrafeAngle = 0;
   public double currentCircleRadius = 0;
@@ -99,7 +99,7 @@ public class DriveTrain extends SubsystemBase {
     //rbd.setNeutralMode(NeutralMode.Brake);
     rbt.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
 
-    
+    /*
     lfd.setSelectedSensorPosition(0);
     lft.setSelectedSensorPosition(0);
     lbd.setSelectedSensorPosition(0);
@@ -108,7 +108,7 @@ public class DriveTrain extends SubsystemBase {
     rft.setSelectedSensorPosition(0);
     rbd.setSelectedSensorPosition(0);
     rbt.setSelectedSensorPosition(0);
-
+*/
     
     lfd.config_kP(slotIdx, kpDir);
     lbd.config_kP(slotIdx, kpDir);
@@ -174,6 +174,7 @@ public class DriveTrain extends SubsystemBase {
   public void rotateDrive(double strafeAngle, double speed, double rotateSpeed){
     //positive rotate speed is left turn, negative rotate speed is right turn
     rotateSpeed = 0;
+    
     double strafeXComponent = -Math.sin(Math.toRadians(strafeAngle))*speed;
     double strafeYComponent = Math.cos(Math.toRadians(strafeAngle))*speed;
     double rotationComponent = Constants.rotate_dampaner*rotateSpeed;
@@ -307,33 +308,35 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void setDirectionalAngles(double[] angles){
+    
     double[] currentAngles = getAngles();
     double[] currentPositions = getDirectionalPositions();
     
     lfd.set(TalonSRXControlMode.Position, 
-    ((currentPositions[0] + 
+    ((lfd.getSelectedSensorPosition() + 
     RobotContainer.angleDistance2(angles[0], currentAngles[0])*Constants.pos_units_per_degree * 
-    (RobotContainer.shouldTurnLeft(currentAngles[0], angles[0]) ? 1:-1))));
+    (RobotContainer.shouldTurnLeft(currentAngles[0], angles[0]) ? -1:1))));
     
     lbd.set(TalonSRXControlMode.Position, 
-    ((currentPositions[1] + 
+    ((lbd.getSelectedSensorPosition() + 
     RobotContainer.angleDistance2(angles[1], currentAngles[1])*Constants.pos_units_per_degree * 
-    (RobotContainer.shouldTurnLeft(currentAngles[1], angles[1]) ? 1:-1))));
+    (RobotContainer.shouldTurnLeft(currentAngles[1], angles[1]) ? -1:1))));
    
     rfd.set(TalonSRXControlMode.Position, 
-    ((currentPositions[2] + 
+    ((rfd.getSelectedSensorPosition() + 
     RobotContainer.angleDistance2(angles[2], currentAngles[2])*Constants.pos_units_per_degree * 
-    (RobotContainer.shouldTurnLeft(currentAngles[2], angles[2]) ? 1:-1))));
+    (RobotContainer.shouldTurnLeft(currentAngles[2], angles[2]) ? -1:1))));
    
     rbd.set(TalonSRXControlMode.Position, 
-    ((currentPositions[3] + 
+    ((rbd.getSelectedSensorPosition() + 
     RobotContainer.angleDistance2(angles[3], currentAngles[3])*Constants.pos_units_per_degree * 
-    (RobotContainer.shouldTurnLeft(currentAngles[3], angles[3]) ? 1:-1))));
+    (RobotContainer.shouldTurnLeft(currentAngles[3], angles[3]) ? -1:1))));
 
     lfdAngle.setDouble(angles[0]);
     lbdAngle.setDouble(angles[1]);
     rfdAngle.setDouble(angles[2]);
     rbdAngle.setDouble(angles[3]);
+    
   }
   //getters
   public double[] getThrustPositions(){
