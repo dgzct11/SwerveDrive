@@ -5,21 +5,11 @@
 package frc.robot.commands.drive_commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
-import frc.robot.functional.PIDControl;
-import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.NavXGyro;
-import frc.robot.subsystems.XboxRemote;
 
-public class FieldOrientedDrive extends CommandBase {
-  /** Creates a new FieldOrientedDrive. */
-  XboxRemote xbox;
-  DriveTrain driveTrain;
-  PIDControl pid = new PIDControl(0.00, 00, 0);
-  public FieldOrientedDrive(DriveTrain dt, XboxRemote xr) {
+public class TurnToAngle extends CommandBase {
+  /** Creates a new TurnToAngle. */
+  public TurnToAngle() {
     // Use addRequirements() here to declare subsystem dependencies.
-    driveTrain = dt;
-    xbox = xr;
   }
 
   // Called when the command is initially scheduled.
@@ -28,13 +18,7 @@ public class FieldOrientedDrive extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    double strafeAngle = xbox.getLeftAngle();
-    double speed = xbox.getLeftMagnitude();
-    double rotateSpeed = xbox.getRightX();
-    double currentAngle = NavXGyro.getAngle();
-    driveTrain.rotateDrive((strafeAngle-currentAngle + 360)%360, speed, rotateSpeed);  
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
