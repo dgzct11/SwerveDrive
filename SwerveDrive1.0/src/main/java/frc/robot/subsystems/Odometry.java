@@ -36,22 +36,41 @@ public class Odometry extends SubsystemBase {
   public Position getPosition(){
     return currentPosition;
   }
+  public double getAngle(){
+    return currentPosition.angle;
+  }
   public void updatePosition(){
     //get current Vector for center 
     //avarage of all vectors removes rotational component
+
+    //get angles of wheels
     double[] angles = driveTrain.getAngles();
+
+    //get how far each wheel traveled since last iteration
     double[] deltaPositions = driveTrain.getThrustPositions();
     for(int i = 0; i<4; i++)
       deltaPositions[i] -= previousPositionsThrust[i];
     
+
     double[] avgVector = new double[2];
     double[][] displacementVectors = new double[4][2];
     double avgRotationMag = 0;
+
     for(int i = 0; i<4; i++){
-      displacementVectors[i][0] = Math.sin(Math.toRadians(angles[i]))*Math.abs(deltaPositions[i]);
-      displacementVectors[i][1] =  Math.cos(Math.toRadians(angles[i]))*Math.abs(deltaPositions[i]);
+
+      //each displacemenet vector is vector for each wheel
+      displacementVectors[i][0] = -Math.sin(Math.toRadians(angles[i])) * Math.abs(deltaPositions[i]);
+      displacementVectors[i][1] =  Math.cos(Math.toRadians(angles[i])) * Math.abs(deltaPositions[i]);
+
+      //adds x and y to avarage vector
+      // avarage vector represents movement of center
       avgVector[0] += displacementVectors[i][0]/4;
       avgVector[1] += displacementVectors[i][1]/4;
+    }
+
+    for(int i = 0; i<4; i++){
+      //removes the average vector from each vector of the wheel
+      //the rotation vectors remain
       displacementVectors[i][0] -= avgVector[0];
       displacementVectors[i][1] -= avgVector[1];
       avgRotationMag += RobotContainer.magnitutde(displacementVectors[i])/4;
@@ -62,7 +81,7 @@ public class Odometry extends SubsystemBase {
     currentPosition.addAngle(angleDiff);
     
   
-    
+    previousPositionsThrust = driveTrain.getThrustPositions();
     //get current rotational vector
 
   }

@@ -6,7 +6,7 @@ package frc.robot.commands.drive_commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-
+import frc.robot.Constants;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.XboxRemote;
 
@@ -28,11 +28,13 @@ public class SwerveDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if(!Constants.in_auto){
       double strafeAngle = xbox.getLeftAngle();
       SmartDashboard.putNumber("Strafe Angle", strafeAngle);
       double speed = xbox.getLeftMagnitude();
       double rotateSpeed = xbox.getRightX();
       driveTrain.rotateDrive(strafeAngle, speed, rotateSpeed);
+    }
   }
 
   // Called once the command ends or is interrupted.

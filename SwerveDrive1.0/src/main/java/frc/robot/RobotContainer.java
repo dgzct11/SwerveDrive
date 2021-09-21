@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 
@@ -40,32 +42,37 @@ public class RobotContainer {
   
  
   //buttons
-  Button xButtonSwitchDrive = new JoystickButton(xboxController, Constants.x_button_num);
+  Button aButton = new JoystickButton(xboxController, Constants.a_button_num);
+  Button bButton = new JoystickButton(xboxController, Constants.b_button_num);
+  Button xButton = new JoystickButton(xboxController, Constants.x_button_num);
+  Button yButton = new JoystickButton(xboxController, Constants.y_button_num);
+
   Button leftPad = new POVButton(xboxController, Constants.left_pad_num);
   Button rightPad = new POVButton(xboxController, Constants.right_pad_num);
   Button upPad = new POVButton(xboxController, Constants.up_pad_num);
   Button downPad = new POVButton(xboxController, Constants.down_pad_num);
 
 
-  Button startButtonIncreaseK = new JoystickButton(xboxController, Constants.start_button_num);
-  Button endButtonDecreaseK = new JoystickButton(xboxController, Constants.back_button_num);
+  Button startButton = new JoystickButton(xboxController, Constants.start_button_num);
+  Button endButton = new JoystickButton(xboxController, Constants.back_button_num);
 
-  Button rightButtonIncMotor = new JoystickButton(xboxController, Constants.rb_button_num);
-  Button leftButtonDecMotor = new JoystickButton(xboxController, Constants.lb_button_num);
+  Button rightButton = new JoystickButton(xboxController, Constants.rb_button_num);
+  Button leftButton = new JoystickButton(xboxController, Constants.lb_button_num);
   
   
   public RobotContainer() {
-    // Configure the button bindings
+    // configures commands
+    DisplayDashboard dd = new DisplayDashboard(driveTrain, xboxRemote, od);
+    dd.addRequirements(xboxRemote);
+    SwerveDrive sd = new SwerveDrive(driveTrain, xboxRemote);
+    sd.addRequirements(driveTrain);
+
+    //Subsystems
     NavXGyro.ahrs.reset();
     od.setDriveTrain(driveTrain);
-    DisplayDashboard dd = new DisplayDashboard(driveTrain, xboxRemote);
-
     xboxRemote.setDefaultCommand(dd);
-    dd.addRequirements(xboxRemote);
-
-    SwerveDrive sd = new SwerveDrive(driveTrain, xboxRemote);
     driveTrain.setDefaultCommand(sd);
-    sd.addRequirements(driveTrain);
+    
     
     configureButtonBindings();
   }
@@ -77,13 +84,13 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    /*
-    xButtonSwitchDrive.whenPressed(new SwitchDriveMode(driveTrain, xboxRemote));
+    
+    xButton.whenPressed(new SwitchDriveMode(driveTrain, xboxRemote));
     upPad.whenPressed(new TurnWheelsToAngle(driveTrain, 0));
     leftPad.whenPressed(new TurnWheelsToAngle(driveTrain, 90));
     downPad.whenPressed(new TurnWheelsToAngle(driveTrain, 180));
     rightPad.whenPressed(new TurnWheelsToAngle(driveTrain, 270));
-    */
+    
   }
 
   /**
@@ -171,4 +178,5 @@ public static double angleToPoint(double[] start, double[] end){
   return to360(Math.toDegrees(Math.atan2(-dx, dy)));
 
 }
+
 }

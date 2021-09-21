@@ -1,6 +1,6 @@
 package frc.robot.functional;
 
-import java.util.Currency;
+
 
 public class PIDControl {
     double kp;
@@ -22,6 +22,16 @@ public class PIDControl {
     }
     public double getOutput(double currentValue){
         double error = Math.abs(setPoint - currentValue);
+        double time = System.currentTimeMillis()/1000 - previousTime;
+        
+        double result =  kp*error + ki*error*time + kd*(error-previousError)/time;
+        previousError = error;
+        previousTime = time;
+        return result;
+        
+    }
+    public double getOutputFromError(double error){
+        
         double time = System.currentTimeMillis()/1000 - previousTime;
         
         double result =  kp*error + ki*error*time + kd*(error-previousError)/time;
