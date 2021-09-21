@@ -48,7 +48,7 @@ public class FollowTrajectory extends CommandBase {
     double angleToPoint = RobotContainer.angleToPoint(start, end);
     double currentAngle = currentPosition.angle;
     double speed = RobotContainer.distance(start, end)/timeUnit;
-    driveTrain.rotateDrive((angleToPoint-currentAngle+360)%360, speed, 0);
+    driveTrain.rotateDriveVelocity((angleToPoint-currentAngle+360)%360, speed, 0);
     previousTime = time;
   }
 
@@ -59,6 +59,6 @@ public class FollowTrajectory extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return  System.currentTimeMillis()/1000 - initialTime>trajectory.totalTime;
   }
 }

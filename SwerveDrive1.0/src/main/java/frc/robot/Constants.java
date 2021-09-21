@@ -64,8 +64,8 @@ public final class Constants {
     public static final double[] rightFrontCenter = {-left_right_wheel_distance/2,-front_back_wheel_distance/2};
     public static final double[] rightBackCenter = {left_right_wheel_distance/2,-front_back_wheel_distance/2};
     public static final double distance_wheel_center = RobotContainer.distance(center, leftFrontCenter);
-    public static final double spin_angle = RobotContainer.to360(Math.toDegrees(Math.atan2(Constants.left_right_wheel_distance/2, Constants.front_back_wheel_distance/2)));
-    
+    public static final double talon_velocity_per_ms = 0;
+  
 
     // control modifiers
     public static final double spin_threshold = 0.5;

@@ -1,7 +1,9 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
+/**
+ * jadf;laskdjf
+ */
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -203,6 +205,33 @@ public class DriveTrain extends SubsystemBase {
     setThrustSpeeds(speeds);
     
   }
+  public void rotateDriveVelocity(double strafeAngle, double speed, double rotateSpeed){
+    //positive rotate speed is left turn, negative rotate speed is right turn
+    rotateSpeed = 0;
+    
+    double strafeXComponent = -Math.sin(Math.toRadians(strafeAngle))*speed;
+    double strafeYComponent = Math.cos(Math.toRadians(strafeAngle))*speed;
+    double rotationComponent = Constants.rotate_dampaner*rotateSpeed;
+    double[] leftFrontVector = {strafeXComponent-rotationComponent, strafeYComponent-rotationComponent};
+    double[] leftBackVector = {strafeXComponent + rotationComponent, strafeYComponent-rotationComponent};
+    double[] rightFrontVector = {strafeXComponent-rotationComponent, strafeYComponent + rotationComponent};
+    double[] rightBackVector = {strafeXComponent + rotationComponent, strafeYComponent + rotationComponent};
+    double[] angles = {RobotContainer.stickTo360(leftFrontVector[0], leftFrontVector[1]),
+                       RobotContainer.stickTo360(leftBackVector[0], leftBackVector[1]),
+                       RobotContainer.stickTo360(rightFrontVector[0], rightFrontVector[1]),
+                       RobotContainer.stickTo360(rightBackVector[0], rightBackVector[1])};
+    double[] speeds = {RobotContainer.magnitutde(leftFrontVector),
+                       RobotContainer.magnitutde(leftBackVector),
+                       RobotContainer.magnitutde(rightFrontVector),
+                       RobotContainer.magnitutde(rightBackVector)};
+    SmartDashboard.putNumber("TARGET Left Front Angle", angles[0]);
+    SmartDashboard.putNumber("TARGET Left Back Angle", angles[0]);
+    SmartDashboard.putNumber("TARGET Right Front Angle", angles[0]);
+    SmartDashboard.putNumber("TARGET Right Back Angle", angles[0]);
+    setDirectionalAngles(angles);
+    setThrustVelocity(speeds);
+    
+  }
 
  
 
@@ -305,6 +334,15 @@ public class DriveTrain extends SubsystemBase {
   
 
   //setters
+  public void setThrustVelocity(double[] velocities){
+    for(int i = 0; i<4; i++){
+      velocities[i] *= Constants.talon_velocity_per_ms;
+    }
+    lft.set(TalonSRXControlMode.Velocity, velocities[0]);
+    lbt.set(TalonSRXControlMode.Velocity, velocities[1]);
+    rfd.set(TalonSRXControlMode.Velocity,velocities[2]);
+    rbd.set(TalonSRXControlMode.Velocity,velocities[3]);
+  }
   public void setThrustSpeeds(double[] speeds){
     lft.set(ControlMode.PercentOutput, speeds[0]);
     lbt.set(ControlMode.PercentOutput, speeds[1]);
