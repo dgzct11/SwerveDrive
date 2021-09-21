@@ -129,7 +129,7 @@ public class RobotContainer {
     double angle = currentNavxAngle;
     boolean value = false;
 
-    if(targetAngle < 180) value = angle<targetAngle || angle> 180+targetAngle;
+    if(targetAngle <= 180) value = angle<targetAngle || angle> 180+targetAngle;
     else value = angle<targetAngle && angle> targetAngle-180;
     return value;
   }

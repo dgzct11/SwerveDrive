@@ -14,6 +14,7 @@ public class SwerveDrive extends CommandBase {
   /** Creates a new SwerveDrive. */
   DriveTrain driveTrain;
   XboxRemote xbox;
+  double previousAngle = 0;
   public SwerveDrive(DriveTrain dt, XboxRemote xr) {
     // Use addRequirements() here to declare subsystem dependencies.
     driveTrain = dt;
@@ -23,7 +24,11 @@ public class SwerveDrive extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() { double strafeAngle = xbox.getLeftAngle();
+    SmartDashboard.putNumber("Strafe Angle", strafeAngle);
+    double speed = xbox.getLeftMagnitude();
+    double rotateSpeed = xbox.getRightX();
+    driveTrain.rotateDrive(strafeAngle, speed, rotateSpeed);}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -33,7 +38,9 @@ public class SwerveDrive extends CommandBase {
       SmartDashboard.putNumber("Strafe Angle", strafeAngle);
       double speed = xbox.getLeftMagnitude();
       double rotateSpeed = xbox.getRightX();
-      driveTrain.rotateDrive(strafeAngle, speed, rotateSpeed);
+      
+        driveTrain.rotateDrive(strafeAngle, speed, rotateSpeed);
+      previousAngle = strafeAngle;
     }
   }
 

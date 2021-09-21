@@ -8,6 +8,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -21,6 +22,7 @@ import frc.robot.Constants;
 
 import frc.robot.RobotContainer;
 import frc.robot.functional.Line;
+import frc.robot.functional.PIDControl;
 
 public class DriveTrain extends SubsystemBase {
 
@@ -37,11 +39,7 @@ public class DriveTrain extends SubsystemBase {
   private NetworkTableEntry kdThEntry = tab.add("Thrust KD", 0).getEntry();
   private NetworkTableEntry kfThEntry = tab.add("Thrust KF", 0).getEntry();
 
-  private ShuffleboardTab directionalAngles = Shuffleboard.getTab("Directional Angles");
-  private NetworkTableEntry lfdAngle = directionalAngles.add("Left Front Angle", 0).getEntry();
-  private NetworkTableEntry lbdAngle = directionalAngles.add("Left Back Angle", 0).getEntry();
-  private NetworkTableEntry rfdAngle = directionalAngles.add("Right Front Angle", 0).getEntry();
-  private NetworkTableEntry rbdAngle = directionalAngles.add("Right Back Angle", 0).getEntry();
+  
 
   /** Creates a new DriveTrain. */
   public TalonSRX lfd = new TalonSRX(Constants.left_front_direction_port);
@@ -62,11 +60,17 @@ public class DriveTrain extends SubsystemBase {
   public double kdDir = 0.01;
   public double kfDir = 0;
 
+  
+  
+
   public double kpTh = 0;
   public double kiTh = 0;
   public double kdTh = 0;
   public double kfTh = 0.5;
   public int slotIdx = 0;
+  int timeout = 0;
+  double errorDeg = 150;
+
   //circle refers to circular path of rotation when turning
   public double currentStrafeAngle = 0;
   public double currentCircleRadius = 0;
@@ -83,25 +87,42 @@ public class DriveTrain extends SubsystemBase {
   public DriveTrain(Odometry od) {
     //configure sensors for each motor controller to sensor in Falcon500
     lfd.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    lfd.setInverted(true);
+    lfd.configAllowableClosedloopError(0, errorDeg*Constants.pos_units_per_degree, timeout);
+   
     lfd.setNeutralMode(NeutralMode.Brake);
+
+
     lft.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    lft.setInverted(true);
 
     lbd.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     lbd.setNeutralMode(NeutralMode.Brake);
+    lbd.setInverted(true);
+    lbd.configAllowableClosedloopError(0, errorDeg*Constants.pos_units_per_degree, timeout);
+
     lbt.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    lbt.setInverted(true);
+
 
     rfd.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     rfd.setNeutralMode(NeutralMode.Brake);
+    rfd.setInverted(true);
+    rfd.configAllowableClosedloopError(0, errorDeg*Constants.pos_units_per_degree, timeout);
+
 
     rft.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-    rft.setInverted(true);
+    rft.setInverted(false);
 
     
     rbd.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     rbd.setNeutralMode(NeutralMode.Brake);
-    rbt.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    rbd.setInverted(true);
+    rbd.configAllowableClosedloopError(0, errorDeg*Constants.pos_units_per_degree, timeout);
 
-    
+    rbt.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+lbt.setInverted(true);
+    /*
     lfd.setSelectedSensorPosition(0);
     lft.setSelectedSensorPosition(0);
     lbd.setSelectedSensorPosition(0);
@@ -110,7 +131,7 @@ public class DriveTrain extends SubsystemBase {
     rft.setSelectedSensorPosition(0);
     rbd.setSelectedSensorPosition(0);
     rbt.setSelectedSensorPosition(0);
-
+*/
     
     lfd.config_kP(slotIdx, kpDir);
     lbd.config_kP(slotIdx, kpDir);
@@ -127,10 +148,7 @@ public class DriveTrain extends SubsystemBase {
     rfd.config_kD(slotIdx, kdDir);
     rbd.config_kD(slotIdx, kdDir);
 
-    lfd.config_kF(slotIdx, kfDir);
-    lbd.config_kF(slotIdx, kfDir);
-    rfd.config_kF(slotIdx, kfDir);
-    rbd.config_kF(slotIdx, kfDir);
+  
 
     lft.config_kP(slotIdx, kpTh);
     lbt.config_kP(slotIdx, kpTh);
@@ -163,10 +181,6 @@ public class DriveTrain extends SubsystemBase {
     kdThEntry.setDouble(kdTh);
     kfThEntry.setDouble(kfTh);
 
-    lfdAngle.setDouble(0);
-    lbdAngle.setDouble(0);
-    rfdAngle.setDouble(0);
-    rbdAngle.setDouble(0);
     
     
 
@@ -180,11 +194,12 @@ public class DriveTrain extends SubsystemBase {
 
   public void rotateDrive(double strafeAngle, double speed, double rotateSpeed){
     //positive rotate speed is left turn, negative rotate speed is right turn
-    rotateSpeed = 0;
+    //rotateSpeed = 0;
     
     double strafeXComponent = -Math.sin(Math.toRadians(strafeAngle))*speed;
     double strafeYComponent = Math.cos(Math.toRadians(strafeAngle))*speed;
     double rotationComponent = Constants.rotate_dampaner*rotateSpeed;
+
     double[] leftFrontVector = {strafeXComponent-rotationComponent, strafeYComponent-rotationComponent};
     double[] leftBackVector = {strafeXComponent + rotationComponent, strafeYComponent-rotationComponent};
     double[] rightFrontVector = {strafeXComponent-rotationComponent, strafeYComponent + rotationComponent};
@@ -197,14 +212,15 @@ public class DriveTrain extends SubsystemBase {
                        RobotContainer.magnitutde(leftBackVector),
                        RobotContainer.magnitutde(rightFrontVector),
                        RobotContainer.magnitutde(rightBackVector)};
-    SmartDashboard.putNumber("TARGET Left Front Angle", angles[0]);
-    SmartDashboard.putNumber("TARGET Left Back Angle", angles[0]);
-    SmartDashboard.putNumber("TARGET Right Front Angle", angles[0]);
-    SmartDashboard.putNumber("TARGET Right Back Angle", angles[0]);
-    setDirectionalAngles(angles);
-    setThrustSpeeds(speeds);
+    
+     setDirectionalAngles(angles);
+    //setThrustSpeeds(speeds);
     
   }
+
+
+
+
   public void rotateDriveVelocity(double strafeAngle, double speed, double rotateSpeed){
     //positive rotate speed is left turn, negative rotate speed is right turn
     rotateSpeed = 0;
@@ -224,10 +240,7 @@ public class DriveTrain extends SubsystemBase {
                        RobotContainer.magnitutde(leftBackVector),
                        RobotContainer.magnitutde(rightFrontVector),
                        RobotContainer.magnitutde(rightBackVector)};
-    SmartDashboard.putNumber("TARGET Left Front Angle", angles[0]);
-    SmartDashboard.putNumber("TARGET Left Back Angle", angles[0]);
-    SmartDashboard.putNumber("TARGET Right Front Angle", angles[0]);
-    SmartDashboard.putNumber("TARGET Right Back Angle", angles[0]);
+    
     setDirectionalAngles(angles);
     setThrustVelocity(speeds);
     
@@ -375,10 +388,7 @@ public class DriveTrain extends SubsystemBase {
     RobotContainer.angleDistance2(angles[3], currentAngles[3])*Constants.pos_units_per_degree * 
     (RobotContainer.shouldTurnLeft(currentAngles[3], angles[3]) ? -1:1))));
 
-    lfdAngle.setDouble(angles[0]);
-    lbdAngle.setDouble(angles[1]);
-    rfdAngle.setDouble(angles[2]);
-    rbdAngle.setDouble(angles[3]);
+    
     
   }
   //getters
@@ -439,17 +449,36 @@ public class DriveTrain extends SubsystemBase {
     
    
     //gets constants from shuffle board
-    
+    /*
     kpDir = kpDirEntry.getDouble(kpDir);
     kiDir = kiDirEntry.getDouble(kiDir);
     kdDir = kdDirEntry.getDouble(kdDir);
     kfDir = kfDirEntry.getDouble(kfDir);
+
+    lfd.config_kP(slotIdx, kpDir);
+    lbd.config_kP(slotIdx, kpDir);
+    rfd.config_kP(slotIdx, kpDir);
+    rbd.config_kP(slotIdx, kpDir);
+
+    lfd.config_kI(slotIdx, kiDir);
+    lbd.config_kI(slotIdx, kiDir);
+    rfd.config_kI(slotIdx, kiDir);
+    rbd.config_kI(slotIdx, kiDir);
+
+    lfd.config_kD(slotIdx, kdDir);
+    lbd.config_kD(slotIdx, kdDir);
+    rfd.config_kD(slotIdx, kdDir);
+    rbd.config_kD(slotIdx, kdDir);
+
+    
+
+
 
     kpTh = kpThEntry.getDouble(kpTh);
     kiTh = kiThEntry.getDouble(kiTh);
     kdTh = kdThEntry.getDouble(kdTh);
     kfTh = kfThEntry.getDouble(kfTh);
 
-    
+    */
   }
 }
