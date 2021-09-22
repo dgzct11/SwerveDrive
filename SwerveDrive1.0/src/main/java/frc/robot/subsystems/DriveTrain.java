@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -74,7 +75,11 @@ public class DriveTrain extends SubsystemBase {
   double errorDeg = 100;
   double motionVelociy = 0;
   double motionAcceleration = 0;
-  
+  PIDControl directionalPIDLF = new PIDControl(kpDir, kiDir, kdDir);
+  PIDControl directionalPIDLB = new PIDControl(kpDir, kiDir, kdDir);
+  PIDControl directionalPIDRF = new PIDControl(kpDir, kiDir, kdDir);
+  PIDControl directionalPIDRB = new PIDControl(kpDir, kiDir, kdDir);
+
   //circle refers to circular path of rotation when turning
   public double currentStrafeAngle = 0;
   public double currentCircleRadius = 0;
@@ -375,34 +380,78 @@ lbt.setInverted(true);
     rbt.set(ControlMode.PercentOutput, speeds[3]);
   }
 
+  public void setDirectionalAnglesPID(double[] angles){
+    double[] currentAngles = getAngles();
+    directionalPIDLF.setSetpoint(angles[0], currentAngles[0]);
+    directionalPIDLF.setSetpoint(angles[0], currentAngles[0]);
+    directionalPIDLF.setSetpoint(angles[0], currentAngles[0]);
+    directionalPIDLF.setSetpoint(angles[0], currentAngles[0]);
+
+    if(RobotContainer.angleDistance2(currentAngles[0], angles[0]) >= errorDeg){
+      lfd.set(TalonSRXControlMode.PercentOutput, (RobotContainer.shouldTurnLeft(angles[0], currentAngles[0])?1:-1)*directionalPIDLF.getOutput(currentAngles[0]));
+   
+    }
+    else lfd.set(TalonSRXControlMode.PercentOutput, 0);
+    
+    if(RobotContainer.angleDistance2(currentAngles[1], angles[1]) >= errorDeg){
+      lbd.set(TalonSRXControlMode.PercentOutput, (RobotContainer.shouldTurnLeft(angles[1], currentAngles[1])?1:-1)*directionalPIDLB.getOutput(currentAngles[1]));
+   
+    }
+    else lbd.set(TalonSRXControlMode.PercentOutput, 0);
+   
+    if(RobotContainer.angleDistance2(currentAngles[2], angles[2]) >= errorDeg){
+      rfd.set(TalonSRXControlMode.PercentOutput, (RobotContainer.shouldTurnLeft(angles[2], currentAngles[2])?1:-1)*directionalPIDRF.getOutput(currentAngles[2]));
+   
+    }
+    else rfd.set(TalonSRXControlMode.PercentOutput, 0);
+   
+    if(RobotContainer.angleDistance2(currentAngles[3], angles[3]) >= errorDeg){
+      rbd.set(TalonSRXControlMode.PercentOutput, (RobotContainer.shouldTurnLeft(angles[3], currentAngles[3])?1:-1)*directionalPIDRB.getOutput(currentAngles[3]));
+
+    }
+    else rbd.set(TalonSRXControlMode.PercentOutput, 0);
+
+   
+  }
   public void setDirectionalAngles(double[] angles){
     
     double[] currentAngles = getAngles();
-   
+   SmartDashboard.putNumber("LF Diff", RobotContainer.angleDistance2(currentAngles[0], angles[0]));
+   SmartDashboard.putNumber("LB Diff", RobotContainer.angleDistance2(currentAngles[1], angles[1]));
+   SmartDashboard.putNumber("RF Diff", RobotContainer.angleDistance2(currentAngles[2], angles[2]));
+   SmartDashboard.putNumber("RB Diff", RobotContainer.angleDistance2(currentAngles[3], angles[3]));
 
-    if(RobotContainer.angleDistance2(currentAngles[0], angles[0]) >= errorDeg)
-      lfd.set(TalonSRXControlMode.Position, 
+    if(RobotContainer.angleDistance2(currentAngles[0], angles[0]) >= errorDeg){
+      lfd.set(TalonSRXControlMode.MotionMagic, 
       ((lfd.getSelectedSensorPosition() + 
       RobotContainer.angleDistance2(angles[0], currentAngles[0])*Constants.pos_units_per_degree * 
       (RobotContainer.shouldTurnLeft(currentAngles[0], angles[0]) ? -1:1))));
+    }
+    //else lfd.set(TalonSRXControlMode.PercentOutput, 0);
     
-    if(RobotContainer.angleDistance2(currentAngles[1], angles[1]) >= errorDeg)
-      lbd.set(TalonSRXControlMode.Position, 
+    if(RobotContainer.angleDistance2(currentAngles[1], angles[1]) >= errorDeg){
+      lbd.set(TalonSRXControlMode.MotionMagic, 
       ((lbd.getSelectedSensorPosition() + 
       RobotContainer.angleDistance2(angles[1], currentAngles[1])*Constants.pos_units_per_degree * 
       (RobotContainer.shouldTurnLeft(currentAngles[1], angles[1]) ? -1:1))));
+    }
+    //else lbd.set(TalonSRXControlMode.PercentOutput, 0);
    
-    if(RobotContainer.angleDistance2(currentAngles[2], angles[2]) >= errorDeg)
-      rfd.set(TalonSRXControlMode.Position, 
+    if(RobotContainer.angleDistance2(currentAngles[2], angles[2]) >= errorDeg){
+      rfd.set(TalonSRXControlMode.MotionMagic, 
       ((rfd.getSelectedSensorPosition() + 
       RobotContainer.angleDistance2(angles[2], currentAngles[2])*Constants.pos_units_per_degree * 
       (RobotContainer.shouldTurnLeft(currentAngles[2], angles[2]) ? -1:1))));
+    }
+   // else rfd.set(TalonSRXControlMode.PercentOutput, 0);
    
-    if(RobotContainer.angleDistance2(currentAngles[3], angles[3]) >= errorDeg)
-      rbd.set(TalonSRXControlMode.Position, 
+    if(RobotContainer.angleDistance2(currentAngles[3], angles[3]) >= errorDeg){
+      rbd.set(TalonSRXControlMode.MotionMagic, 
       ((rbd.getSelectedSensorPosition() + 
       RobotContainer.angleDistance2(angles[3], currentAngles[3])*Constants.pos_units_per_degree * 
       (RobotContainer.shouldTurnLeft(currentAngles[3], angles[3]) ? -1:1))));
+    }
+    //else rbd.set(TalonSRXControlMode.PercentOutput, 0);
 
     
     
