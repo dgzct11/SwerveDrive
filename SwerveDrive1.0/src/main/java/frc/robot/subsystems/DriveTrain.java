@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.functional.Line;
 import frc.robot.functional.PIDControl;
@@ -72,9 +72,9 @@ public class DriveTrain extends SubsystemBase {
   public double kfTh = 0.5;
   public int slotIdx = 0;
   int timeout = 0;
-  double errorDeg = 100;
-  double motionVelociy = 0;
-  double motionAcceleration = 0;
+  double errorDeg = 1;
+  double motionVelociy = 100;
+  double motionAcceleration = 100;
   PIDControl directionalPIDLF = new PIDControl(kpDir, kiDir, kdDir);
   PIDControl directionalPIDLB = new PIDControl(kpDir, kiDir, kdDir);
   PIDControl directionalPIDRF = new PIDControl(kpDir, kiDir, kdDir);
@@ -139,7 +139,7 @@ public class DriveTrain extends SubsystemBase {
 
     rbt.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
 lbt.setInverted(true);
-    /*
+    
     lfd.setSelectedSensorPosition(0);
     lft.setSelectedSensorPosition(0);
     lbd.setSelectedSensorPosition(0);
@@ -148,7 +148,7 @@ lbt.setInverted(true);
     rft.setSelectedSensorPosition(0);
     rbd.setSelectedSensorPosition(0);
     rbt.setSelectedSensorPosition(0);
-*/
+
     
     lfd.config_kP(slotIdx, kpDir);
     lbd.config_kP(slotIdx, kpDir);
@@ -221,7 +221,7 @@ lbt.setInverted(true);
     double[] leftBackVector = {strafeXComponent + rotationComponent, strafeYComponent-rotationComponent};
     double[] rightFrontVector = {strafeXComponent-rotationComponent, strafeYComponent + rotationComponent};
     double[] rightBackVector = {strafeXComponent + rotationComponent, strafeYComponent + rotationComponent};
-    double[] angles = {RobotContainer.stickTo360(leftFrontVector[0], leftFrontVector[1]),
+     double[] angles = {RobotContainer.stickTo360(leftFrontVector[0], leftFrontVector[1]),
                        RobotContainer.stickTo360(leftBackVector[0], leftBackVector[1]),
                        RobotContainer.stickTo360(rightFrontVector[0], rightFrontVector[1]),
                        RobotContainer.stickTo360(rightBackVector[0], rightBackVector[1])};
@@ -231,7 +231,11 @@ lbt.setInverted(true);
                        RobotContainer.magnitutde(rightBackVector)};
     
      setDirectionalAngles(angles);
-    //setThrustSpeeds(speeds);
+    setThrustSpeeds(speeds);
+    SmartDashboard.putNumber("LF turnto", angles[0]);
+    SmartDashboard.putNumber("LB turnto", angles[1]);
+    SmartDashboard.putNumber("RF turnto", angles[2]);
+    SmartDashboard.putNumber("RB turnto", angles[3]);
     
   }
 
@@ -258,7 +262,7 @@ lbt.setInverted(true);
                        RobotContainer.magnitutde(rightFrontVector),
                        RobotContainer.magnitutde(rightBackVector)};
     
-    setDirectionalAngles(angles);
+    setDirectionalAnglesPID(angles);
     setThrustVelocity(speeds);
     
   }
@@ -308,6 +312,7 @@ lbt.setInverted(true);
     }
    */
   }
+
 
   public double[] calcAngles(double circleRadius){
 
@@ -373,6 +378,8 @@ lbt.setInverted(true);
     rfd.set(TalonSRXControlMode.Velocity,velocities[2]);
     rbd.set(TalonSRXControlMode.Velocity,velocities[3]);
   }
+  
+  
   public void setThrustSpeeds(double[] speeds){
     lft.set(ControlMode.PercentOutput, speeds[0]);
     lbt.set(ControlMode.PercentOutput, speeds[1]);
@@ -380,12 +387,13 @@ lbt.setInverted(true);
     rbt.set(ControlMode.PercentOutput, speeds[3]);
   }
 
+  
   public void setDirectionalAnglesPID(double[] angles){
     double[] currentAngles = getAngles();
     directionalPIDLF.setSetpoint(angles[0], currentAngles[0]);
-    directionalPIDLF.setSetpoint(angles[0], currentAngles[0]);
-    directionalPIDLF.setSetpoint(angles[0], currentAngles[0]);
-    directionalPIDLF.setSetpoint(angles[0], currentAngles[0]);
+    directionalPIDLF.setSetpoint(angles[1], currentAngles[1]);
+    directionalPIDLF.setSetpoint(angles[2], currentAngles[2]);
+    directionalPIDLF.setSetpoint(angles[3], currentAngles[3]);
 
     if(RobotContainer.angleDistance2(currentAngles[0], angles[0]) >= errorDeg){
       lfd.set(TalonSRXControlMode.PercentOutput, (RobotContainer.shouldTurnLeft(angles[0], currentAngles[0])?1:-1)*directionalPIDLF.getOutput(currentAngles[0]));
@@ -413,6 +421,8 @@ lbt.setInverted(true);
 
    
   }
+ 
+ 
   public void setDirectionalAngles(double[] angles){
     
     double[] currentAngles = getAngles();
@@ -421,42 +431,43 @@ lbt.setInverted(true);
    SmartDashboard.putNumber("RF Diff", RobotContainer.angleDistance2(currentAngles[2], angles[2]));
    SmartDashboard.putNumber("RB Diff", RobotContainer.angleDistance2(currentAngles[3], angles[3]));
 
-    if(RobotContainer.angleDistance2(currentAngles[0], angles[0]) >= errorDeg){
-      lfd.set(TalonSRXControlMode.MotionMagic, 
+    //if(RobotContainer.angleDistance2(currentAngles[0], angles[0]) >= errorDeg){
+      lfd.set(TalonSRXControlMode.Position, 
       ((lfd.getSelectedSensorPosition() + 
       RobotContainer.angleDistance2(angles[0], currentAngles[0])*Constants.pos_units_per_degree * 
       (RobotContainer.shouldTurnLeft(currentAngles[0], angles[0]) ? -1:1))));
-    }
+    
     //else lfd.set(TalonSRXControlMode.PercentOutput, 0);
     
-    if(RobotContainer.angleDistance2(currentAngles[1], angles[1]) >= errorDeg){
-      lbd.set(TalonSRXControlMode.MotionMagic, 
+    //if(RobotContainer.angleDistance2(currentAngles[1], angles[1]) >= errorDeg){
+      lbd.set(TalonSRXControlMode.Position, 
       ((lbd.getSelectedSensorPosition() + 
       RobotContainer.angleDistance2(angles[1], currentAngles[1])*Constants.pos_units_per_degree * 
       (RobotContainer.shouldTurnLeft(currentAngles[1], angles[1]) ? -1:1))));
-    }
+    
     //else lbd.set(TalonSRXControlMode.PercentOutput, 0);
    
-    if(RobotContainer.angleDistance2(currentAngles[2], angles[2]) >= errorDeg){
-      rfd.set(TalonSRXControlMode.MotionMagic, 
+    //if(RobotContainer.angleDistance2(currentAngles[2], angles[2]) >= errorDeg){
+      rfd.set(TalonSRXControlMode.Position, 
       ((rfd.getSelectedSensorPosition() + 
       RobotContainer.angleDistance2(angles[2], currentAngles[2])*Constants.pos_units_per_degree * 
       (RobotContainer.shouldTurnLeft(currentAngles[2], angles[2]) ? -1:1))));
-    }
+    
    // else rfd.set(TalonSRXControlMode.PercentOutput, 0);
    
-    if(RobotContainer.angleDistance2(currentAngles[3], angles[3]) >= errorDeg){
-      rbd.set(TalonSRXControlMode.MotionMagic, 
+    //if(RobotContainer.angleDistance2(currentAngles[3], angles[3]) >= errorDeg){
+      rbd.set(TalonSRXControlMode.Position, 
       ((rbd.getSelectedSensorPosition() + 
       RobotContainer.angleDistance2(angles[3], currentAngles[3])*Constants.pos_units_per_degree * 
       (RobotContainer.shouldTurnLeft(currentAngles[3], angles[3]) ? -1:1))));
-    }
+    
     
     //else rbd.set(TalonSRXControlMode.PercentOutput, 0);
 
     
     
   }
+  
   //getters
   public double[] getThrustPositions(){
     double[] result = new double[4];
@@ -468,6 +479,7 @@ lbt.setInverted(true);
 
   }
    
+
   public double[] getDirectionalPositions(){
     double[] result = new double[4];
     result[0] = lfd.getSelectedSensorPosition();
@@ -478,6 +490,8 @@ lbt.setInverted(true);
     return result;
 
   }
+  
+  
   public double[] getAngles(){
     double[] result = getDirectionalPositions();
     for(int i = 0; i<result.length; i++){
@@ -485,6 +499,7 @@ lbt.setInverted(true);
     }
     return result;
   }
+
 
   public void mod(){
     if(lfd.getSelectedSensorPosition()/Constants.pos_units_per_degree>360)
@@ -508,6 +523,8 @@ lbt.setInverted(true);
     rbd.setSelectedSensorPosition((360*Constants.pos_units_per_degree+rbd.getSelectedSensorPosition())%(360*Constants.pos_units_per_degree));
 
   }
+  
+  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

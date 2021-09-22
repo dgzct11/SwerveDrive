@@ -115,7 +115,7 @@ public class RobotContainer {
     return Math.abs(angle%360);
   }
   public static double stickTo360(double x, double y){
-   return (to360(Math.toDegrees(Math.atan2(-y,x)))+270)%360;
+   return (Math.toDegrees(Math.atan2(-x, y)) +360 )%360;
   }
   public static boolean shouldTurnLeftNavx(double currentNavxAngle, double targetAngle){
     double angle = navxTo360(currentNavxAngle);
