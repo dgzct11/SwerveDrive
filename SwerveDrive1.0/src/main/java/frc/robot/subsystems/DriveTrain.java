@@ -11,7 +11,9 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -70,7 +72,9 @@ public class DriveTrain extends SubsystemBase {
   public int slotIdx = 0;
   int timeout = 0;
   double errorDeg = 150;
-
+  double motionVelociy = 0;
+  double motionAcceleration = 0;
+  
   //circle refers to circular path of rotation when turning
   public double currentStrafeAngle = 0;
   public double currentCircleRadius = 0;
@@ -86,11 +90,14 @@ public class DriveTrain extends SubsystemBase {
 
   public DriveTrain(Odometry od) {
     //configure sensors for each motor controller to sensor in Falcon500
+    TalonSRXConfiguration directionalConfiguration = new TalonSRXConfiguration();
+    
     lfd.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     lfd.setInverted(true);
     lfd.configAllowableClosedloopError(0, errorDeg*Constants.pos_units_per_degree, timeout);
-   
     lfd.setNeutralMode(NeutralMode.Brake);
+    lfd.configMotionCruiseVelocity(motionVelociy);
+    lfd.configMotionAcceleration(motionAcceleration);
 
 
     lft.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
@@ -100,6 +107,8 @@ public class DriveTrain extends SubsystemBase {
     lbd.setNeutralMode(NeutralMode.Brake);
     lbd.setInverted(true);
     lbd.configAllowableClosedloopError(0, errorDeg*Constants.pos_units_per_degree, timeout);
+    lbd.configMotionCruiseVelocity(motionVelociy);
+    lbd.configMotionAcceleration(motionAcceleration);
 
     lbt.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     lbt.setInverted(true);
@@ -109,7 +118,8 @@ public class DriveTrain extends SubsystemBase {
     rfd.setNeutralMode(NeutralMode.Brake);
     rfd.setInverted(true);
     rfd.configAllowableClosedloopError(0, errorDeg*Constants.pos_units_per_degree, timeout);
-
+    rfd.configMotionCruiseVelocity(motionVelociy);
+    rfd.configMotionAcceleration(motionAcceleration);
 
     rft.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     rft.setInverted(false);
@@ -119,6 +129,8 @@ public class DriveTrain extends SubsystemBase {
     rbd.setNeutralMode(NeutralMode.Brake);
     rbd.setInverted(true);
     rbd.configAllowableClosedloopError(0, errorDeg*Constants.pos_units_per_degree, timeout);
+    rbd.configMotionCruiseVelocity(motionVelociy);
+    rbd.configMotionAcceleration(motionAcceleration);
 
     rbt.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
 lbt.setInverted(true);
@@ -367,26 +379,30 @@ lbt.setInverted(true);
     
     double[] currentAngles = getAngles();
    
+
+    if(RobotContainer.angleDistance2(currentAngles[0], angles[0]) >= errorDeg)
+      lfd.set(TalonSRXControlMode.Position, 
+      ((lfd.getSelectedSensorPosition() + 
+      RobotContainer.angleDistance2(angles[0], currentAngles[0])*Constants.pos_units_per_degree * 
+      (RobotContainer.shouldTurnLeft(currentAngles[0], angles[0]) ? -1:1))));
     
-    lfd.set(TalonSRXControlMode.Position, 
-    ((lfd.getSelectedSensorPosition() + 
-    RobotContainer.angleDistance2(angles[0], currentAngles[0])*Constants.pos_units_per_degree * 
-    (RobotContainer.shouldTurnLeft(currentAngles[0], angles[0]) ? -1:1))));
-    
-    lbd.set(TalonSRXControlMode.Position, 
-    ((lbd.getSelectedSensorPosition() + 
-    RobotContainer.angleDistance2(angles[1], currentAngles[1])*Constants.pos_units_per_degree * 
-    (RobotContainer.shouldTurnLeft(currentAngles[1], angles[1]) ? -1:1))));
+    if(RobotContainer.angleDistance2(currentAngles[1], angles[1]) >= errorDeg)
+      lbd.set(TalonSRXControlMode.Position, 
+      ((lbd.getSelectedSensorPosition() + 
+      RobotContainer.angleDistance2(angles[1], currentAngles[1])*Constants.pos_units_per_degree * 
+      (RobotContainer.shouldTurnLeft(currentAngles[1], angles[1]) ? -1:1))));
    
-    rfd.set(TalonSRXControlMode.Position, 
-    ((rfd.getSelectedSensorPosition() + 
-    RobotContainer.angleDistance2(angles[2], currentAngles[2])*Constants.pos_units_per_degree * 
-    (RobotContainer.shouldTurnLeft(currentAngles[2], angles[2]) ? -1:1))));
+    if(RobotContainer.angleDistance2(currentAngles[2], angles[2]) >= errorDeg)
+      rfd.set(TalonSRXControlMode.Position, 
+      ((rfd.getSelectedSensorPosition() + 
+      RobotContainer.angleDistance2(angles[2], currentAngles[2])*Constants.pos_units_per_degree * 
+      (RobotContainer.shouldTurnLeft(currentAngles[2], angles[2]) ? -1:1))));
    
-    rbd.set(TalonSRXControlMode.Position, 
-    ((rbd.getSelectedSensorPosition() + 
-    RobotContainer.angleDistance2(angles[3], currentAngles[3])*Constants.pos_units_per_degree * 
-    (RobotContainer.shouldTurnLeft(currentAngles[3], angles[3]) ? -1:1))));
+    if(RobotContainer.angleDistance2(currentAngles[3], angles[3]) >= errorDeg)
+      rbd.set(TalonSRXControlMode.Position, 
+      ((rbd.getSelectedSensorPosition() + 
+      RobotContainer.angleDistance2(angles[3], currentAngles[3])*Constants.pos_units_per_degree * 
+      (RobotContainer.shouldTurnLeft(currentAngles[3], angles[3]) ? -1:1))));
 
     
     
