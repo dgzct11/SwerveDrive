@@ -71,7 +71,7 @@ public class DriveTrain extends SubsystemBase {
   public double kfTh = 0.5;
   public int slotIdx = 0;
   int timeout = 0;
-  double errorDeg = 150;
+  double errorDeg = 100;
   double motionVelociy = 0;
   double motionAcceleration = 0;
   
