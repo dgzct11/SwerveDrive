@@ -37,11 +37,6 @@ public class DriveTrain extends SubsystemBase {
   private NetworkTableEntry kdDirEntry = tab.add("Directional KD", 0).getEntry();
   private NetworkTableEntry kfDirEntry = tab.add("Directional KF", 0).getEntry();
 
-  private NetworkTableEntry kpThEntry = tab.add("Thrust KP", 0).getEntry();
-  private NetworkTableEntry kiThEntry = tab.add("Thrust KI", 0).getEntry();
-  private NetworkTableEntry kdThEntry = tab.add("Thrust KD", 0).getEntry();
-  private NetworkTableEntry kfThEntry = tab.add("Thrust KF", 0).getEntry();
-
   
 
   /** Creates a new DriveTrain. */
@@ -119,7 +114,7 @@ public class DriveTrain extends SubsystemBase {
     rbd.configMotionAcceleration(motionAcceleration);
 
     rbt.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-lbt.setInverted(true);
+    lbt.setInverted(true);
     
     lfd.setSelectedSensorPosition(0);
     lft.setSelectedSensorPosition(0);
@@ -147,48 +142,13 @@ lbt.setInverted(true);
     rbd.config_kD(slotIdx, kdDir);
 
   
-
-    lft.config_kP(slotIdx, kpTh);
-    lbt.config_kP(slotIdx, kpTh);
-    rft.config_kP(slotIdx, kpTh);
-    rbt.config_kP(slotIdx, kpTh);
-
-    lft.config_kI(slotIdx, kiTh);
-    lbt.config_kI(slotIdx, kiTh);
-    rft.config_kI(slotIdx, kiTh);
-    rbt.config_kI(slotIdx, kiTh);
-
-    lft.config_kD(slotIdx, kdTh);
-    lbt.config_kD(slotIdx, kdTh);
-    rft.config_kD(slotIdx, kdTh);
-    rbt.config_kD(slotIdx, kdTh);
-
-    lft.config_kF(slotIdx, kfTh);
-    lbt.config_kF(slotIdx, kfTh);
-    rft.config_kF(slotIdx, kfTh);
-    rbt.config_kF(slotIdx, kfTh);
-
-    //display constants to shuffle board
     kpDirEntry.setDouble(kpDir);
     kiDirEntry.setDouble(kiDir);
     kdDirEntry.setDouble(kdDir);
     kfDirEntry.setDouble(kiDir);
-
-    kpThEntry.setDouble(kpTh);
-    kiThEntry.setDouble(kiTh);
-    kdThEntry.setDouble(kdTh);
-    kfThEntry.setDouble(kfTh);
-
-    
-    
-
-    odometry = od;
   }
 
-  public void stop(){
-    double[] speeds = {0,0,0,0};
-    setThrustSpeeds(speeds);
-  }
+
 
   public void rotateDrive(double strafeAngle, double speed, double rotateSpeed){
     //positive rotate speed is left turn, negative rotate speed is right turn
@@ -222,20 +182,6 @@ lbt.setInverted(true);
 
 
 
-
-
- 
-
-  
-
- 
-
-  
-
-  //setters
- 
-  
-  
   public void setThrustSpeeds(double[] speeds){
     lft.set(ControlMode.PercentOutput, speeds[0]);
     lbt.set(ControlMode.PercentOutput, speeds[1]);
@@ -371,7 +317,7 @@ lbt.setInverted(true);
     kpDir = kpDirEntry.getDouble(kpDir);
     kiDir = kiDirEntry.getDouble(kiDir);
     kdDir = kdDirEntry.getDouble(kdDir);
-    kfDir = kfDirEntry.getDouble(kfDir);
+  
 
     lfd.config_kP(slotIdx, kpDir);
     lbd.config_kP(slotIdx, kpDir);
@@ -387,15 +333,6 @@ lbt.setInverted(true);
     lbd.config_kD(slotIdx, kdDir);
     rfd.config_kD(slotIdx, kdDir);
     rbd.config_kD(slotIdx, kdDir);
-
-    
-
-
-
-    kpTh = kpThEntry.getDouble(kpTh);
-    kiTh = kiThEntry.getDouble(kiTh);
-    kdTh = kdThEntry.getDouble(kdTh);
-    kfTh = kfThEntry.getDouble(kfTh);
 
     */
   }

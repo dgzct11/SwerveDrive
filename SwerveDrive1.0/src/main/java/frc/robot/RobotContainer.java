@@ -12,14 +12,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.commands.drive_commands.SwerveDrive;
-import frc.robot.commands.drive_commands.SwitchDriveMode;
-import frc.robot.commands.drive_commands.TurnWheelsToAngle;
-import frc.robot.commands.other_commands.DisplayDashboard;
-import frc.robot.functional.Circle;
-import frc.robot.functional.Line;
+
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.NavXGyro;
-import frc.robot.subsystems.Odometry;
+
 import frc.robot.subsystems.XboxRemote;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -34,18 +29,15 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 public class RobotContainer {
   
   //subsystems
-  public Odometry od = new Odometry();
-  public DriveTrain driveTrain = new DriveTrain(od);
+
+  public DriveTrain driveTrain = new DriveTrain();
  
   public XboxController xboxController = new XboxController(Constants.xbox_port);
   public XboxRemote xboxRemote = new XboxRemote(xboxController);
   
  
   //buttons
-  Button aButton = new JoystickButton(xboxController, Constants.a_button_num);
-  Button bButton = new JoystickButton(xboxController, Constants.b_button_num);
-  Button xButton = new JoystickButton(xboxController, Constants.x_button_num);
-  Button yButton = new JoystickButton(xboxController, Constants.y_button_num);
+
 
   Button leftPad = new POVButton(xboxController, Constants.left_pad_num);
   Button rightPad = new POVButton(xboxController, Constants.right_pad_num);
@@ -53,24 +45,12 @@ public class RobotContainer {
   Button downPad = new POVButton(xboxController, Constants.down_pad_num);
 
 
-  Button startButton = new JoystickButton(xboxController, Constants.start_button_num);
-  Button endButton = new JoystickButton(xboxController, Constants.back_button_num);
-
-  Button rightButton = new JoystickButton(xboxController, Constants.rb_button_num);
-  Button leftButton = new JoystickButton(xboxController, Constants.lb_button_num);
-  
-  
   public RobotContainer() {
     // configures commands
-    DisplayDashboard dd = new DisplayDashboard(driveTrain, xboxRemote, od);
-    dd.addRequirements(xboxRemote);
+
     SwerveDrive sd = new SwerveDrive(driveTrain, xboxRemote);
     sd.addRequirements(driveTrain);
 
-    //Subsystems
-    NavXGyro.ahrs.reset();
-    od.setDriveTrain(driveTrain);
-    xboxRemote.setDefaultCommand(dd);
     driveTrain.setDefaultCommand(sd);
     
     
@@ -84,13 +64,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    
-    xButton.whenPressed(new SwitchDriveMode(driveTrain, xboxRemote));
-    upPad.whenPressed(new TurnWheelsToAngle(driveTrain, 0));
-    leftPad.whenPressed(new TurnWheelsToAngle(driveTrain, 90));
-    downPad.whenPressed(new TurnWheelsToAngle(driveTrain, 180));
-    rightPad.whenPressed(new TurnWheelsToAngle(driveTrain, 270));
-    
+   
   }
 
   /**
@@ -139,12 +113,6 @@ public class RobotContainer {
     return Math.sqrt( Math.pow(p1[1] - p2[1], 2) + Math.pow(p1[0] - p2[0], 2));
   }
 
-  public static double getArcLength(Circle circle){
-    Line base = new Line(circle.startPoint, circle.endPoint);
-    double[] midPoint = base.getMidPoint();
-    double halfAngle = Math.atan(distance(midPoint, base.startPoint)/distance(midPoint, circle.center));
-    return halfAngle*2*circle.radius;
-  }
 
   public static double angleFromSlope(double[] start, double[] end){
     return Math.toDegrees(Math.atan2((end[1] - start[1]), end[0] - start[0]));
@@ -152,12 +120,7 @@ public class RobotContainer {
   public static double magnitutde(double[] vector){
     return Math.sqrt((vector[0]*vector[0]) + (vector[1]*vector[1]));
   }
-  public static double angleDistance(double targetAngle){
-    double angle = navxTo360(NavXGyro.ahrs.getYaw());
-    double distance = Math.abs(targetAngle - angle)%360;
-    if (distance > 180) distance = 360 - distance;
-    return distance;
-  }
+
   public static double angleDistance2(double targetAngle, double angle){
     
     double distance = Math.abs(targetAngle - angle)%360;
