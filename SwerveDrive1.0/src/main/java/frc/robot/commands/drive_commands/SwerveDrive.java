@@ -36,7 +36,7 @@ public class SwerveDrive extends CommandBase {
       double speed = xbox.getLeftMagnitude();
       double rotateSpeed = xbox.getRightX();
       
-      //driveTrain.rotateDrive(strafeAngle, speed, rotateSpeed);
+      driveTrain.rotateDrive(strafeAngle, speed, rotateSpeed);
       previousAngle = strafeAngle;
     }
   }

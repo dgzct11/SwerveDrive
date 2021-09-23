@@ -57,7 +57,7 @@ public class DriveTrain extends SubsystemBase {
   public double kfDir = 0;
   public int slotIdx = 0;
   int timeout = 0;
-  double errorDeg = 0.1;
+  double errorDeg = 0.01;
   double motionVelociy = 500;
   double motionAcceleration = 1000;
 
@@ -72,8 +72,8 @@ public class DriveTrain extends SubsystemBase {
       motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
       
       motor.configAllowableClosedloopError(slotIdx, errorDeg*Constants.pos_units_per_degree);
-      //TODO change back to break
-      motor.setNeutralMode(NeutralMode.Coast);
+    
+      motor.setNeutralMode(NeutralMode.Brake);
       motor.configMotionCruiseVelocity(motionVelociy);
       motor.configMotionAcceleration(motionAcceleration);
 
