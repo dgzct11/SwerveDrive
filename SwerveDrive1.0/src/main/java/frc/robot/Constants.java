@@ -54,7 +54,9 @@ public final class Constants {
     
     //robot spacific constants
 
-    public static final double pos_units_per_degree = 74.152;
+    public static final double pos_units_per_degree = 72.857777778;
+    public static final double pos_units_per_degree_rf = 72.8220588235;
+   
     public static final double left_right_wheel_distance = 0.581;
     public static final double max_pos_units = 6178;
     public static final double front_back_wheel_distance = 0.581;
