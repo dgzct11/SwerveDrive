@@ -29,8 +29,6 @@ import frc.robot.functional.PIDControl;
 
 public class DriveTrain extends SubsystemBase {
 
-  
-  /** Creates a new DriveTrain. */
   public TalonSRX lfd = new TalonSRX(Constants.left_front_direction_port);
   public TalonSRX lft = new TalonSRX(Constants.left_front_thrust_port);
 
@@ -45,28 +43,23 @@ public class DriveTrain extends SubsystemBase {
 
   public TalonSRX[] directionals = {lfd, lbd, rfd, rbd};
   public TalonSRX[] thrusts = {lft, lbt, rft, rbt};
-  //utility variables
+
   public double kpDir = 0.01;
   public double kiDir = 0;
   public double kdDir = 0.01;
-  public double kfDir = 0;
+  public double kfDir = 0.15;
   public int slotIdx = 0;
   int timeout = 0;
   double errorDeg = 1;
-  double motionVelociy = 100;
-  double motionAcceleration = 100;
-
+  double motionVelociy = 500;
+  double motionAcceleration = 1000;
 
   PIDControl directionalPIDLF = new PIDControl(kpDir, kiDir, kdDir);
   PIDControl directionalPIDLB = new PIDControl(kpDir, kiDir, kdDir);
   PIDControl directionalPIDRF = new PIDControl(kpDir, kiDir, kdDir);
   PIDControl directionalPIDRB = new PIDControl(kpDir, kiDir, kdDir);
 
-  //circle refers to circular path of rotation when turning
- 
   public DriveTrain() {
-    //configure sensors for each motor controller to sensor in Falcon500
-    
     for(int i = 0; i<4; i++){
       TalonSRX motor = directionals[i];
       motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
@@ -79,11 +72,11 @@ public class DriveTrain extends SubsystemBase {
       motor.config_kP(slotIdx, kpDir);
       motor.config_kI(slotIdx, kiDir);
       motor.config_kD(slotIdx, kdDir);
+      motor.config_kF(slotIdx, kfDir);
     }
     for(int i = 0; i<4; i++){
       TalonSRX motor = thrusts[i];
       motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-
     }
     lfd.setSelectedSensorPosition(0);
     lft.setSelectedSensorPosition(0);
@@ -93,17 +86,13 @@ public class DriveTrain extends SubsystemBase {
     rft.setSelectedSensorPosition(0);
     rbd.setSelectedSensorPosition(0);
     rbt.setSelectedSensorPosition(0);
-
-  
   }
 
   public void rotateDrive(double strafeAngle, double speed, double rotateSpeed){
     //positive rotate speed is left turn, negative rotate speed is right turn
-    //rotateSpeed = 0;
-    
     double strafeXComponent = -Math.sin(Math.toRadians(strafeAngle))*speed;
     double strafeYComponent = Math.cos(Math.toRadians(strafeAngle))*speed;
-    double rotationComponent = Constants.rotate_dampaner*rotateSpeed;
+    double rotationComponent = Constants.rotate_dampaner*rotateSpeed/Math.sqrt(2);;
 
     double[] leftFrontVector = {strafeXComponent-rotationComponent, strafeYComponent-rotationComponent};
     double[] leftBackVector = {strafeXComponent + rotationComponent, strafeYComponent-rotationComponent};
@@ -117,26 +106,19 @@ public class DriveTrain extends SubsystemBase {
                        RobotContainer.magnitutde(leftBackVector),
                        RobotContainer.magnitutde(rightFrontVector),
                        RobotContainer.magnitutde(rightBackVector)};
-    
-     setDirectionalAngles(angles);
-    setThrustSpeeds(speeds);
+    setDirectionalAngles(angles);
+    //setThrustSpeeds(speeds);
     SmartDashboard.putNumber("LF turnto", angles[0]);
     SmartDashboard.putNumber("LB turnto", angles[1]);
     SmartDashboard.putNumber("RF turnto", angles[2]);
     SmartDashboard.putNumber("RB turnto", angles[3]);
-    
   }
-
-
-
   public void setThrustSpeeds(double[] speeds){
     lft.set(ControlMode.PercentOutput, speeds[0]);
     lbt.set(ControlMode.PercentOutput, speeds[1]);
     rft.set(ControlMode.PercentOutput, speeds[2]);
     rbt.set(ControlMode.PercentOutput, speeds[3]);
   }
-
-  
   public void setDirectionalAnglesPID(double[] angles){
     double[] currentAngles = getAngles();
     directionalPIDLF.setSetpoint(angles[0], currentAngles[0]);
@@ -159,18 +141,14 @@ public class DriveTrain extends SubsystemBase {
     if(RobotContainer.angleDistance2(currentAngles[3], angles[3]) >= errorDeg)
       rbd.set(TalonSRXControlMode.PercentOutput, (RobotContainer.shouldTurnLeft(angles[3], currentAngles[3])?1:-1)*directionalPIDRB.getOutput(currentAngles[3]));
     else rbd.set(TalonSRXControlMode.PercentOutput, 0);
-
   }
- 
- 
+
   public void setDirectionalAngles(double[] angles){
-    
     double[] currentAngles = getAngles();
     SmartDashboard.putNumber("LF Diff", RobotContainer.angleDistance2(currentAngles[0], angles[0]));
     SmartDashboard.putNumber("LB Diff", RobotContainer.angleDistance2(currentAngles[1], angles[1]));
     SmartDashboard.putNumber("RF Diff", RobotContainer.angleDistance2(currentAngles[2], angles[2]));
     SmartDashboard.putNumber("RB Diff", RobotContainer.angleDistance2(currentAngles[3], angles[3]));
-
     for(int i = 0; i<4; i++){
       TalonSRX motor = directionals[i];
       //if(RobotContainer.angleDistance2(currentAngles[3], angles[3]) >= errorDeg)
@@ -180,15 +158,13 @@ public class DriveTrain extends SubsystemBase {
               (RobotContainer.shouldTurnLeft(currentAngles[i], angles[i]) ? -1:1))));
       //else rbd.set(TalonSRXControlMode.PercentOutput, 0);
     }
- 
   }
-  
+
   public double[] getDirectionalPositions(){
     double[] result = new double[4];
     for(int i = 0; i<4; i++)
       result[i] = directionals[i].getSelectedSensorPosition();
     return result;
-
   }
  
   public double[] getAngles(){
@@ -199,23 +175,13 @@ public class DriveTrain extends SubsystemBase {
     return result;
   }
 
-
-  
-  
-  
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    //corrects angles of directional motor encoders
-    
-   
-    //gets constants from shuffle board
     /*
     kpDir = kpDirEntry.getDouble(kpDir);
     kiDir = kiDirEntry.getDouble(kiDir);
     kdDir = kdDirEntry.getDouble(kdDir);
   
-
     lfd.config_kP(slotIdx, kpDir);
     lbd.config_kP(slotIdx, kpDir);
     rfd.config_kP(slotIdx, kpDir);
@@ -230,7 +196,6 @@ public class DriveTrain extends SubsystemBase {
     lbd.config_kD(slotIdx, kdDir);
     rfd.config_kD(slotIdx, kdDir);
     rbd.config_kD(slotIdx, kdDir);
-
     */
   }
 }
