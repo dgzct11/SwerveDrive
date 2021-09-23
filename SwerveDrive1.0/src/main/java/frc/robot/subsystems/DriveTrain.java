@@ -28,6 +28,13 @@ import frc.robot.RobotContainer;
 import frc.robot.functional.PIDControl;
 
 public class DriveTrain extends SubsystemBase {
+  private ShuffleboardTab tab = Shuffleboard.getTab("PID DriveTrain Constants");
+  
+  private NetworkTableEntry kpDirEntry = tab.add("Directional KP", 0).getEntry();
+  private NetworkTableEntry kiDirEntry = tab.add("Directional KI", 0).getEntry();
+  private NetworkTableEntry kdDirEntry = tab.add("Directional KD", 0).getEntry();
+  private NetworkTableEntry kfDirEntry = tab.add("Directional KF", 0).getEntry();
+
 
   public TalonSRX lfd = new TalonSRX(Constants.left_front_direction_port);
   public TalonSRX lft = new TalonSRX(Constants.left_front_thrust_port);
@@ -81,7 +88,7 @@ public class DriveTrain extends SubsystemBase {
     }
     rft.setInverted(true);
     rbt.setInverted(true);
-    /*
+    
     lfd.setSelectedSensorPosition(0);
     lft.setSelectedSensorPosition(0);
     lbd.setSelectedSensorPosition(0);
@@ -90,7 +97,7 @@ public class DriveTrain extends SubsystemBase {
     rft.setSelectedSensorPosition(0);
     rbd.setSelectedSensorPosition(0);
     rbt.setSelectedSensorPosition(0);
-    */
+    
   }
 
   public void rotateDrive(double strafeAngle, double speed, double rotateSpeed){
@@ -112,7 +119,7 @@ public class DriveTrain extends SubsystemBase {
                        RobotContainer.magnitutde(rightFrontVector),
                        RobotContainer.magnitutde(rightBackVector)};
     setDirectionalAngles(angles);
-    //setThrustSpeeds(speeds);
+    setThrustSpeeds(speeds);
     SmartDashboard.putNumber("LF turnto", angles[0]);
     SmartDashboard.putNumber("LB turnto", angles[1]);
     SmartDashboard.putNumber("RF turnto", angles[2]);
@@ -187,7 +194,7 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("LB Angle", angles[1]);
     SmartDashboard.putNumber("RF Angle", angles[2]);
     SmartDashboard.putNumber("RB Angle", angles[3]);
-    /*
+    
     kpDir = kpDirEntry.getDouble(kpDir);
     kiDir = kiDirEntry.getDouble(kiDir);
     kdDir = kdDirEntry.getDouble(kdDir);
@@ -206,6 +213,6 @@ public class DriveTrain extends SubsystemBase {
     lbd.config_kD(slotIdx, kdDir);
     rfd.config_kD(slotIdx, kdDir);
     rbd.config_kD(slotIdx, kdDir);
-    */
+    
   }
 }
