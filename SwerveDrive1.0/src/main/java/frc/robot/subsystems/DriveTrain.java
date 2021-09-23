@@ -89,6 +89,7 @@ public class DriveTrain extends SubsystemBase {
     rft.setInverted(true);
     rbt.setInverted(true);
     
+    /*
     lfd.setSelectedSensorPosition(0);
     lft.setSelectedSensorPosition(0);
     lbd.setSelectedSensorPosition(0);
@@ -97,14 +98,14 @@ public class DriveTrain extends SubsystemBase {
     rft.setSelectedSensorPosition(0);
     rbd.setSelectedSensorPosition(0);
     rbt.setSelectedSensorPosition(0);
-    
+    */
   }
 
   public void rotateDrive(double strafeAngle, double speed, double rotateSpeed){
     //positive rotate speed is left turn, negative rotate speed is right turn
     double strafeXComponent = -Math.sin(Math.toRadians(strafeAngle))*speed;
     double strafeYComponent = Math.cos(Math.toRadians(strafeAngle))*speed;
-    double rotationComponent = Constants.rotate_dampaner*rotateSpeed/Math.sqrt(2);;
+    double rotationComponent = -Constants.rotate_dampaner*rotateSpeed/Math.sqrt(2);;
 
     double[] leftFrontVector = {strafeXComponent-rotationComponent, strafeYComponent-rotationComponent};
     double[] leftBackVector = {strafeXComponent + rotationComponent, strafeYComponent-rotationComponent};
@@ -126,10 +127,10 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("RB turnto", angles[3]);
   }
   public void setThrustSpeeds(double[] speeds){
-    lft.set(ControlMode.PercentOutput, speeds[0]);
-    lbt.set(ControlMode.PercentOutput, speeds[1]);
-    rft.set(ControlMode.PercentOutput, speeds[2]);
-    rbt.set(ControlMode.PercentOutput, speeds[3]);
+    lft.set(ControlMode.PercentOutput, Constants.max_motor_percent*speeds[0]);
+    lbt.set(ControlMode.PercentOutput,  Constants.max_motor_percent*speeds[1]);
+    rft.set(ControlMode.PercentOutput,  Constants.max_motor_percent*speeds[2]);
+    rbt.set(ControlMode.PercentOutput,  Constants.max_motor_percent*speeds[3]);
   }
   public void setDirectionalAnglesPID(double[] angles){
     double[] currentAngles = getAngles();
