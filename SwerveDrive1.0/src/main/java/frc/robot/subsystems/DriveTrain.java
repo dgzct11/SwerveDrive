@@ -52,8 +52,8 @@ public class DriveTrain extends SubsystemBase {
   public TalonFX[] thrusts = {lft, lbt, rft, rbt};
 
   public double kpDir = 0.2;
-  public double kiDir = 0;
-  public double kdDir = 0.01;
+  public double kiDir = 0.002;
+  public double kdDir = 0;
   public double kfDir = 0;
   public int slotIdx = 0;
   int timeout = 0;
