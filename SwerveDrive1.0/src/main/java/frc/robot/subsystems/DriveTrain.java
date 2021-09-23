@@ -158,7 +158,7 @@ public class DriveTrain extends SubsystemBase {
    //positive rotate speed is left turn, negative rotate speed is right turn
    double strafeXComponent = -Math.sin(Math.toRadians(strafeAngle))*speed;
    double strafeYComponent = Math.cos(Math.toRadians(strafeAngle))*speed;
-   double rotationComponent = Constants.rotate_dampaner*rotateSpeed/Math.sqrt(2);;
+   double rotationComponent = -Constants.rotate_dampaner*rotateSpeed/Math.sqrt(2);;
 
    double[] leftFrontVector = {strafeXComponent-rotationComponent, strafeYComponent-rotationComponent};
    double[] leftBackVector = {strafeXComponent + rotationComponent, strafeYComponent-rotationComponent};
@@ -173,7 +173,7 @@ public class DriveTrain extends SubsystemBase {
                       RobotContainer.magnitutde(rightFrontVector),
                       RobotContainer.magnitutde(rightBackVector)};
    setDirectionalAngles(angles);
-   //setThrustSpeeds(speeds);
+   setThrustSpeeds(speeds);
    SmartDashboard.putNumber("LF turnto", angles[0]);
    SmartDashboard.putNumber("LB turnto", angles[1]);
    SmartDashboard.putNumber("RF turnto", angles[2]);
@@ -204,7 +204,7 @@ public class DriveTrain extends SubsystemBase {
                        RobotContainer.magnitutde(rightFrontVector),
                        RobotContainer.magnitutde(rightBackVector)};
     
-    setDirectionalAnglesPID(angles);
+    setDirectionalAngles(angles);
     setThrustVelocity(speeds);
     
   }
