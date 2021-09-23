@@ -25,11 +25,7 @@ public class SwerveDrive extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() { 
-    double strafeAngle = xbox.getLeftAngle();
-    SmartDashboard.putNumber("Strafe Angle", strafeAngle);
-    double speed = xbox.getLeftMagnitude();
-    double rotateSpeed = xbox.getRightX();
-    driveTrain.rotateDrive(strafeAngle, speed, rotateSpeed);}
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

@@ -47,7 +47,7 @@ public class DriveTrain extends SubsystemBase {
   public double kpDir = 0.01;
   public double kiDir = 0;
   public double kdDir = 0.01;
-  public double kfDir = 0.15;
+  public double kfDir = 0;
   public int slotIdx = 0;
   int timeout = 0;
   double errorDeg = 1;
@@ -63,7 +63,7 @@ public class DriveTrain extends SubsystemBase {
     for(int i = 0; i<4; i++){
       TalonSRX motor = directionals[i];
       motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-      motor.setInverted(true);
+      
       motor.configAllowableClosedloopError(slotIdx, errorDeg*Constants.pos_units_per_degree);
       motor.setNeutralMode(NeutralMode.Brake);
       motor.configMotionCruiseVelocity(motionVelociy);
@@ -74,10 +74,14 @@ public class DriveTrain extends SubsystemBase {
       motor.config_kD(slotIdx, kdDir);
       motor.config_kF(slotIdx, kfDir);
     }
+    
     for(int i = 0; i<4; i++){
       TalonSRX motor = thrusts[i];
       motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     }
+    rft.setInverted(true);
+    rbt.setInverted(true);
+    /*
     lfd.setSelectedSensorPosition(0);
     lft.setSelectedSensorPosition(0);
     lbd.setSelectedSensorPosition(0);
@@ -86,6 +90,7 @@ public class DriveTrain extends SubsystemBase {
     rft.setSelectedSensorPosition(0);
     rbd.setSelectedSensorPosition(0);
     rbt.setSelectedSensorPosition(0);
+    */
   }
 
   public void rotateDrive(double strafeAngle, double speed, double rotateSpeed){
@@ -155,7 +160,7 @@ public class DriveTrain extends SubsystemBase {
         motor.set(TalonSRXControlMode.Position, 
               ((motor.getSelectedSensorPosition() + 
               RobotContainer.angleDistance2(angles[i], currentAngles[i])*Constants.pos_units_per_degree * 
-              (RobotContainer.shouldTurnLeft(currentAngles[i], angles[i]) ? -1:1))));
+              (RobotContainer.shouldTurnLeft(currentAngles[i], angles[i]) ? 1:-1))));
       //else rbd.set(TalonSRXControlMode.PercentOutput, 0);
     }
   }
@@ -177,6 +182,11 @@ public class DriveTrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    double[] angles = getAngles();
+    SmartDashboard.putNumber("LF Angle", angles[0]);
+    SmartDashboard.putNumber("LB Angle", angles[1]);
+    SmartDashboard.putNumber("RF Angle", angles[2]);
+    SmartDashboard.putNumber("RB Angle", angles[3]);
     /*
     kpDir = kpDirEntry.getDouble(kpDir);
     kiDir = kiDirEntry.getDouble(kiDir);
