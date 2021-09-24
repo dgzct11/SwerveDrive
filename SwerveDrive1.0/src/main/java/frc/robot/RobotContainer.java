@@ -12,9 +12,11 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.commands.drive_commands.SwerveDrive;
-
+import frc.robot.functional.Circle;
+import frc.robot.functional.Line;
 import frc.robot.subsystems.DriveTrain;
-
+import frc.robot.subsystems.NavXGyro;
+import frc.robot.subsystems.Odometry;
 import frc.robot.subsystems.XboxRemote;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -34,7 +36,8 @@ public class RobotContainer {
  
   public XboxController xboxController = new XboxController(Constants.xbox_port);
   public XboxRemote xboxRemote = new XboxRemote(xboxController);
-  
+  public Odometry odometry = new Odometry();
+  public NavXGyro navx = new NavXGyro();
  
   //buttons
 
@@ -47,7 +50,7 @@ public class RobotContainer {
 
   public RobotContainer() {
     // configures commands
-
+    odometry.setDriveTrain(driveTrain);
     SwerveDrive sd = new SwerveDrive(driveTrain, xboxRemote);
     sd.addRequirements(driveTrain);
 
@@ -140,6 +143,12 @@ public static double angleToPoint(double[] start, double[] end){
   double dy = end[1]-start[1];
   return to360(Math.toDegrees(Math.atan2(-dx, dy)));
 
+}
+public static double getArcLength(Circle circle){
+  Line base = new Line(circle.startPoint, circle.endPoint);
+  double[] midPoint = base.getMidPoint();
+  double halfAngle = Math.atan(distance(midPoint, base.startPoint)/distance(midPoint, circle.center));
+  return halfAngle*2*circle.radius;
 }
 
 }

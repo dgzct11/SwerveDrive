@@ -57,6 +57,8 @@ public final class Constants {
     public static final double pos_units_per_degree = 72.857777778;
     public static final double pos_units_per_degree_rf = 72.8171171171;
    
+    public static final double pos_units_per_rotation = 16410;
+    public static final double pos_units_per_meter = pos_units_per_degree*3.13297132071;
     public static final double left_right_wheel_distance = 0.581;
     public static final double max_pos_units = 6178;
     public static final double front_back_wheel_distance = 0.581;
@@ -72,6 +74,7 @@ public final class Constants {
     // control modifiers
     public static final double spin_threshold = 0.5;
     public static final double rotate_dampaner = 1;
+    
     public static double max_motor_percent = 0.5;
     
     // state variables

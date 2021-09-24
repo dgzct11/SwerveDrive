@@ -161,6 +161,12 @@ public class DriveTrain extends SubsystemBase {
     return result;
   }
  
+  public double[] getThrustPositions(){
+    double[] result = new double[4];
+    for(int i = 0; i<4; i++)
+      result[i] = thrusts[i].getSelectedSensorPosition();
+    return result;
+  }
   public double[] getAngles(){
     double[] result = getDirectionalPositions();
     for(int i = 0; i<result.length; i++){

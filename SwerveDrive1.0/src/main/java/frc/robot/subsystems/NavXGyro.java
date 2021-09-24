@@ -4,14 +4,28 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
+import frc.robot.Constants;
 public class NavXGyro extends SubsystemBase {
   /** Creates a new NavXGyro. */
-  public NavXGyro() {}
+  //TODO
+  public static AHRS ahrs = new AHRS(Constants.mxp_port);
+  public NavXGyro() {
+    ahrs.reset();
+  }
 
+  public static double getAngle(){
+    return RobotContainer.navxTo360(ahrs.getAngle());
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Navx Angle", NavXGyro.getAngle());
+    SmartDashboard.putNumber("Navx X", NavXGyro.ahrs.getDisplacementX());
+    SmartDashboard.putNumber("Navx Y", NavXGyro.ahrs.getDisplacementY());
   }
 }
