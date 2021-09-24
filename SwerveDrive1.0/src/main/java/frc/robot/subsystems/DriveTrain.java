@@ -56,6 +56,9 @@ public class DriveTrain extends SubsystemBase {
   public double kdDir = 0;
   public double kfDir = 0;
   public int slotIdx = 0;
+
+  public int[] thrustCoefficients = {1,1,1,1};
+
   int timeout = 0;
   double errorDeg = 0.01;
   double motionVelociy = 500;
@@ -130,10 +133,10 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("RB turnto", angles[3]);
   }
   public void setThrustSpeeds(double[] speeds){
-    lft.set(ControlMode.PercentOutput, Constants.max_motor_percent*speeds[0]);
-    lbt.set(ControlMode.PercentOutput,  Constants.max_motor_percent*speeds[1]);
-    rft.set(ControlMode.PercentOutput,  Constants.max_motor_percent*speeds[2]);
-    rbt.set(ControlMode.PercentOutput,  Constants.max_motor_percent*speeds[3]);
+    lft.set(ControlMode.PercentOutput, thrustCoefficients[0] * Constants.max_motor_percent*speeds[0]);
+    lbt.set(ControlMode.PercentOutput,  thrustCoefficients[1] * Constants.max_motor_percent*speeds[1]);
+    rft.set(ControlMode.PercentOutput,  thrustCoefficients[2] * Constants.max_motor_percent*speeds[2]);
+    rbt.set(ControlMode.PercentOutput, thrustCoefficients[3] * Constants.max_motor_percent*speeds[3]);
   }
  
 
@@ -145,13 +148,35 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("RB Diff", RobotContainer.angleDistance2(currentAngles[3], angles[3]));
     for(int i = 0; i<4; i++){
       TalonFX motor = directionals[i];
-      //if(RobotContainer.angleDistance2(currentAngles[3], angles[3]) >= errorDeg)
+      
         motor.set(TalonFXControlMode.Position, 
               ((motor.getSelectedSensorPosition() + 
               RobotContainer.angleDistance2(angles[i], currentAngles[i])*Constants.pos_units_per_degree * 
               (RobotContainer.shouldTurnLeft(currentAngles[i], angles[i]) ? 1:-1))));
-      //else rbd.set(TalonFXControlMode.PercentOutput, 0);
+      
     }
+  }
+
+  public void setDirectionalAnglesEff(double[] angles){
+    double[] currentAngles = getAngles();
+    
+    for(int i = 0; i<4; i++){
+      TalonFX motor = directionals[i];
+      if(RobotContainer.angleDistance2(angles[i], currentAngles[i]) > 90){
+        thrustCoefficients[i] = -1;
+        angles[i] = (angles[i]+180)%360;
+      }
+      else
+        thrustCoefficients[i] = 1;
+      motor.set(TalonFXControlMode.Position, 
+              ((motor.getSelectedSensorPosition() + 
+              RobotContainer.angleDistance2(angles[i], currentAngles[i])*Constants.pos_units_per_degree * 
+              (RobotContainer.shouldTurnLeft(currentAngles[i], angles[i]) ? 1:-1))));
+    }
+    SmartDashboard.putNumber("LF Diff", RobotContainer.angleDistance2(currentAngles[0], angles[0]));
+    SmartDashboard.putNumber("LB Diff", RobotContainer.angleDistance2(currentAngles[1], angles[1]));
+    SmartDashboard.putNumber("RF Diff", RobotContainer.angleDistance2(currentAngles[2], angles[2]));
+    SmartDashboard.putNumber("RB Diff", RobotContainer.angleDistance2(currentAngles[3], angles[3]));
   }
 
   public double[] getDirectionalPositions(){
