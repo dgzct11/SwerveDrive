@@ -21,16 +21,19 @@ public class Odometry extends SubsystemBase {
   public Odometry(){
 
   }
+
   public void setDriveTrain(DriveTrain dt){
     driveTrain = dt;
     previousPositionsDirectional = driveTrain.getDirectionalPositions();
     previousPositionsThrust = driveTrain.getThrustPositions();
   }
+
   public Odometry(DriveTrain dt) {
     driveTrain = dt;
     previousPositionsDirectional = driveTrain.getDirectionalPositions();
     previousPositionsThrust = driveTrain.getThrustPositions();
   }
+
   public void reset(){
     currentPosition = new Position(0, 0, 0);
   }
@@ -49,11 +52,13 @@ public class Odometry extends SubsystemBase {
 
     //get how far each wheel traveled since last iteration
     double[] deltaPositions = driveTrain.getThrustPositions();
+    //subtracts previous position from total position to get change in position
     for(int i = 0; i<4; i++)
       deltaPositions[i] -= previousPositionsThrust[i];
-    
+    previousPositionsThrust = driveTrain.getThrustPositions();
 
-    double[] avgVector = new double[2];
+    double[] strafeVector = new double[2];
+    //vector for each wheel rpresenting x y movement
     double[][] displacementVectors = new double[4][2];
     double avgRotationMag = 0;
 
@@ -64,25 +69,25 @@ public class Odometry extends SubsystemBase {
       displacementVectors[i][1] =  Math.cos(Math.toRadians(angles[i])) * Math.abs(deltaPositions[i]);
 
       //adds x and y to avarage vector
-      // avarage vector represents movement of center
-      avgVector[0] += displacementVectors[i][0]/4;
-      avgVector[1] += displacementVectors[i][1]/4;
+      // avarage vector represents movement of center, since the sum of all rotation vectors should be zero
+      strafeVector[0] += displacementVectors[i][0]/4;
+      strafeVector[1] += displacementVectors[i][1]/4;
     }
 
     for(int i = 0; i<4; i++){
       //removes the average vector from each vector of the wheel
       //the rotation vectors remain
-      displacementVectors[i][0] -= avgVector[0];
-      displacementVectors[i][1] -= avgVector[1];
+      displacementVectors[i][0] -= strafeVector[0];
+      displacementVectors[i][1] -= strafeVector[1];
       avgRotationMag += RobotContainer.magnitutde(displacementVectors[i])/4;
     }
     double angleDiff = Math.toDegrees(avgRotationMag/Constants.pos_units_per_meter/Constants.distance_wheel_center);
     
-    currentPosition.add(avgVector[0]/Constants.pos_units_per_meter, avgVector[1]/Constants.pos_units_per_meter);
+    currentPosition.add(strafeVector[0]/Constants.pos_units_per_meter, strafeVector[1]/Constants.pos_units_per_meter);
     currentPosition.addAngle(angleDiff);
     
   
-    previousPositionsThrust = driveTrain.getThrustPositions();
+    
     //get current rotational vector
 
   }
