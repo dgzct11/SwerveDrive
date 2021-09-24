@@ -156,7 +156,10 @@ public class DriveTrain extends SubsystemBase {
       
     }
   }
-
+  public void stop(){
+    double[] speeds = {0,0,0,0};
+    setThrustSpeeds(speeds);
+  }
   public void setDirectionalAnglesEff(double[] angles){
     double[] currentAngles = getAngles();
     
