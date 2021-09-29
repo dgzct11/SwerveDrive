@@ -58,7 +58,7 @@ public final class Constants {
     public static final double pos_units_per_degree_rf = 72.8171171171;
    
     public static final double pos_units_per_rotation = 16410;
-    public static final double pos_units_per_meter = pos_units_per_degree*3.13297135609;
+    public static final double pos_units_per_meter = pos_units_per_rotation*3.13297135609;
     public static final double left_right_wheel_distance = 0.581;
     public static final double max_pos_units = 6178;
     public static final double front_back_wheel_distance = 0.581;
