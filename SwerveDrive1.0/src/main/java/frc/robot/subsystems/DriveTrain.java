@@ -203,14 +203,7 @@ public class DriveTrain extends SubsystemBase {
     return result;
   }
 
-  @Override
-  public void periodic() {
-    double[] angles = getAngles();
-    SmartDashboard.putNumber("LF Angle", angles[0]);
-    SmartDashboard.putNumber("LB Angle", angles[1]);
-    SmartDashboard.putNumber("RF Angle", angles[2]);
-    SmartDashboard.putNumber("RB Angle", angles[3]);
-    
+  public void setConstants(){
     kpDir = kpDirEntry.getDouble(kpDir);
     kiDir = kiDirEntry.getDouble(kiDir);
     kdDir = kdDirEntry.getDouble(kdDir);
@@ -230,5 +223,15 @@ public class DriveTrain extends SubsystemBase {
     rfd.config_kD(slotIdx, kdDir);
     rbd.config_kD(slotIdx, kdDir);
     
+  }
+  @Override
+  public void periodic() {
+    double[] angles = getAngles();
+    SmartDashboard.putNumber("LF Angle", angles[0]);
+    SmartDashboard.putNumber("LB Angle", angles[1]);
+    SmartDashboard.putNumber("RF Angle", angles[2]);
+    SmartDashboard.putNumber("RB Angle", angles[3]);
+    
+   //setConstants();
   }
 }
