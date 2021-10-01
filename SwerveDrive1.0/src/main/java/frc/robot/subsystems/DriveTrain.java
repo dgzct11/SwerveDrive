@@ -232,6 +232,11 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("RF Angle", angles[2]);
     SmartDashboard.putNumber("RB Angle", angles[3]);
     
+    double[] thrustPos = getThrustPositions();
+    SmartDashboard.putNumber("LF Pos", thrustPos[0]);
+    SmartDashboard.putNumber("LB Pos", thrustPos[1]);
+    SmartDashboard.putNumber("RF Pos", thrustPos[2]);
+    SmartDashboard.putNumber("RB Pos", thrustPos[3]);
    //setConstants();
   }
 }
