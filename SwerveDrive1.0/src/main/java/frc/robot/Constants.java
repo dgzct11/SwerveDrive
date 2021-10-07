@@ -60,8 +60,10 @@ public final class Constants {
    //61.25 cm front back
    //61.4 cm
    //85.5 cm
-    public static final double pos_units_per_rotation = 16410;
-    public static final double pos_units_per_meter = pos_units_per_rotation*3.13297135609;
+   //9.8552 cm wheel diameter
+   //205
+    public static final double pos_units_per_rotation = 16676.4;
+    public static final double pos_units_per_meter = pos_units_per_rotation*(1/(Math.PI*0.098552));
     public static final double left_right_wheel_distance = 0.59305;
     public static final double max_pos_units = 6178;
     public static final double front_back_wheel_distance = 0.59155;
