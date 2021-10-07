@@ -61,10 +61,10 @@ public class DriveTrain extends SubsystemBase {
   public double kfDir = 0;
   public int slotIdx = 0;
 
-  public double kpTh = 0;
+  public double kpTh = 0.01;
   public double kiTh = 0;
   public double kdTh = 0;
-  public double kfTh = 0.1;
+  public double kfTh = 0.045;
   public int[] thrustCoefficients = {1,1,1,1};
 
   int timeout = 0;
