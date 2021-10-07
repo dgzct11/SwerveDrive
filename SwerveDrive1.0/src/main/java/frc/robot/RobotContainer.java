@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 
 import edu.wpi.first.wpilibj2.command.Command;
-
+import frc.robot.commands.auto_commands.FollowTrajectory;
 import frc.robot.commands.drive_commands.SwerveDrive;
 import frc.robot.functional.Circle;
 import frc.robot.functional.Line;
@@ -76,8 +76,16 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return null;
+    double[][] points = {
+      {0.0,0.0},
+      {0,1},
+      {1,1}
+      };
+      double[] distances = {
+      0.5,
+        };
+    return new FollowTrajectory(points, distances, driveTrain, odometry);//new AutonomusCommands(driveTrain);
+        //return new DriveStraightDistance(1, 1, driveTrain);
   }
 
   public static double navxTo360(double angle){
