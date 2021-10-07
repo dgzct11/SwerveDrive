@@ -56,23 +56,27 @@ public final class Constants {
 
     public static final double pos_units_per_degree = 72.857777778;
     public static final double pos_units_per_degree_rf = 72.8171171171;
-   
+   //thickness of wheels 41.9mm
+   //61.25 cm front back
+   //61.4 cm
+   //85.5 cm
     public static final double pos_units_per_rotation = 16410;
     public static final double pos_units_per_meter = pos_units_per_rotation*3.13297135609;
-    public static final double left_right_wheel_distance = 0.581;
+    public static final double left_right_wheel_distance = 0.59305;
     public static final double max_pos_units = 6178;
-    public static final double front_back_wheel_distance = 0.581;
+    public static final double front_back_wheel_distance = 0.59155;
     public static final double[] center = {0,0};
     public static final double[] leftFrontCenter = {-left_right_wheel_distance/2,front_back_wheel_distance/2};
     public static final double[] leftBackCenter = {left_right_wheel_distance/2,front_back_wheel_distance/2};
     public static final double[] rightFrontCenter = {-left_right_wheel_distance/2,-front_back_wheel_distance/2};
     public static final double[] rightBackCenter = {left_right_wheel_distance/2,-front_back_wheel_distance/2};
     public static final double distance_wheel_center = RobotContainer.distance(center, leftFrontCenter);
-    public static final double talon_velocity_per_ms = 0;
+    //native units per 0.1 seconds
+    public static final double talon_velocity_per_ms = pos_units_per_meter/10;
   
 
     // control modifiers
-    public static final double spin_threshold = 0.5;
+
     public static final double rotate_dampaner = 1;
     public static final double limeLightHeight = 0;
     
