@@ -15,7 +15,7 @@ public class Trajectory {
     ArrayList<Segment> segments;
     double maxVelocity;
     double acceleration;
-    double breakAcceleration;
+    
 
     double totalDistance = 0;
     
@@ -37,23 +37,23 @@ public class Trajectory {
         distance to accelerate: maxV^2 = 2ax
         */
         timeToMax = maxVelocity/acceleration;
-        timeToBreak = (maxVelocity/breakAcceleration);
+        timeToBreak = (maxVelocity/acceleration);
         distanceToAccelerate = (maxVelocity*maxVelocity/(2*acceleration));
-        distanceToBreak = (maxVelocity*maxVelocity/(2*breakAcceleration));
+        distanceToBreak = (maxVelocity*maxVelocity/(2*acceleration));
         totalTime = (totalDistance - distanceToAccelerate - distanceToBreak )/maxVelocity + timeToMax + timeToBreak;
         
     }
     public void setMaxAV(double a, double v){
         acceleration = a;
         maxVelocity = v;
-        breakAcceleration = a;
+        
     }
     public Position getEndPoint(){
         Segment seg = segments.get(segments.size()-1);
             return new Position(seg.endPoint, RobotContainer.angleFromSlope(seg.startPoint, seg.endPoint));
     }
     public Position getPosition(double time){
-        time = time/1000;
+    
         /*
        if time<acceltime:
         use x = x + vt + a/2t^2
@@ -72,7 +72,7 @@ public class Trajectory {
            
         }
         else if(time >= totalTime-timeToBreak){
-            distance = totalDistance-distanceToBreak + maxVelocity*(time-(totalTime-timeToBreak)) -breakAcceleration/2*Math.pow((time-(totalTime-timeToBreak)),2);
+            distance = totalDistance-distanceToBreak + maxVelocity*(time-(totalTime-timeToBreak)) -acceleration/2*Math.pow((time-(totalTime-timeToBreak)),2);
         }
         else{
             distance = distanceToAccelerate + maxVelocity*(time-timeToMax);
