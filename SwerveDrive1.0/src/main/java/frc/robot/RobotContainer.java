@@ -10,11 +10,13 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.auto_commands.AlignWithObject;
 import frc.robot.commands.auto_commands.FollowTrajectory;
 import frc.robot.commands.drive_commands.SwerveDrive;
 import frc.robot.functional.Circle;
 import frc.robot.functional.Line;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.NavXGyro;
 import frc.robot.subsystems.Odometry;
 import frc.robot.subsystems.XboxRemote;
@@ -38,7 +40,7 @@ public class RobotContainer {
   public XboxRemote xboxRemote = new XboxRemote(xboxController);
   public Odometry odometry = new Odometry();
   public NavXGyro navx = new NavXGyro();
- 
+ public LimeLight limeLight = new LimeLight();
   //buttons
 
 
@@ -76,16 +78,22 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    double[][] points = {
+   /* double[][] points = {
       {0.0,0.0},
-      {0,1},
-      {1,1}
+      {0,2},
+      {1.9,2},
+      {1.9,0},
+      {0,0}
       };
       double[] distances = {
       0.5,
+      0.5,
+      0.5
         };
     return new FollowTrajectory(points, distances, driveTrain, odometry);//new AutonomusCommands(driveTrain);
         //return new DriveStraightDistance(1, 1, driveTrain);
+        */
+      return new AlignWithObject(driveTrain, limeLight);
   }
 
   public static double navxTo360(double angle){
