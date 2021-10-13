@@ -65,6 +65,7 @@ public class LimeLight extends SubsystemBase {
     SmartDashboard.putNumber("Lime X", x);
     SmartDashboard.putNumber("Lime y", y);
     SmartDashboard.putNumber("Lime Area", area);
+    SmartDashboard.putNumber("Distance", getDistanceFromArea(0.0316));
     SmartDashboard.putBoolean("Lime Tracking", objectInView);
   }
   

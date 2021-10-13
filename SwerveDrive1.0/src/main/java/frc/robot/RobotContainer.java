@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.auto_commands.AlignAngleRange;
 import frc.robot.commands.auto_commands.AlignWithObject;
 import frc.robot.commands.auto_commands.FollowTrajectory;
 import frc.robot.commands.drive_commands.SwerveDrive;
@@ -93,7 +94,7 @@ public class RobotContainer {
     return new FollowTrajectory(points, distances, driveTrain, odometry);//new AutonomusCommands(driveTrain);
         //return new DriveStraightDistance(1, 1, driveTrain);
         */
-      return new AlignWithObject(driveTrain, limeLight);
+      return new AlignAngleRange(driveTrain, limeLight);
   }
 
   public static double navxTo360(double angle){

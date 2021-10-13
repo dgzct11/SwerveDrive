@@ -17,18 +17,18 @@ public class AlignAngleRange extends CommandBase {
   /** Creates a new AlignWithObject. */
   double angle;
   double kp = 0.03;
-  double ki = 0;
-  double kd = 0;
-  double kpRange = 0.03;
+
+  double kpRange = 0.3;
   double errorDiff = 0.01;
-  DriveTrain driveTrian;
-  PIDControl pid = new PIDControl(kp, ki, kd);
+  DriveTrain driveTrain;
+
   LimeLight limelight;
-  double distance = 0.5;
-  double area = 0.5;
+  double distance = 2;
+  double area = 0.0316;
+
   public AlignAngleRange(DriveTrain dt, LimeLight lt) {
     // Use addRequirements() here to declare subsystem dependencies.
-    driveTrian = dt;
+    driveTrain = dt;
     limelight = lt;
    
   }
@@ -44,17 +44,19 @@ public class AlignAngleRange extends CommandBase {
   public void execute() {
    
     if(limelight.inView()){
-     double strafeAngle = limelight.getHorizontalAngleDiff()*-1;
-     double speed = Math.abs(limelight.getDistanceFromArea(area)-distance)*kpRange* (distance>limelight.getDistanceFromArea(area) ? 1:-1);
-     double angleError =Math.min( kp*(Math.abs(limelight.getHorizontalAngleDiff())),0.3) * (limelight.getHorizontalAngleDiff()>0 ? -1:1);
-     driveTrian.rotateDrive(strafeAngle, speed, angleError);
+     double strafeAngle = limelight.getHorizontalAngleDiff();
+     double speed = Math.min( Math.abs(limelight.getDistanceFromArea(area)-distance)*kpRange, 0.3) * (distance > limelight.getDistanceFromArea(area) ? -1:1);
+     double angleError = Math.min( kp * (Math.abs(limelight.getHorizontalAngleDiff())),0.3) * (limelight.getHorizontalAngleDiff()>0 ? -1:1);
+     SmartDashboard.putNumber("Speed Align", speed);
+     driveTrain.rotateDrive(strafeAngle, speed, angleError);
     }
     else{
-      driveTrian.rotateDrive(0, 0, 0.3);
+      driveTrain.rotateDrive(0, 0, 0.3);
      
     }
   }
-
+  boolean somethign = true;
+  int val =  (somethign == true ? 0: 100);
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
