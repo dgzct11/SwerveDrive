@@ -25,7 +25,6 @@ public class NavXGyro extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Navx Angle", NavXGyro.getAngle());
-    SmartDashboard.putNumber("Navx X", NavXGyro.ahrs.getDisplacementX());
-    SmartDashboard.putNumber("Navx Y", NavXGyro.ahrs.getDisplacementY());
+   
   }
 }

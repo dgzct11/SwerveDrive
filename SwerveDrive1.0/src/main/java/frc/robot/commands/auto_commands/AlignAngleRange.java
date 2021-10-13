@@ -13,17 +13,20 @@ import frc.robot.functional.PIDControl;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.LimeLight;
 
-public class AlignWithObject extends CommandBase {
+public class AlignAngleRange extends CommandBase {
   /** Creates a new AlignWithObject. */
   double angle;
   double kp = 0.03;
   double ki = 0;
   double kd = 0;
+  double kpRange = 0.03;
   double errorDiff = 0.01;
   DriveTrain driveTrian;
   PIDControl pid = new PIDControl(kp, ki, kd);
   LimeLight limelight;
-  public AlignWithObject(DriveTrain dt, LimeLight lt) {
+  double distance = 0.5;
+  double area = 0.5;
+  public AlignAngleRange(DriveTrain dt, LimeLight lt) {
     // Use addRequirements() here to declare subsystem dependencies.
     driveTrian = dt;
     limelight = lt;
@@ -41,12 +44,15 @@ public class AlignWithObject extends CommandBase {
   public void execute() {
    
     if(limelight.inView()){
-     double error =Math.min( kp*(Math.abs(limelight.getHorizontalAngleDiff())),0.3);
-       driveTrian.rotateDrive(0, 0, error * (limelight.getHorizontalAngleDiff()>0 ? -1:1));
+     double strafeAngle = limelight.getHorizontalAngleDiff()*-1;
+     double speed = Math.abs(limelight.getDistanceFromArea(area)-distance)*kpRange* (distance>limelight.getDistanceFromArea(area) ? 1:-1);
+     double angleError =Math.min( kp*(Math.abs(limelight.getHorizontalAngleDiff())),0.3) * (limelight.getHorizontalAngleDiff()>0 ? -1:1);
+     driveTrian.rotateDrive(strafeAngle, speed, angleError);
     }
     else{
       driveTrian.rotateDrive(0, 0, 0.3);
-       }
+     
+    }
   }
 
   // Called once the command ends or is interrupted.

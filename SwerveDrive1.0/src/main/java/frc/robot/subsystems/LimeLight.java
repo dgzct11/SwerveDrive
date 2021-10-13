@@ -47,6 +47,11 @@ public class LimeLight extends SubsystemBase {
     double heightDifference = objectHeight-Constants.limeLightHeight;
     return heightDifference/Math.tan(Math.toRadians(getHorizontalAngleDiff())); 
   }
+  public double getDistanceFromArea(double objectArea){
+    double totalCameraArea = objectArea/(area/100);
+    double horizontalWidthOfFrame = Math.sqrt(totalCameraArea/0.733789999804);
+    return horizontalWidthOfFrame/2/0.509525449494;
+  }
   public double getHorizontalAngleDiff(){
     return -x;
   }
