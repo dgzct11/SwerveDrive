@@ -52,7 +52,7 @@ public final class Constants {
     public static final int lb_button_num = 5;
     public static final int rb_button_num = 6;
     
-    //robot spacific constants
+    //robot specific constants
 
     public static final double pos_units_per_degree = 74.152;
     public static final double left_right_wheel_distance = 0.581;
@@ -76,12 +76,4 @@ public final class Constants {
     
     public static int drive_mode = 0;
     public static boolean in_auto = false;
-    
-   
-   
-    
-
-
-
-
 }
