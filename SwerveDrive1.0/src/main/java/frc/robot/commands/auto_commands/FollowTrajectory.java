@@ -25,7 +25,7 @@ public class FollowTrajectory extends CommandBase {
   double acceleration = 1, velocity = 2;
   double previousTime;
   double initialTime;
-  double timeUnit = 1;
+  double timeUnit = 0.1;
   public FollowTrajectory(double[][] points, double[] distances, DriveTrain dt, Odometry od) {
     // Use addRequirements() here to declare subsystem dependencies.
     driveTrain = dt;
@@ -39,6 +39,7 @@ public class FollowTrajectory extends CommandBase {
   public void initialize() {
     Constants.in_auto = true;
     odometry.reset();
+    NavXGyro.ahrs.reset();
     initialTime = System.currentTimeMillis()/1000.;
   }
 
@@ -51,16 +52,14 @@ public class FollowTrajectory extends CommandBase {
     Position newPos = trajectory.getPosition(time+timeUnit);
     double[] start = {currentPosition.x, currentPosition.y};
     double[] end = {newPos.x, newPos.y};
-    SmartDashboard.putNumber("End X", end[0]);
-    SmartDashboard.putNumber("End Y", end[1]);
-    SmartDashboard.putNumber("current time", System.currentTimeMillis()/1000. - initialTime);
-    SmartDashboard.putNumber("totalTime", trajectory.totalTime);
+    SmartDashboard.putNumber("X", end[0]);
+    SmartDashboard.putNumber("Y", end[1]);
+   
     double angleToPoint = RobotContainer.angleToPoint(start, end);
     double currentAngle = currentPosition.angle;
     double speed = RobotContainer.distance(start, end)/timeUnit;
-    SmartDashboard.putNumber("speed", speed);
-    SmartDashboard.putNumber("angleToPoint", angleToPoint);
-    driveTrain.rotateDriveVelocity(angleToPoint, speed, 0);
+    SmartDashboard.putNumber("Speed A", speed);
+    driveTrain.rotateDriveVelocity((angleToPoint-NavXGyro.ahrs.getAngle() + 360)%360, speed, 0);
     previousTime = time;
   }
 
