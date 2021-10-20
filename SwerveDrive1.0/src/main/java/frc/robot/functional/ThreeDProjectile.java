@@ -12,7 +12,8 @@ public class ThreeDProjectile {
         double flightTime = Math.max(roots[0], roots[1]);
         double[] result = {
             positions[0] + velocities[0] * flightTime,
-            positions[1] + velocities[1] * flightTime
+            positions[1] + velocities[1] * flightTime,
+            flightTime
         };
         return result;
         //returns [x,y,t]

@@ -162,7 +162,7 @@ public class DriveTrain extends SubsystemBase {
                        RobotContainer.magnitutde(rightBackVector)};
     setDirectionalAngles(angles);
     setVelocities(speeds);
-    SmartDashboard.putNumber("VVVVV", 000);
+ 
     SmartDashboard.putNumber("LF turnto", angles[0]);
     SmartDashboard.putNumber("LB turnto", angles[1]);
     SmartDashboard.putNumber("RF turnto", angles[2]);
@@ -175,10 +175,10 @@ public class DriveTrain extends SubsystemBase {
     rbt.set(ControlMode.PercentOutput, thrustCoefficients[3] * Constants.max_motor_percent*speeds[3]);
   }
   public void setVelocities(double[] speeds){
-    lft.set(ControlMode.Velocity, Constants.talon_velocity_per_ms*speeds[0]);
-    lbt.set(ControlMode.Velocity,  Constants.talon_velocity_per_ms*speeds[1]);
-    rft.set(ControlMode.Velocity,  Constants.talon_velocity_per_ms*speeds[2]);
-    rbt.set(ControlMode.Velocity,  Constants.talon_velocity_per_ms*speeds[3]);
+    lft.set(ControlMode.Velocity,  thrustCoefficients[0] * Constants.talon_velocity_per_ms*speeds[0]);
+    lbt.set(ControlMode.Velocity,  thrustCoefficients[1] * Constants.talon_velocity_per_ms*speeds[1]);
+    rft.set(ControlMode.Velocity,  thrustCoefficients[2] * Constants.talon_velocity_per_ms*speeds[2]);
+    rbt.set(ControlMode.Velocity,  thrustCoefficients[3] * Constants.talon_velocity_per_ms*speeds[3]);
   }
  
 
