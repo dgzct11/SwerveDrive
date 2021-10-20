@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.functional.Position;
-import frc.robot.functional.Circle;
+
 public class Odometry extends SubsystemBase {
  
   public  Position currentPosition = new Position(0,0,0);

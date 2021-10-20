@@ -6,11 +6,11 @@ package frc.robot.commands.auto_commands;
 
 import frc.robot.functional.Position;
 import frc.robot.functional.Trajectory;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
+
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.NavXGyro;
@@ -56,7 +56,7 @@ public class FollowTrajectory extends CommandBase {
     SmartDashboard.putNumber("Y", end[1]);
    
     double angleToPoint = RobotContainer.angleToPoint(start, end);
-    double currentAngle = currentPosition.angle;
+ 
     double speed = RobotContainer.distance(start, end)/timeUnit;
     SmartDashboard.putNumber("Speed A", speed);
     driveTrain.rotateDriveVelocity((angleToPoint-NavXGyro.ahrs.getAngle() + 360)%360, speed, 0);

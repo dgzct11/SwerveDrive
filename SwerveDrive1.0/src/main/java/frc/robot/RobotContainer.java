@@ -10,19 +10,18 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.auto_commands.AlignAngleRange;
-import frc.robot.commands.auto_commands.AlignWithObject;
+
 import frc.robot.commands.auto_commands.FollowTrajectory;
 import frc.robot.commands.drive_commands.SwerveDrive;
 import frc.robot.functional.Circle;
 import frc.robot.functional.Line;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.JoystickRemote;
 import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.NavXGyro;
 import frc.robot.subsystems.Odometry;
 import frc.robot.subsystems.XboxRemote;
 
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Button;
 /**
@@ -38,6 +37,9 @@ public class RobotContainer {
   public DriveTrain driveTrain = new DriveTrain();
  
   public XboxController xboxController = new XboxController(Constants.xbox_port);
+  public XboxController leftJoyStick = new XboxController(Constants.left_joystick_port);
+  public XboxController rightJoyStick = new XboxController(Constants.right_joystick_port);
+  public JoystickRemote joystick = new JoystickRemote(leftJoyStick, rightJoyStick);
   public XboxRemote xboxRemote = new XboxRemote(xboxController);
   public Odometry odometry = new Odometry();
   public NavXGyro navx = new NavXGyro();
