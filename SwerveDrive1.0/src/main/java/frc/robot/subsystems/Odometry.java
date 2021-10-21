@@ -81,9 +81,9 @@ public class Odometry extends SubsystemBase {
       displacementVectors[i][1] -= strafeVector[1];
       avgRotationMag += RobotContainer.magnitutde(displacementVectors[i])/4;
     }
-    double angleDiff = Math.toDegrees(avgRotationMag/Constants.pos_units_per_meter/Constants.distance_wheel_center);
+    double angleDiff = Math.toDegrees(avgRotationMag/Constants.units_per_meter/Constants.distance_wheel_center);
     if(displacementVectors[0][0]>0 && displacementVectors[0][1]>0) avgRotationMag *= -1;
-    currentPosition.add(strafeVector[0]/Constants.pos_units_per_meter, strafeVector[1]/Constants.pos_units_per_meter);
+    currentPosition.add(strafeVector[0]/Constants.units_per_meter, strafeVector[1]/Constants.units_per_meter);
     currentPosition.addAngle(-angleDiff);
     
   

@@ -10,17 +10,15 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.DriveManager;
 import frc.robot.commands.auto_commands.AlignAngleRange;
 import frc.robot.commands.auto_commands.AlignWithObject;
 import frc.robot.commands.auto_commands.FollowTrajectory;
-import frc.robot.commands.drive_commands.SwerveDrive;
 import frc.robot.functional.Circle;
 import frc.robot.functional.Line;
-import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.NavXGyro;
 import frc.robot.subsystems.Odometry;
-import frc.robot.subsystems.XboxRemote;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -37,27 +35,25 @@ public class RobotContainer {
 
   public DriveTrain driveTrain = new DriveTrain();
  
-  public XboxController xboxController = new XboxController(Constants.xbox_port);
-  public XboxRemote xboxRemote = new XboxRemote(xboxController);
+  public XboxController xc = new XboxController(Constants.xbox_p);
   public Odometry odometry = new Odometry();
   public NavXGyro navx = new NavXGyro();
  public LimeLight limeLight = new LimeLight();
   //buttons
 
 
-  Button leftPad = new POVButton(xboxController, Constants.left_pad_num);
-  Button rightPad = new POVButton(xboxController, Constants.right_pad_num);
-  Button upPad = new POVButton(xboxController, Constants.up_pad_num);
-  Button downPad = new POVButton(xboxController, Constants.down_pad_num);
+  Button leftPad = new POVButton(xc, Constants.left_pad_num);
+  Button rightPad = new POVButton(xc, Constants.right_pad_num);
+  Button upPad = new POVButton(xc, Constants.up_pad_num);
+  Button downPad = new POVButton(xc, Constants.down_pad_num);
+
+  private Command DriveManager;
 
 
   public RobotContainer() {
     // configures commands
     odometry.setDriveTrain(driveTrain);
-    SwerveDrive sd = new SwerveDrive(driveTrain, xboxRemote);
-    sd.addRequirements(driveTrain);
-
-    driveTrain.setDefaultCommand(sd);
+    driveTrain.setDefaultCommand(DriveManager);
     
     
     configureButtonBindings();
@@ -78,23 +74,8 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-   /* double[][] points = {
-      {0.0,0.0},
-      {0,2},
-      {1.9,2},
-      {1.9,0},
-      {0,0}
-      };
-      double[] distances = {
-      0.5,
-      0.5,
-      0.5
-        };
-    return new FollowTrajectory(points, distances, driveTrain, odometry);//new AutonomusCommands(driveTrain);
-        //return new DriveStraightDistance(1, 1, driveTrain);
-        */
-      return new AlignAngleRange(driveTrain, limeLight);
+  public Command getCommand() {
+    return new DriveManager(xc);
   }
 
   public static double navxTo360(double angle){
