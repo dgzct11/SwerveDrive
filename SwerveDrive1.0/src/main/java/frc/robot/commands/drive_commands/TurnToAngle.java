@@ -5,9 +5,9 @@
 package frc.robot.commands.drive_commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.functional.PIDControl;
+import frc.robot.functional.SwerveDrive;
 import frc.robot.subsystems.NavXGyro;
 
 public class TurnToAngle extends CommandBase {
@@ -17,11 +17,11 @@ public class TurnToAngle extends CommandBase {
   double ki;
   double kd;
   double errorDiff = 0.1;
-  DriveTrain driveTrian;
+  SwerveDrive sd;
   PIDControl pid = new PIDControl(kp, ki, kd);
-  public TurnToAngle(DriveTrain dt, double a) {
+  public TurnToAngle(SwerveDrive sd, double a) {
     // Use addRequirements() here to declare subsystem dependencies.
-    driveTrian = dt;
+    this.sd = sd;
     angle = a;
   }
 
@@ -34,13 +34,13 @@ public class TurnToAngle extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveTrian.rotateDrive(0, 0, pid.getOutput(NavXGyro.getAngle() * (RobotContainer.shouldTurnLeft(NavXGyro.getAngle(), angle)? 1:-1)));
+    // sd.drive(0, 0, pid.getOutput(NavXGyro.getAngle() * (RobotContainer.shouldTurnLeft(NavXGyro.getAngle(), angle)? 1:-1)));
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    driveTrian.stop();
+    sd.stop();
   }
 
   // Returns true when the command should end.

@@ -40,7 +40,12 @@ public class Wheel {
   }
 
   public void drive(double speed, double angle) {
-    speed_m.set(ControlMode.PercentOutput, speed);
+    speed_m.set(ControlMode.PercentOutput, speed * Constants.max_motor_percent);
+    angle_m.set(ControlMode.Position, angle * Constants.units_per_degree);
+  }
+
+  public void drive_v(double speed, double angle) {
+    speed_m.set(ControlMode.Velocity, speed * Constants.talon_velocity_per_ms);
     angle_m.set(ControlMode.Position, angle * Constants.units_per_degree);
   }
 }

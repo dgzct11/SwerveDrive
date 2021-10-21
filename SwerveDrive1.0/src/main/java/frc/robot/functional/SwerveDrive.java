@@ -148,21 +148,21 @@ public class SwerveDrive {
     for(Wheel el:wheels) {el.drive(0, 0);}
   }
 
-  public double[] getPositions() {
+  public double[] getPositions(int first, int last ) {
     double[] positions = new double[8];
-    for (short i = 0; i < 8; i++) {
-      if (i<4) {
-        positions[i] = wheels[i].speed_m.getSelectedSensorPosition();
+    for (;first < last; first++) {
+      if (first<4) {
+        positions[first] = wheels[first].speed_m.getSelectedSensorPosition();
       } else {
-        positions[i] = wheels[i-4].angle_m.getSelectedSensorPosition();
+        positions[first] = wheels[first-4].angle_m.getSelectedSensorPosition();
       }
     }
     return positions;
   }
 
   public double[] getAngles() {
-    double[] angles = getPositions();
-    for (int i = 4; i < angles.length; i++) {
+    double[] angles = getPositions(4,8);
+    for (int i = 0; i < angles.length; i++) {
       angles[i] = RobotContainer.floorMod(angles[i] / Constants.units_per_degree, 360);
     }
     return angles;

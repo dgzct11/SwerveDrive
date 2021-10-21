@@ -2,15 +2,15 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.functional.SwerveDrive;
 
-public class TeleDrive extends SubsystemBase {
+public class TeleDrive extends CommandBase {
   /** Creates a new DriveTrain. */
   private SwerveDrive sd;
   private XboxController xc;
@@ -25,9 +25,10 @@ public class TeleDrive extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-    double[] positions = sd.getPositions();
-    double[] angles = sd.getPositions();
+  public void execute() {
+    drive();
+    double[] positions = sd.getPositions(0,4);
+    double[] angles = sd.getAngles();
 
     SmartDashboard.putNumber("LF Angle", angles[0]);
     SmartDashboard.putNumber("LB Angle", angles[1]);

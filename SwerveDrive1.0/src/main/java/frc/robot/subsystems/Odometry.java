@@ -9,29 +9,28 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.functional.Position;
-import frc.robot.functional.Circle;
+import frc.robot.functional.SwerveDrive;
 public class Odometry extends SubsystemBase {
  
   public  Position currentPosition = new Position(0,0,0);
-  DriveTrain driveTrain;
+  SwerveDrive sd;
   //the position of every Talon thrust
   double[] previousPositionsThrust = new double[4];
-  //the position of every Talon directional
   double[] previousPositionsDirectional = new double[4];
   public Odometry(){
 
   }
 
-  public void setDriveTrain(DriveTrain dt){
-    driveTrain = dt;
-    previousPositionsDirectional = driveTrain.getDirectionalPositions();
-    previousPositionsThrust = driveTrain.getThrustPositions();
+  public void setDriveTrain(SwerveDrive sd){
+    this.sd = sd;
+    previousPositionsThrust = sd.getPositions(0,4);
+    previousPositionsDirectional = sd.getPositions(4,8);
   }
 
-  public Odometry(DriveTrain dt) {
-    driveTrain = dt;
-    previousPositionsDirectional = driveTrain.getDirectionalPositions();
-    previousPositionsThrust = driveTrain.getThrustPositions();
+  public Odometry(SwerveDrive sd) {
+    this.sd = sd;
+    previousPositionsThrust = sd.getPositions(0,4);
+    previousPositionsDirectional = sd.getPositions(4,8);
   }
 
   public void reset(){
@@ -48,14 +47,14 @@ public class Odometry extends SubsystemBase {
     //avarage of all vectors removes rotational component
 
     //get angles of wheels
-    double[] angles = driveTrain.getAngles();
+    double[] angles = sd.getAngles();
 
     //get how far each wheel traveled since last iteration
-    double[] deltaPositions = driveTrain.getThrustPositions();
+    double[] deltaPositions = sd.getPositions(0,4);
     //subtracts previous position from total position to get change in position
     for(int i = 0; i<4; i++)
       deltaPositions[i] -= previousPositionsThrust[i];
-    previousPositionsThrust = driveTrain.getThrustPositions();
+    previousPositionsThrust = sd.getPositions(0,4);
 
     double[] strafeVector = new double[2];
     //vector for each wheel rpresenting x y movement

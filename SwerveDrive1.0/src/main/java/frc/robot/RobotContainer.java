@@ -8,21 +8,13 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.DriveManager;
-import frc.robot.commands.auto_commands.AlignAngleRange;
-import frc.robot.commands.auto_commands.AlignWithObject;
-import frc.robot.commands.auto_commands.FollowTrajectory;
+import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.functional.Circle;
 import frc.robot.functional.Line;
 import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.NavXGyro;
 import frc.robot.subsystems.Odometry;
-
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
-import edu.wpi.first.wpilibj2.command.button.Button;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -32,30 +24,25 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 public class RobotContainer {
   
   //subsystems
-
-  public DriveTrain driveTrain = new DriveTrain();
- 
-  public XboxController xc = new XboxController(Constants.xbox_p);
+  public XboxController xc;
   public Odometry odometry = new Odometry();
   public NavXGyro navx = new NavXGyro();
- public LimeLight limeLight = new LimeLight();
+  public LimeLight limeLight = new LimeLight();
+  Button leftPad;
+  Button rightPad;
+  Button upPad;
+  Button downPad;
+
   //buttons
-
-
-  Button leftPad = new POVButton(xc, Constants.left_pad_num);
-  Button rightPad = new POVButton(xc, Constants.right_pad_num);
-  Button upPad = new POVButton(xc, Constants.up_pad_num);
-  Button downPad = new POVButton(xc, Constants.down_pad_num);
-
-  private Command DriveManager;
-
-
-  public RobotContainer() {
+  public RobotContainer(XboxController xc) {
     // configures commands
-    odometry.setDriveTrain(driveTrain);
-    driveTrain.setDefaultCommand(DriveManager);
-    
-    
+    //odometry.setDriveTrain(driveTrain);
+    //driveTrain.setDefaultCommand(DriveManager);
+    this.xc = xc;
+    leftPad = new POVButton(xc, Constants.left_pad_num);
+    rightPad = new POVButton(xc, Constants.right_pad_num);
+    upPad = new POVButton(xc, Constants.up_pad_num);
+    downPad = new POVButton(xc, Constants.down_pad_num);
     configureButtonBindings();
   }
 
@@ -74,9 +61,6 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getCommand() {
-    return new DriveManager(xc);
-  }
 
   public static double navxTo360(double angle){
         

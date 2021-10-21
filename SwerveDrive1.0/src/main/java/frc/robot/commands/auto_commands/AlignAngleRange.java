@@ -9,7 +9,7 @@ package frc.robot.commands.auto_commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.functional.PIDControl;
+import frc.robot.functional.SwerveDrive;
 import frc.robot.subsystems.LimeLight;
 
 public class AlignAngleRange extends CommandBase {
@@ -19,15 +19,15 @@ public class AlignAngleRange extends CommandBase {
 
   double kpRange = 0.3;
   double errorDiff = 0.01;
-  DriveTrain driveTrain;
+  SwerveDrive sd;
 
   LimeLight limelight;
   double distance = 2;
   double area = 0.0316;
 
-  public AlignAngleRange(DriveTrain dt, LimeLight lt) {
+  public AlignAngleRange(SwerveDrive sd, LimeLight lt) {
     // Use addRequirements() here to declare subsystem dependencies.
-    driveTrain = dt;
+    this.sd = sd;
     limelight = lt;
    
   }
@@ -47,10 +47,10 @@ public class AlignAngleRange extends CommandBase {
      double speed = Math.min( Math.abs(limelight.getDistanceFromArea(area)-distance)*kpRange, 0.3) * (distance > limelight.getDistanceFromArea(area) ? -1:1);
      double angleError = Math.min( kp * (Math.abs(limelight.getHorizontalAngleDiff())),0.3) * (limelight.getHorizontalAngleDiff()>0 ? -1:1);
      SmartDashboard.putNumber("Speed Align", speed);
-     driveTrain.rotateDrive(strafeAngle, speed, angleError);
+     //sd.drive(strafeAngle, speed, angleError);
     }
     else{
-      driveTrain.rotateDrive(0, 0, 0.3);
+      sd.drive(0, 0, 0.3);
      
     }
   }

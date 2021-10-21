@@ -5,8 +5,12 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.AutoDrive;
+import frc.robot.commands.TeleDrive;
+import frc.robot.functional.SwerveDrive;
+import frc.robot.functional.Wheel;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -14,8 +18,15 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
-  private Command m_command;
-  private RobotContainer m_robotContainer;
+  private Wheel bl = new Wheel(Constants.bl_angle, Constants.bl_speed);
+  private Wheel br = new Wheel(Constants.br_angle, Constants.br_speed);
+  private Wheel fr = new Wheel(Constants.fr_angle, Constants.fr_speed);
+  private Wheel fl = new Wheel(Constants.fl_angle, Constants.fl_speed);
+
+  private SwerveDrive sd = new SwerveDrive(br, bl, fr, fl);
+  private XboxController xc = new XboxController(Constants.xbox_p);
+  private TeleDrive td = new TeleDrive(xc, sd);
+  private AutoDrive ad = new AutoDrive(sd);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -25,9 +36,6 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
-    m_command = m_robotContainer.getCommand();
-    m_command.schedule();
   }
 
   /**
@@ -56,7 +64,8 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    Constants.drive_mode = 1;
+    CommandScheduler.getInstance().cancelAll();
+    ad.schedule();
   }
 
   /** This function is called periodically during autonomous. */
@@ -69,7 +78,8 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    Constants.drive_mode = 0; 
+    CommandScheduler.getInstance().cancelAll();
+    td.schedule();
   }
 
   /** This function is called periodically during operator control. */

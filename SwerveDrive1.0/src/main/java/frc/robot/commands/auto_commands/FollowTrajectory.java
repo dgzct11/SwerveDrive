@@ -4,30 +4,28 @@
 
 package frc.robot.commands.auto_commands;
 
-import frc.robot.functional.Position;
-import frc.robot.functional.Trajectory;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.NavXGyro;
+import frc.robot.functional.Position;
+import frc.robot.functional.SwerveDrive;
+import frc.robot.functional.Trajectory;
 import frc.robot.subsystems.Odometry;
 
 public class FollowTrajectory extends CommandBase {
   /** Creates a new FollowTrajectory. */
-  
-  DriveTrain driveTrain;
   Odometry odometry;
   Trajectory trajectory;
   double acceleration = 1, velocity = 2;
   double previousTime;
   double initialTime;
   double timeUnit = 1;
-  public FollowTrajectory(double[][] points, double[] distances, DriveTrain dt, Odometry od) {
+  SwerveDrive sd;
+
+  public FollowTrajectory(double[][] points, double[] distances, SwerveDrive sd, Odometry od) {
     // Use addRequirements() here to declare subsystem dependencies.
-    driveTrain = dt;
+    this.sd = sd;
     odometry = od;
     trajectory = new Trajectory(points, distances, acceleration, velocity);
     
@@ -59,7 +57,7 @@ public class FollowTrajectory extends CommandBase {
     double speed = RobotContainer.distance(start, end)/timeUnit;
     SmartDashboard.putNumber("speed", speed);
     SmartDashboard.putNumber("angleToPoint", angleToPoint);
-    driveTrain.rotateDriveVelocity(angleToPoint, speed, 0);
+    //sd.drive(angleToPoint, speed, 0);
     previousTime = time;
   }
 
