@@ -9,8 +9,8 @@ package frc.robot.commands.auto_commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.functional.PIDControl;
-import frc.robot.functional.SwerveDrive;
 import frc.robot.subsystems.LimeLight;
+import frc.robot.subsystems.SwerveDrive;
 
 public class AlignWithObject extends CommandBase {
   /** Creates a new AlignWithObject. */

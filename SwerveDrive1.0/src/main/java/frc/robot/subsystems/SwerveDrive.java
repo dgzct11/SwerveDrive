@@ -2,19 +2,21 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.functional;
+package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.functional.Wheel;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 
 /** An example command that uses an example subsystem. */
-public class SwerveDrive {
+public class SwerveDrive extends SubsystemBase{
   private ShuffleboardTab tab = Shuffleboard.getTab("PID DriveTrain Constants");
   
   private NetworkTableEntry kpDirEntry = tab.add("Directional KP", 0).getEntry();
@@ -57,7 +59,7 @@ public class SwerveDrive {
     fr.speed_m.setInverted(true);
   }
 
-  public void drive (double x1, double y1, double x2) {
+  public double[][] trig (double x1, double y1, double x2) {
 
     double sine = Constants.side_over_radius;
 
@@ -78,6 +80,11 @@ public class SwerveDrive {
 
     double[][] dir = {{brSpeed, blSpeed, frSpeed, flSpeed},{brAngle, blAngle, frAngle, flAngle}};
 
+    return dir;
+  }
+
+  public void drive_fo (double x1, double y1, double x2) {
+    double[][] dir = trig(x1, y1, x2);
     for (short i = 0; i < 4; i++) {
       dir[1][i] += 180;
       wheels[i].drive(dir[0][i], currentAngles[i] - dir[1][i]);
@@ -90,7 +97,21 @@ public class SwerveDrive {
     SmartDashboard.putNumber("RF turnto", angles[2]);
     SmartDashboard.putNumber("RB turnto", angles[3]);
   }
-/*
+
+  public void drive (double x1, double y1, double x2) {
+    double[][] dir = trig(x1, y1, x2);
+    for (short i = 0; i < 4; i++) {
+      dir[1][i] += 180;
+      wheels[i].drive(dir[0][i], dir[1][i]);
+    }
+
+    double[] angles = getAngles();
+    SmartDashboard.putNumber("LF turnto", angles[0]);
+    SmartDashboard.putNumber("LB turnto", angles[1]);
+    SmartDashboard.putNumber("RF turnto", angles[2]);
+    SmartDashboard.putNumber("RB turnto", angles[3]);
+  }
+
   public void driveDirectionalAngles(double[] angles) {
     double[] currentAngles = getAngles();
     SmartDashboard.putNumber("LF Diff", RobotContainer.angleDistance2(currentAngles[0], angles[0]));
@@ -122,7 +143,6 @@ public class SwerveDrive {
     SmartDashboard.putNumber("RF Diff", RobotContainer.angleDistance2(currentAngles[2], angles[2]));
     SmartDashboard.putNumber("RB Diff", RobotContainer.angleDistance2(currentAngles[3], angles[3]));
   }
-  */
 
   public void setPID() {
     

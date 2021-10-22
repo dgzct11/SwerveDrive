@@ -9,9 +9,9 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.functional.Position;
-import frc.robot.functional.SwerveDrive;
 import frc.robot.functional.Trajectory;
 import frc.robot.subsystems.Odometry;
+import frc.robot.subsystems.SwerveDrive;
 
 public class FollowTrajectory extends CommandBase {
   /** Creates a new FollowTrajectory. */

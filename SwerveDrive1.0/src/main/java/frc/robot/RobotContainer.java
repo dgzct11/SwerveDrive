@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.robot.commands.DriveManager;
 import frc.robot.functional.Circle;
 import frc.robot.functional.Line;
 import frc.robot.subsystems.LimeLight;
@@ -24,7 +25,8 @@ import frc.robot.subsystems.Odometry;
 public class RobotContainer {
   
   //subsystems
-  public XboxController xc;
+  
+  public XboxController xc = new XboxController(Constants.xbox_p);
   public Odometry odometry = new Odometry();
   public NavXGyro navx = new NavXGyro();
   public LimeLight limeLight = new LimeLight();
@@ -32,13 +34,13 @@ public class RobotContainer {
   Button rightPad;
   Button upPad;
   Button downPad;
+  DriveManager dm = new DriveManager(xc);
 
   //buttons
-  public RobotContainer(XboxController xc) {
+  public RobotContainer() {
     // configures commands
     //odometry.setDriveTrain(driveTrain);
     //driveTrain.setDefaultCommand(DriveManager);
-    this.xc = xc;
     leftPad = new POVButton(xc, Constants.left_pad_num);
     rightPad = new POVButton(xc, Constants.right_pad_num);
     upPad = new POVButton(xc, Constants.up_pad_num);
@@ -53,7 +55,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-   
+   leftPad.whenPressed(new Runnable(){@Override public void run() {if (dm.drivemode == 0) {dm.drivemode = 1;} else {dm.drivemode = 0;}}});
   }
 
   /**
@@ -61,6 +63,7 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+  public DriveManager getCommand() {return dm;}
 
   public static double navxTo360(double angle){
         
