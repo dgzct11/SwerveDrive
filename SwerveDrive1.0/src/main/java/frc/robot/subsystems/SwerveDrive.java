@@ -70,10 +70,10 @@ public class SwerveDrive extends SubsystemBase{
     double frSpeed = Math.sqrt ((a * a) + (d * d));
     double flSpeed = Math.sqrt ((a * a) + (c * c));
 
-    double brAngle = Math.atan2 (b, d) * 180 / Math.PI;
-    double blAngle = Math.atan2 (b, c) * 180 / Math.PI;
-    double frAngle = Math.atan2 (a, d) * 180 / Math.PI;
-    double flAngle = Math.atan2 (a, c) * 180 / Math.PI;
+    double brAngle = Math.toDegrees(Math.atan2 (b, d));
+    double blAngle = Math.toDegrees(Math.atan2 (b, c));
+    double frAngle = Math.toDegrees(Math.atan2 (a, d));
+    double flAngle = Math.toDegrees(Math.atan2 (a, c));
 
     double[][] dir = {{brSpeed, blSpeed, frSpeed, flSpeed},{brAngle, blAngle, frAngle, flAngle}};
 
