@@ -45,6 +45,8 @@ public class SwerveDrive {
   
   public int[] thrustCoefficients = {1,1,1,1};
 
+  private double[] currentAngles = new double[4];
+
   public SwerveDrive (Wheel br, Wheel bl, Wheel fr, Wheel fl) {
     this.br = br;
     this.bl = bl;
@@ -56,6 +58,7 @@ public class SwerveDrive {
   }
 
   public void drive (double x1, double y1, double x2) {
+
     double sine = Constants.side_over_radius;
 
     double a = x1 - x2 * sine;
@@ -68,15 +71,18 @@ public class SwerveDrive {
     double frSpeed = Math.sqrt ((a * a) + (d * d));
     double flSpeed = Math.sqrt ((a * a) + (c * c));
 
-    double brAngle = (Math.atan2 (b, d) / Math.PI) * 180;
-    double blAngle = (Math.atan2 (b, c) / Math.PI) * 180;
-    double frAngle = (Math.atan2 (a, d) / Math.PI) * 180;
-    double flAngle = (Math.atan2 (a, c) / Math.PI) * 180;
+    double brAngle = Math.atan2 (b, d) * 180 / Math.PI;
+    double blAngle = Math.atan2 (b, c) * 180 / Math.PI;
+    double frAngle = Math.atan2 (a, d) * 180 / Math.PI;
+    double flAngle = Math.atan2 (a, c) * 180 / Math.PI;
 
-    br.drive (brSpeed, brAngle);
-    bl.drive (blSpeed, blAngle);
-    fr.drive (frSpeed, frAngle);
-    fl.drive (flSpeed, flAngle);
+    double[][] dir = {{brSpeed, blSpeed, frSpeed, flSpeed},{brAngle, blAngle, frAngle, flAngle}};
+
+    for (short i = 0; i < 4; i++) {
+      dir[1][i] += 180;
+      wheels[i].drive(dir[0][i], currentAngles[i] - dir[1][i]);
+      currentAngles[i] = dir[1][i];
+    }
 
     double[] angles = getAngles();
     SmartDashboard.putNumber("LF turnto", angles[0]);
@@ -84,7 +90,7 @@ public class SwerveDrive {
     SmartDashboard.putNumber("RF turnto", angles[2]);
     SmartDashboard.putNumber("RB turnto", angles[3]);
   }
-
+/*
   public void driveDirectionalAngles(double[] angles) {
     double[] currentAngles = getAngles();
     SmartDashboard.putNumber("LF Diff", RobotContainer.angleDistance2(currentAngles[0], angles[0]));
@@ -116,6 +122,7 @@ public class SwerveDrive {
     SmartDashboard.putNumber("RF Diff", RobotContainer.angleDistance2(currentAngles[2], angles[2]));
     SmartDashboard.putNumber("RB Diff", RobotContainer.angleDistance2(currentAngles[3], angles[3]));
   }
+  */
 
   public void setPID() {
     
