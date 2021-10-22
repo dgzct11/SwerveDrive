@@ -5,8 +5,12 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.DriveManager;
+import frc.robot.commands.drive_commands.AutoDrive;
+import frc.robot.commands.drive_commands.TeleDrive;
+import frc.robot.functional.Wheel;
+import frc.robot.subsystems.SwerveDrive;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -15,7 +19,9 @@ import frc.robot.commands.DriveManager;
  */
 public class Robot extends TimedRobot {
   private RobotContainer rc = new RobotContainer();
-  private DriveManager dm;
+  private SwerveDrive sd = rc.sd;
+  private TeleDrive td = rc.td;;
+  private AutoDrive ad = rc.ad;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -24,8 +30,6 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    dm = rc.getCommand();
-    dm.schedule();
   }
 
   /**
@@ -53,14 +57,20 @@ public class Robot extends TimedRobot {
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
-  public void autonomousInit() {dm.drivemode = 2;}
+  public void autonomousInit() {
+    CommandScheduler.getInstance().cancelAll();
+    sd.setDefaultCommand(ad);
+  }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {}
 
   @Override
-  public void teleopInit() {dm.drivemode = 0;}
+  public void teleopInit() {
+    CommandScheduler.getInstance().cancelAll();
+    sd.setDefaultCommand(td);
+  }
 
   /** This function is called periodically during operator control. */
   @Override

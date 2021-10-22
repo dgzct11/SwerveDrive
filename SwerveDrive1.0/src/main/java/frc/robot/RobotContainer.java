@@ -4,18 +4,19 @@
 
 package frc.robot;
 
-
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.commands.DriveManager;
+import frc.robot.commands.drive_commands.AutoDrive;
+import frc.robot.commands.drive_commands.TeleDrive;
 import frc.robot.functional.Circle;
 import frc.robot.functional.Line;
+import frc.robot.functional.Wheel;
 import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.NavXGyro;
 import frc.robot.subsystems.Odometry;
+import frc.robot.subsystems.SwerveDrive;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -23,10 +24,17 @@ import frc.robot.subsystems.Odometry;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  private XboxController xc = new XboxController(Constants.xbox_p);
+  private Wheel bl = new Wheel(Constants.bl_angle, Constants.bl_speed);
+  private Wheel br = new Wheel(Constants.br_angle, Constants.br_speed);
+  private Wheel fr = new Wheel(Constants.fr_angle, Constants.fr_speed);
+  private Wheel fl = new Wheel(Constants.fl_angle, Constants.fl_speed);
+
+  public SwerveDrive sd = new SwerveDrive(br, bl, fr, fl);
+  public TeleDrive td = new TeleDrive(xc, sd);
+  public AutoDrive ad = new AutoDrive(sd);
   
   //subsystems
-  
-  public XboxController xc = new XboxController(Constants.xbox_p);
   public Odometry odometry = new Odometry();
   public NavXGyro navx = new NavXGyro();
   public LimeLight limeLight = new LimeLight();
@@ -34,13 +42,12 @@ public class RobotContainer {
   Button rightPad;
   Button upPad;
   Button downPad;
-  DriveManager dm = new DriveManager(xc);
+  Object[] motors = {sd,td,ad};
 
   //buttons
   public RobotContainer() {
     // configures commands
     //odometry.setDriveTrain(driveTrain);
-    //driveTrain.setDefaultCommand(DriveManager);
     leftPad = new POVButton(xc, Constants.left_pad_num);
     rightPad = new POVButton(xc, Constants.right_pad_num);
     upPad = new POVButton(xc, Constants.up_pad_num);
@@ -48,13 +55,15 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
+  public Object[] returnmotors() {return motors;}
+
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  public Runnable switc = new Runnable() {@Override public void run() {if (dm.drivemode == 0) {dm.drivemode = 1;} else {dm.drivemode = 0;}};}; 
+  public Runnable switc = new Runnable() {@Override public void run() {if (td.fo == false) {td.fo = true;} else {td.fo = false;}}};
   private void configureButtonBindings() {
     leftPad.whenPressed(switc);
   }
@@ -64,7 +73,6 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public DriveManager getCommand() {return dm;}
 
   public static double navxTo360(double angle){
         
