@@ -54,8 +54,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+  public Runnable switc = new Runnable() {@Override public void run() {if (dm.drivemode == 0) {dm.drivemode = 1;} else {dm.drivemode = 0;}};}; 
   private void configureButtonBindings() {
-   leftPad.whenPressed(new Runnable(){@Override public void run() {if (dm.drivemode == 0) {dm.drivemode = 1;} else {dm.drivemode = 0;}}});
+    leftPad.whenPressed(switc);
   }
 
   /**
