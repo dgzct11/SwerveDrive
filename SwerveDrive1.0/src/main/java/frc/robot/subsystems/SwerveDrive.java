@@ -94,6 +94,7 @@ public class SwerveDrive extends SubsystemBase{
   }
 
   public void drive_fo (double x1, double y1, double x2) {
+    y1 *= -1;
     double currentAngle = NavXGyro.getAngle();
     y1 = y1 * Math.cos(currentAngle) + x1 * Math.sin(currentAngle);
     x1 = -y1 * Math.sin(currentAngle) + x1 * Math.cos(currentAngle);
