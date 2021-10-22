@@ -47,8 +47,6 @@ public class SwerveDrive extends SubsystemBase{
   
   public int[] thrustCoefficients = {1,1,1,1};
 
-  private double[] currentAngles = new double[4];
-
   public SwerveDrive (Wheel br, Wheel bl, Wheel fr, Wheel fl) {
     this.br = br;
     this.bl = bl;
@@ -60,7 +58,6 @@ public class SwerveDrive extends SubsystemBase{
   }
 
   public double[][] trig (double x1, double y1, double x2) {
-
     double sine = Constants.side_over_radius;
 
     double a = x1 - x2 * sine;
@@ -83,12 +80,10 @@ public class SwerveDrive extends SubsystemBase{
     return dir;
   }
 
-  public void drive_fo (double x1, double y1, double x2) {
+  public void drive (double x1, double y1, double x2) {
     double[][] dir = trig(x1, y1, x2);
     for (short i = 0; i < 4; i++) {
-      dir[1][i] += 180;
-      wheels[i].drive(dir[0][i], currentAngles[i] - dir[1][i]);
-      currentAngles[i] = dir[1][i];
+      wheels[i].drive(dir[0][i], dir[1][i]);
     }
 
     double[] angles = getAngles();
@@ -98,10 +93,12 @@ public class SwerveDrive extends SubsystemBase{
     SmartDashboard.putNumber("RB turnto", angles[3]);
   }
 
-  public void drive (double x1, double y1, double x2) {
+  public void drive_fo (double x1, double y1, double x2) {
+    double currentAngle = NavXGyro.ahrs.getAngle();
+    y1 = y1 * Math.cos(currentAngle) + x1 * Math.sin(currentAngle);
+    x1 = -y1 * Math.sin(currentAngle) + x1 * Math.cos(currentAngle);
     double[][] dir = trig(x1, y1, x2);
     for (short i = 0; i < 4; i++) {
-      dir[1][i] += 180;
       wheels[i].drive(dir[0][i], dir[1][i]);
     }
 
