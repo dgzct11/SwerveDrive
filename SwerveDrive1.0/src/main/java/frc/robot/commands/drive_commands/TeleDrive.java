@@ -12,9 +12,11 @@ import frc.robot.subsystems.SwerveDrive;
 
 public class TeleDrive extends CommandBase {
   /** Creates a new DriveTrain. */
+  interface foCheck {void drive();}
   private SwerveDrive sd;
   private XboxController xc;
-  public boolean fo;
+  public boolean fo = false;
+  foCheck drive;
   /*
   double angle;
   double kp;
@@ -31,23 +33,24 @@ public class TeleDrive extends CommandBase {
     addRequirements(sd);
   }
 
-  public void checkFO(Boolean fo) {
+  public void checkFO() {
     if (fo != false) {
-      sd.drive_fo(xc.getRawAxis(Constants.left_x_axis), xc.getRawAxis(Constants.left_y_axis), xc.getRawAxis(Constants.right_x_axis));
+      drive = () -> {sd.drive_fo(xc.getRawAxis(Constants.left_x_axis), xc.getRawAxis(Constants.left_y_axis), xc.getRawAxis(Constants.right_x_axis));};
     } else {
-      sd.drive(xc.getRawAxis(Constants.left_x_axis), xc.getRawAxis(Constants.left_y_axis), xc.getRawAxis(Constants.right_x_axis));
+      drive = () -> {sd.drive(xc.getRawAxis(Constants.left_x_axis), xc.getRawAxis(Constants.left_y_axis), xc.getRawAxis(Constants.right_x_axis));};
     }
   }
   
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    checkFO();
     //pid.setSetpoint(angle, NavXGyro.getAngle());
   }
 
   @Override
   public void execute() {
-    checkFO(fo);
+    drive.drive();
     double[] positions = sd.getPositions(0,4);
     double[] angles = sd.getAngles();
 
