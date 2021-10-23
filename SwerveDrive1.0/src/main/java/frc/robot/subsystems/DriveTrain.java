@@ -91,6 +91,7 @@ public class DriveTrain extends SubsystemBase {
       
     }
     
+    
     for(int i = 0; i<4; i++){
       TalonFX motor = thrusts[i];
       motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
@@ -118,7 +119,7 @@ public class DriveTrain extends SubsystemBase {
     //positive rotate speed is left turn, negative rotate speed is right turn
     double strafeXComponent = -Math.sin(Math.toRadians(strafeAngle))*speed;
     double strafeYComponent = Math.cos(Math.toRadians(strafeAngle))*speed;
-    double rotationComponent = -Constants.rotate_dampaner*rotateSpeed/Math.sqrt(2);;
+    double rotationComponent = Constants.rotate_dampaner*rotateSpeed/Math.sqrt(2);;
 
     double[] leftFrontVector = {strafeXComponent-rotationComponent, strafeYComponent-rotationComponent};
     double[] leftBackVector = {strafeXComponent + rotationComponent, strafeYComponent-rotationComponent};
@@ -144,7 +145,7 @@ public class DriveTrain extends SubsystemBase {
     //positive rotate speed is left turn, negative rotate speed is right turn
     double strafeXComponent = -Math.sin(Math.toRadians(strafeAngle))*speed;
     double strafeYComponent = Math.cos(Math.toRadians(strafeAngle))*speed;
-    double rotationComponent = -Constants.rotate_dampaner*rotateSpeed/Math.sqrt(2);;
+    double rotationComponent = Constants.rotate_dampaner*rotateSpeed/Math.sqrt(2);;
 
     double[] leftFrontVector = {strafeXComponent-rotationComponent, strafeYComponent-rotationComponent};
     double[] leftBackVector = {strafeXComponent + rotationComponent, strafeYComponent-rotationComponent};
@@ -158,7 +159,7 @@ public class DriveTrain extends SubsystemBase {
                        RobotContainer.magnitutde(leftBackVector),
                        RobotContainer.magnitutde(rightFrontVector),
                        RobotContainer.magnitutde(rightBackVector)};
-    setDirectionalAngles(angles);
+    setDirectionalAnglesEff(angles); //TODO add Eff
     setVelocities(speeds);
  
     SmartDashboard.putNumber("LF turnto", angles[0]);
@@ -304,5 +305,6 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("RF Pos", thrustPos[2]);
     SmartDashboard.putNumber("RB Pos", thrustPos[3]);
     //setConstants();
+    setDirectionalConstants();
   }
 }

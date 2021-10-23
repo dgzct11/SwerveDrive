@@ -30,7 +30,7 @@ public class XboxRemote extends SubsystemBase {
     return Math.sqrt(Math.pow(xboxController.getRawAxis(Constants.left_x_axis), 2) + Math.pow(xboxController.getRawAxis(Constants.left_y_axis), 2));
   }
   public double getRightX(){
-    return xboxController.getRawAxis(Constants.right_x_axis);
+    return -xboxController.getRawAxis(Constants.right_x_axis);
   }
   @Override
   public void periodic() {
