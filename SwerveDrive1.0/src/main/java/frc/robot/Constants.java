@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.SPI.Port;
 public final class Constants {
 
     //ports
+    public static final int left_joystick_port = 0;
+
     public static final int xbox_port = 0;
     public static final Port mxp_port = Port.kMXP;
     
@@ -82,8 +84,9 @@ public final class Constants {
     public static final double rotate_dampaner = 1;
     public static final double limeLightHeight = 0;
     public static final double ball_area = 0;
-    public static final int left_joystick_port = 0;
+   
     public static final int right_joystick_port = 0;
+    public static final double velocityMax = 1.5;
     
     public static double max_motor_percent = 0.5;
     

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.commands.auto_commands.FollowTrajectory;
 import frc.robot.commands.drive_commands.SwerveDrive;
+import frc.robot.commands.drive_commands.SwitchDriveMode;
 import frc.robot.functional.Circle;
 import frc.robot.functional.Line;
 import frc.robot.subsystems.DriveTrain;
@@ -51,7 +52,7 @@ public class RobotContainer {
   Button rightPad = new POVButton(xboxController, Constants.right_pad_num);
   Button upPad = new POVButton(xboxController, Constants.up_pad_num);
   Button downPad = new POVButton(xboxController, Constants.down_pad_num);
-
+  Button xButton = new POVButton(xboxController, Constants.x_button_num);
 
   public RobotContainer() {
     // configures commands
@@ -71,8 +72,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+
   private void configureButtonBindings() {
-   
+   xButton.whenPressed(new SwitchDriveMode(driveTrain, xboxRemote));
   }
 
   /**

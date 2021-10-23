@@ -73,6 +73,7 @@ public class DriveTrain extends SubsystemBase {
 
 
   public DriveTrain() {
+    NavXGyro.ahrs.reset();
     for(int i = 0; i<4; i++){
       TalonFX motor = directionals[i];
       motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
@@ -174,10 +175,10 @@ public class DriveTrain extends SubsystemBase {
     rbt.set(ControlMode.PercentOutput, thrustCoefficients[3] * Constants.max_motor_percent*speeds[3]);
   }
   public void setVelocities(double[] speeds){
-    lft.set(ControlMode.Velocity,  thrustCoefficients[0] * Constants.talon_velocity_per_ms*speeds[0]);
-    lbt.set(ControlMode.Velocity,  thrustCoefficients[1] * Constants.talon_velocity_per_ms*speeds[1]);
-    rft.set(ControlMode.Velocity,  thrustCoefficients[2] * Constants.talon_velocity_per_ms*speeds[2]);
-    rbt.set(ControlMode.Velocity,  thrustCoefficients[3] * Constants.talon_velocity_per_ms*speeds[3]);
+    lft.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[0] * Constants.talon_velocity_per_ms*speeds[0]);
+    lbt.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[1] * Constants.talon_velocity_per_ms*speeds[1]);
+    rft.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[2] * Constants.talon_velocity_per_ms*speeds[2]);
+    rbt.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[3] * Constants.talon_velocity_per_ms*speeds[3]);
   }
  
 
