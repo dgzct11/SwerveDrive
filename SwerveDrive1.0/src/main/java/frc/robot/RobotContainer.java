@@ -10,11 +10,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.drive_commands.AutoDrive;
 import frc.robot.commands.drive_commands.TeleDrive;
-import frc.robot.functional.Circle;
-import frc.robot.functional.Line;
 import frc.robot.functional.Wheel;
-import frc.robot.subsystems.LimeLight;
-import frc.robot.subsystems.Odometry;
 import frc.robot.subsystems.SwerveDrive;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -34,13 +30,13 @@ public class RobotContainer {
   public AutoDrive ad = new AutoDrive(sd);
   
   //subsystems
-  public Odometry odometry = new Odometry();
-  public LimeLight limeLight = new LimeLight();
+  Object[] classes = {sd,td,ad};
+
+  //Buttons
   Button leftPad;
   Button rightPad;
   Button upPad;
   Button downPad;
-  Object[] motors = {sd,td,ad};
 
   //buttons
   public RobotContainer() {
@@ -53,7 +49,7 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
-  public Object[] returnmotors() {return motors;}
+  public Object[] returnmotors() {return classes;}
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -70,8 +66,7 @@ public class RobotContainer {
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
-   */
-
+   *
   public static double navxTo360(double angle){
         
     if (angle<=0) angle += 360;
@@ -141,6 +136,6 @@ public static double getArcLength(Circle circle){
   double[] midPoint = base.getMidPoint();
   double halfAngle = Math.atan(distance(midPoint, base.startPoint)/distance(midPoint, circle.center));
   return halfAngle*2*circle.radius;
-}
-
+}y
+  */
 }

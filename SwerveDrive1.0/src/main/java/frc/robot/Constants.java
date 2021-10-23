@@ -51,11 +51,6 @@ public final class Constants {
     public static int back_button_num = 7;  
     public static final int lb_button_num = 5;
     public static final int rb_button_num = 6;
-    
-    //robot spacific constants
-
-    public static final double units_per_degree = 72.857777778;
-    public static final double units_per_degree_rf = 72.8171171171;
 
    /*thickness of wheels 41.9mm
     861.25 cm front back
@@ -67,18 +62,10 @@ public final class Constants {
 
     public static final double side_over_radius = 0.84309923278;
 
+    public static final double units_per_degree = 72.857777778;
+    public static final double units_per_degree_rf = 72.8171171171;
     public static final double units_per_rotation = 16676.4;
     public static final double units_per_meter = units_per_rotation*(1/(Math.PI*0.098552));
-    public static final double left_right_wheel_distance = 0.59305;
-    public static final double max_units = 6178;
-    public static final double front_back_wheel_distance = 0.59155;
-    public static final double[] center = {0,0};
-    public static final double[] leftFrontCenter = {-left_right_wheel_distance/2,front_back_wheel_distance/2};
-    public static final double[] leftBackCenter = {left_right_wheel_distance/2,front_back_wheel_distance/2};
-    public static final double[] rightFrontCenter = {-left_right_wheel_distance/2,-front_back_wheel_distance/2};
-    public static final double[] rightBackCenter = {left_right_wheel_distance/2,-front_back_wheel_distance/2};
-    public static final double distance_wheel_center = RobotContainer.distance(center, leftFrontCenter);
-    //native units per 0.1 seconds
     public static final double talon_velocity_per_ms = units_per_meter/10;
   
 
@@ -88,9 +75,4 @@ public final class Constants {
     public static final double limeLightHeight = 0;
     
     public static double max_motor_percent = 0.5;
-    
-    // state variables
-    
-    public static int drive_mode = 0;
-    public static boolean in_auto = false;
 }

@@ -35,9 +35,9 @@ public class TeleDrive extends CommandBase {
 
   public void checkFO() {
     if (fo != false) {
-      drive = () -> {sd.drive_fo(xc.getRawAxis(Constants.left_x_axis), xc.getRawAxis(Constants.left_y_axis), xc.getRawAxis(Constants.right_x_axis));};
+      drive = () -> {sd.drive_fo(xc.getRawAxis(Constants.left_x_axis), -xc.getRawAxis(Constants.left_y_axis), xc.getRawAxis(Constants.right_x_axis));};
     } else {
-      drive = () -> {sd.drive(xc.getRawAxis(Constants.left_x_axis), xc.getRawAxis(Constants.left_y_axis), xc.getRawAxis(Constants.right_x_axis));};
+      drive = () -> {sd.drive(xc.getRawAxis(Constants.left_x_axis), -xc.getRawAxis(Constants.left_y_axis), xc.getRawAxis(Constants.right_x_axis));};
     }
   }
   
@@ -52,7 +52,7 @@ public class TeleDrive extends CommandBase {
   public void execute() {
     drive.drive();
     double[] positions = sd.getPositions(0,4);
-    double[] angles = sd.getAngles();
+    double[] angles = sd.getPositions(4, 8);
 
     SmartDashboard.putNumber("LF Angle", angles[0]);
     SmartDashboard.putNumber("LB Angle", angles[1]);
@@ -63,7 +63,7 @@ public class TeleDrive extends CommandBase {
     SmartDashboard.putNumber("LB Pos", positions[1]);
     SmartDashboard.putNumber("RF Pos", positions[2]);
     SmartDashboard.putNumber("RB Pos", positions[3]);
-    SmartDashboard.putNumber("Navx Angle", sd.getAngle());
+    SmartDashboard.putNumber("Navx Angle", sd.getFOAngle());
   }
   
   // Called every time the scheduler runs while the command is scheduled.

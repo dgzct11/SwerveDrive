@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.functional.Wheel;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -13,7 +12,6 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
@@ -57,7 +55,6 @@ public class SwerveDrive extends SubsystemBase{
     this.bl = bl;
     this.fr = fr;
     this.fl = fl;
-    
     br.speed_m.setInverted(true);
     fr.speed_m.setInverted(true);
     ahrs.reset();
@@ -87,66 +84,27 @@ public class SwerveDrive extends SubsystemBase{
   }
 
   public void drive (double x1, double y1, double x2) {
-    y1 *= -1;
     double[][] dir = trig(x1, y1, x2);
     for (short i = 0; i < 4; i++) {
       wheels[i].drive(dir[0][i], dir[1][i]);
     }
-
-    double[] angles = getAngles();
-    SmartDashboard.putNumber("LF turnto", angles[0]);
-    SmartDashboard.putNumber("LB turnto", angles[1]);
-    SmartDashboard.putNumber("RF turnto", angles[2]);
-    SmartDashboard.putNumber("RB turnto", angles[3]);
   }
 
   public void drive_fo (double x1, double y1, double x2) {
-    y1 *= -1;
-    double currentAngle = getAngle();
+    double currentAngle = getFOAngle();
     y1 = y1 * Math.cos(currentAngle) + x1 * Math.sin(currentAngle);
     x1 = -y1 * Math.sin(currentAngle) + x1 * Math.cos(currentAngle);
     double[][] dir = trig(x1, y1, x2);
     for (short i = 0; i < 4; i++) {
       wheels[i].drive(dir[0][i], dir[1][i]);
     }
-
-    double[] angles = getAngles();
-    SmartDashboard.putNumber("LF turnto", angles[0]);
-    SmartDashboard.putNumber("LB turnto", angles[1]);
-    SmartDashboard.putNumber("RF turnto", angles[2]);
-    SmartDashboard.putNumber("RB turnto", angles[3]);
   }
 
   public void driveDirectionalAngles(double[] angles) {
-    double[] currentAngles = getAngles();
-    SmartDashboard.putNumber("LF Diff", RobotContainer.angleDistance2(currentAngles[0], angles[0]));
-    SmartDashboard.putNumber("LB Diff", RobotContainer.angleDistance2(currentAngles[1], angles[1]));
-    SmartDashboard.putNumber("RF Diff", RobotContainer.angleDistance2(currentAngles[2], angles[2]));
-    SmartDashboard.putNumber("RB Diff", RobotContainer.angleDistance2(currentAngles[3], angles[3]));
+    double[] currentAngles = getPositions(4, 8);
     for(int i = 0; i<4; i++) {
-      wheels[i].drive(0, (wheels[i].angle_m.getSelectedSensorPosition() +
-      RobotContainer.angleDistance2(angles[i], currentAngles[i])*Constants.units_per_degree *
-      (RobotContainer.shouldTurnLeft(currentAngles[i], angles[i]) ? 1 : -1)));
+      wheels[i].drive(0, (currentAngles[i] + angles[i]));
     }
-  }
-
-  public void setDirectionalAnglesEff(double[] angles) {
-    double[] currentAngles = getAngles();
-
-    for (int i = 0; i < 4; i++) {
-      if (RobotContainer.angleDistance2(angles[i], currentAngles[i]) > 90) {
-        thrustCoefficients[i] = -1;
-        angles[i] = (angles[i] + 180) % 360;
-      } else
-        thrustCoefficients[i] = 1;
-      wheels[i].drive(0, 
-      ((wheels[i].angle_m.getSelectedSensorPosition() + RobotContainer.angleDistance2(angles[i], currentAngles[i])
-              * Constants.units_per_degree * (RobotContainer.shouldTurnLeft(currentAngles[i], angles[i]) ? 1 : -1))));
-    }
-    SmartDashboard.putNumber("LF Diff", RobotContainer.angleDistance2(currentAngles[0], angles[0]));
-    SmartDashboard.putNumber("LB Diff", RobotContainer.angleDistance2(currentAngles[1], angles[1]));
-    SmartDashboard.putNumber("RF Diff", RobotContainer.angleDistance2(currentAngles[2], angles[2]));
-    SmartDashboard.putNumber("RB Diff", RobotContainer.angleDistance2(currentAngles[3], angles[3]));
   }
 
   public void setPID() {
@@ -192,14 +150,7 @@ public class SwerveDrive extends SubsystemBase{
     return positions;
   }
 
-  public double[] getAngles() {
-    double[] angles = getPositions(4,8);
-    for (int i = 0; i < angles.length; i++) {
-      angles[i] = RobotContainer.floorMod(angles[i] / Constants.units_per_degree, 360);
-    }
-    return angles;
-  }
-  public double getAngle(){
-    return RobotContainer.navxTo360(ahrs.getAngle());
+  public double getFOAngle(){
+    return (360-(ahrs.getAngle()+360));
   }
 }
