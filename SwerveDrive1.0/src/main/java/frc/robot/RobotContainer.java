@@ -14,7 +14,6 @@ import frc.robot.functional.Circle;
 import frc.robot.functional.Line;
 import frc.robot.functional.Wheel;
 import frc.robot.subsystems.LimeLight;
-import frc.robot.subsystems.NavXGyro;
 import frc.robot.subsystems.Odometry;
 import frc.robot.subsystems.SwerveDrive;
 /**
@@ -36,7 +35,6 @@ public class RobotContainer {
   
   //subsystems
   public Odometry odometry = new Odometry();
-  public NavXGyro navx = new NavXGyro();
   public LimeLight limeLight = new LimeLight();
   Button leftPad;
   Button rightPad;

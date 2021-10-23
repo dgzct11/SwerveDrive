@@ -7,6 +7,9 @@ package frc.robot.subsystems;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.functional.Wheel;
+
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -47,6 +50,8 @@ public class SwerveDrive extends SubsystemBase{
   
   public int[] thrustCoefficients = {1,1,1,1};
 
+  public static AHRS ahrs = new AHRS(Constants.mxp_port);
+
   public SwerveDrive (Wheel br, Wheel bl, Wheel fr, Wheel fl) {
     this.br = br;
     this.bl = bl;
@@ -55,6 +60,7 @@ public class SwerveDrive extends SubsystemBase{
     
     br.speed_m.setInverted(true);
     fr.speed_m.setInverted(true);
+    ahrs.reset();
   }
 
   public double[][] trig (double x1, double y1, double x2) {
@@ -96,7 +102,7 @@ public class SwerveDrive extends SubsystemBase{
 
   public void drive_fo (double x1, double y1, double x2) {
     y1 *= -1;
-    double currentAngle = NavXGyro.getAngle();
+    double currentAngle = getAngle();
     y1 = y1 * Math.cos(currentAngle) + x1 * Math.sin(currentAngle);
     x1 = -y1 * Math.sin(currentAngle) + x1 * Math.cos(currentAngle);
     double[][] dir = trig(x1, y1, x2);
@@ -192,5 +198,8 @@ public class SwerveDrive extends SubsystemBase{
       angles[i] = RobotContainer.floorMod(angles[i] / Constants.units_per_degree, 360);
     }
     return angles;
+  }
+  public double getAngle(){
+    return RobotContainer.navxTo360(ahrs.getAngle());
   }
 }

@@ -63,6 +63,7 @@ public class TeleDrive extends CommandBase {
     SmartDashboard.putNumber("LB Pos", positions[1]);
     SmartDashboard.putNumber("RF Pos", positions[2]);
     SmartDashboard.putNumber("RB Pos", positions[3]);
+    SmartDashboard.putNumber("Navx Angle", sd.getAngle());
   }
   
   // Called every time the scheduler runs while the command is scheduled.
