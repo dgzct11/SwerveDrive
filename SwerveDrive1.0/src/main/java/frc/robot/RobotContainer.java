@@ -63,9 +63,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  public Runnable switc = new Runnable() {@Override public void run() {if (td.fo == false) {td.fo = true;} else {td.fo = false;}td.checkFO();}};
+  public Runnable Switch = new Runnable() {@Override public void run() {if (td.fo == false) {td.fo = true;} else {td.fo = false;}td.checkFO();}};
   private void configureButtonBindings() {
-    leftPad.whenPressed(switc);
+    leftPad.whenPressed(Switch);
   }
 
   /**
