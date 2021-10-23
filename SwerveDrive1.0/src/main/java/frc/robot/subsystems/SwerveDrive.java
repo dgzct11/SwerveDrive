@@ -81,6 +81,7 @@ public class SwerveDrive extends SubsystemBase{
   }
 
   public void drive (double x1, double y1, double x2) {
+    y1 *= -1;
     double[][] dir = trig(x1, y1, x2);
     for (short i = 0; i < 4; i++) {
       wheels[i].drive(dir[0][i], dir[1][i]);
