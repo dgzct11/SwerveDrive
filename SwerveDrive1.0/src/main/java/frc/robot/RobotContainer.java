@@ -57,85 +57,17 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  public Runnable Switch = new Runnable() {@Override public void run() {if (td.fo == false) {td.fo = true;} else {td.fo = false;}td.checkFO();}};
+  public Runnable foSwitch = new Runnable() {public void run() {if (td.fo == false) {td.fo = true;} else {td.fo = false;}td.checkFO();}};
+  public Runnable raise = new Runnable() {public void run() {Constants.velocityMax++; Constants.max_motor_percent++;}};
+  public Runnable lower = new Runnable() {public void run() {if (Constants.velocityMax != 0||Constants.max_motor_percent != 0) {Constants.velocityMax--; Constants.max_motor_percent--;}}};
   private void configureButtonBindings() {
-    leftPad.whenPressed(Switch);
+    leftPad.whenPressed(raise);
+    rightPad.whenPressed(lower);
+    upPad.whenPressed(foSwitch);
   }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
    * @return the command to run in autonomous
-   *
-  public static double navxTo360(double angle){
-        
-    if (angle<=0) angle += 360;
-
-    return 360-angle;
-  }
-  public static double to360(double angle) {
-    if (angle <= 0) angle += 360;
-
-    return Math.abs(angle%360);
-  }
-  public static double stickTo360(double x, double y){
-   return (Math.toDegrees(Math.atan2(-x, y)) +360 )%360;
-  }
-  public static boolean shouldTurnLeftNavx(double currentNavxAngle, double targetAngle){
-    double angle = navxTo360(currentNavxAngle);
-    boolean value = false;
-
-    if(targetAngle < 180) value = angle<targetAngle || angle> 180+targetAngle;
-    else value = angle<targetAngle && angle> targetAngle-180;
-    return value;
-  }
-  public static boolean shouldTurnLeft(double currentNavxAngle, double targetAngle){
-    double angle = currentNavxAngle;
-    boolean value = false;
-
-    if(targetAngle <= 180) value = angle<targetAngle || angle> 180+targetAngle;
-    else value = angle<targetAngle && angle> targetAngle-180;
-    return value;
-  }
- 
-
-  public static double distance(double[] p1, double[] p2){
-    return Math.sqrt( Math.pow(p1[1] - p2[1], 2) + Math.pow(p1[0] - p2[0], 2));
-  }
-
-
-  public static double angleFromSlope(double[] start, double[] end){
-    return Math.toDegrees(Math.atan2((end[1] - start[1]), end[0] - start[0]));
-  }
-  public static double magnitutde(double[] vector){
-    return Math.sqrt((vector[0]*vector[0]) + (vector[1]*vector[1]));
-  }
-
-  public static double angleDistance2(double targetAngle, double angle){
-    
-    double distance = Math.abs(targetAngle - angle)%360;
-    if (distance > 180) distance = 360 - distance;
-    return distance;
-  }
-
-
-  public static double floorMod(double x, double y){
-    if(x<0)
-        return y - Math.abs(x)%y;
-    return x%y;
-}
-
-public static double angleToPoint(double[] start, double[] end){
-  double dx = end[0]-start[0];
-  double dy = end[1]-start[1];
-  return to360(Math.toDegrees(Math.atan2(-dx, dy)));
-
-}
-public static double getArcLength(Circle circle){
-  Line base = new Line(circle.startPoint, circle.endPoint);
-  double[] midPoint = base.getMidPoint();
-  double halfAngle = Math.atan(distance(midPoint, base.startPoint)/distance(midPoint, circle.center));
-  return halfAngle*2*circle.radius;
-}y
-  */
+   */
 }

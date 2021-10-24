@@ -75,4 +75,5 @@ public final class Constants {
     public static final double limeLightHeight = 0;
     
     public static double max_motor_percent = 0.5;
+	public static double velocityMax;
 }

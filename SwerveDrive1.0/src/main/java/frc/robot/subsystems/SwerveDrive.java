@@ -108,7 +108,6 @@ public class SwerveDrive extends SubsystemBase{
   }
 
   public void setPID() {
-    
     kpDir = kpDirEntry.getDouble(kpDir);
     kiDir = kiDirEntry.getDouble(kiDir);
     kdDir = kdDirEntry.getDouble(kdDir);
