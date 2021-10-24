@@ -51,19 +51,16 @@ public class TeleDrive extends CommandBase {
   @Override
   public void execute() {
     drive.drive();
-    double[] positions = sd.getPositions(0,4);
-    double[] angles = sd.getPositions(4, 8);
+    double[] values = sd.getValues(0,8);
 
-    SmartDashboard.putNumber("LF Angle", angles[0]);
-    SmartDashboard.putNumber("LB Angle", angles[1]);
-    SmartDashboard.putNumber("RF Angle", angles[2]);
-    SmartDashboard.putNumber("RB Angle", angles[3]);
-
-    SmartDashboard.putNumber("LF Pos", positions[0]);
-    SmartDashboard.putNumber("LB Pos", positions[1]);
-    SmartDashboard.putNumber("RF Pos", positions[2]);
-    SmartDashboard.putNumber("RB Pos", positions[3]);
-    SmartDashboard.putNumber("Navx Angle", sd.getFOAngle());
+    SmartDashboard.putNumber("LF Pos", values[0]);
+    SmartDashboard.putNumber("LB Pos", values[1]);
+    SmartDashboard.putNumber("RF Pos", values[2]);
+    SmartDashboard.putNumber("RB Pos", values[3]);
+    SmartDashboard.putNumber("LF Angle", values[4]);
+    SmartDashboard.putNumber("LB Angle", values[5]);
+    SmartDashboard.putNumber("RF Angle", values[6]);
+    SmartDashboard.putNumber("RB Angle", values[7]);
   }
   
   // Called every time the scheduler runs while the command is scheduled.

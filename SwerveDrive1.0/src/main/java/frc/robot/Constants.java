@@ -67,6 +67,7 @@ public final class Constants {
     public static final double units_per_rotation = 16676.4;
     public static final double units_per_meter = units_per_rotation*(1/(Math.PI*0.098552));
     public static final double talon_velocity_per_ms = units_per_meter/10;
+    public static final double distancePP = 0.00007558843;
   
 
     // control modifiers

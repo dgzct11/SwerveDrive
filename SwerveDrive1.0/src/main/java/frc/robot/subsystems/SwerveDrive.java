@@ -91,9 +91,10 @@ public class SwerveDrive extends SubsystemBase{
   }
 
   public void drive_fo (double x1, double y1, double x2) {
-    double currentAngle = getFOAngle();
-    y1 = y1 * Math.cos(currentAngle) + x1 * Math.sin(currentAngle);
-    x1 = -y1 * Math.sin(currentAngle) + x1 * Math.cos(currentAngle);
+    double foAngle = getFOAngle();
+    double temp = y1 * Math.cos(foAngle) + x1 * Math.sin(foAngle);
+    x1 = -y1 * Math.sin(foAngle) + x1 * Math.cos(foAngle);
+    y1 = temp;
     double[][] dir = trig(x1, y1, x2);
     for (short i = 0; i < 4; i++) {
       wheels[i].drive(dir[0][i], dir[1][i]);
@@ -101,7 +102,7 @@ public class SwerveDrive extends SubsystemBase{
   }
 
   public void driveDirectionalAngles(double[] angles) {
-    double[] currentAngles = getPositions(4, 8);
+    double[] currentAngles = getValues(4, 8);
     for(int i = 0; i<4; i++) {
       wheels[i].drive(0, (currentAngles[i] + angles[i]));
     }
@@ -137,13 +138,13 @@ public class SwerveDrive extends SubsystemBase{
     for(Wheel el:wheels) {el.drive(0, 0);}
   }
 
-  public double[] getPositions(int first, int last ) {
+  public double[] getValues(int first, int last ) {
     double[] positions = new double[8];
     for (;first < last; first++) {
       if (first<4) {
-        positions[first] = wheels[first].speed_m.getSelectedSensorPosition();
+        positions[first] = wheels[first].speed_m.getSelectedSensorPosition()*Constants.distancePP;
       } else {
-        positions[first] = wheels[first-4].angle_m.getSelectedSensorPosition();
+        positions[first] = wheels[first-4].angle_m.getSelectedSensorPosition()/Constants.units_per_degree;
       }
     }
     return positions;
