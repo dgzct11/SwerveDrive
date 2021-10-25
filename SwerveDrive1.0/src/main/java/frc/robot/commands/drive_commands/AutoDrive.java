@@ -27,7 +27,6 @@ public class AutoDrive extends CommandBase {
         drive = () -> {ll.trackBall();};
         periodic = () -> {ll.updateValues();};
         break;
-      default:
     }
   }
 
