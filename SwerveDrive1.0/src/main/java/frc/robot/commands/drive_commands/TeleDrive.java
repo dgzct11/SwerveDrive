@@ -12,7 +12,7 @@ import frc.robot.subsystems.SwerveDrive;
 
 public class TeleDrive extends CommandBase {
   /** Creates a new DriveTrain. */
-  interface foCheck {void drive();}
+  interface foCheck {void run();}
   private SwerveDrive sd;
   private XboxController xc;
   public boolean fo = false;
@@ -50,7 +50,7 @@ public class TeleDrive extends CommandBase {
 
   @Override
   public void execute() {
-    drive.drive();
+    drive.run();
     double[] values = sd.getValues(0,8);
 
     SmartDashboard.putNumber("LF Pos", values[0]);

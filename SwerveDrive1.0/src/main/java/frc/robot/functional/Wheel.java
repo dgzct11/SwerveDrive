@@ -12,7 +12,7 @@ import frc.robot.Constants;
 public class Wheel {
   public TalonSRX angle_m;
   public TalonSRX speed_m;
-  public int slotIdx = 0;
+  public int slotIdx=0;
   public double kpDir=0;
   public double kiDir=0;
   public double kdDir=0;

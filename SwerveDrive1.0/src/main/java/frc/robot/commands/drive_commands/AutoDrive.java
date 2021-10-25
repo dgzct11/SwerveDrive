@@ -5,23 +5,41 @@
 package frc.robot.commands.drive_commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.functional.LimeLight;
 import frc.robot.subsystems.SwerveDrive;
 
 public class AutoDrive extends CommandBase {
   /** Creates a new AutoDrive. */
-  SwerveDrive sd;
+  interface autodmCheck {void run();};
+  public int autodd = 0;
+  autodmCheck drive;
+  autodmCheck periodic;
+  LimeLight ll;
+
   public AutoDrive(SwerveDrive sd) {
-    this.sd = sd;
+    ll = new LimeLight(sd);
     addRequirements(sd);
   }
 
-  public void drive() {
-    
+  public void checkAutoDM() {
+    switch (autodd) {
+      case 0:
+        drive = () -> {ll.trackBall();};
+        periodic = () -> {ll.updateValues();};
+        break;
+      default:
+    }
+  }
+
+  @Override
+  public void initialize() {
+    checkAutoDM();
+    //pid.setSetpoint(angle, NavXGyro.getAngle());
   }
 
   @Override
   public void execute() {
-    drive();
-    // This method will be called once per scheduler run
+    drive.run();
+    periodic.run();
   }
 }

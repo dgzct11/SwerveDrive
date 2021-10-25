@@ -18,7 +18,7 @@ import frc.robot.subsystems.SwerveDrive;
 public class Robot extends TimedRobot {
   private RobotContainer rc = new RobotContainer();
   private SwerveDrive sd = rc.sd;
-  private TeleDrive td = rc.td;;
+  private TeleDrive td = rc.td;
   private AutoDrive ad = rc.ad;
   /**
    * This function is run when the robot is first started up and should be used for any

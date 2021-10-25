@@ -20,8 +20,8 @@ import frc.robot.subsystems.SwerveDrive;
  */
 public class RobotContainer {
   private XboxController xc = new XboxController(Constants.xbox_p);
-  private Wheel bl = new Wheel(Constants.bl_angle, Constants.bl_speed);
   private Wheel br = new Wheel(Constants.br_angle, Constants.br_speed);
+  private Wheel bl = new Wheel(Constants.bl_angle, Constants.bl_speed);
   private Wheel fr = new Wheel(Constants.fr_angle, Constants.fr_speed);
   private Wheel fl = new Wheel(Constants.fl_angle, Constants.fl_speed);
 
@@ -29,8 +29,7 @@ public class RobotContainer {
   public TeleDrive td = new TeleDrive(xc, sd);
   public AutoDrive ad = new AutoDrive(sd);
   
-  //subsystems
-  Object[] classes = {sd,td,ad};
+  //subsystems\
 
   //Buttons
   Button leftPad;
@@ -49,8 +48,6 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
-  public Object[] returnmotors() {return classes;}
-
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -59,15 +56,10 @@ public class RobotContainer {
    */
   public Runnable foSwitch = new Runnable() {public void run() {if (td.fo == false) {td.fo = true;} else {td.fo = false;}td.checkFO();}};
   public Runnable raise = new Runnable() {public void run() {Constants.velocityMax++; Constants.max_motor_percent++;}};
-  public Runnable lower = new Runnable() {public void run() {if (Constants.velocityMax != 0||Constants.max_motor_percent != 0) {Constants.velocityMax--; Constants.max_motor_percent--;}}};
+  public Runnable lower = new Runnable() {public void run() {if (Constants.velocityMax != 0||Constants.max_motor_percent != 0) {Constants.velocityMax-=0.5; Constants.max_motor_percent-=0.5;}}};
   private void configureButtonBindings() {
     leftPad.whenPressed(raise);
     rightPad.whenPressed(lower);
     upPad.whenPressed(foSwitch);
   }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   * @return the command to run in autonomous
-   */
 }

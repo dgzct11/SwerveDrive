@@ -40,21 +40,17 @@ public class SwerveDrive extends SubsystemBase{
   public double kdTh = 0;
   public double kfTh = 0.045;
 
-  private Wheel br;
-  private Wheel bl;
-  private Wheel fr;
-  private Wheel fl;
-  private Wheel[] wheels = {br, bl, fr, fl};
+  private Wheel[] wheels = new Wheel[4];
   
   public int[] thrustCoefficients = {1,1,1,1};
 
   public static AHRS ahrs = new AHRS(Constants.mxp_port);
 
   public SwerveDrive (Wheel br, Wheel bl, Wheel fr, Wheel fl) {
-    this.br = br;
-    this.bl = bl;
-    this.fr = fr;
-    this.fl = fl;
+    wheels[0] = br;
+    wheels[1] = bl;
+    wheels[2] = fr;
+    wheels[3] = fl;
     br.speed_m.setInverted(true);
     fr.speed_m.setInverted(true);
     ahrs.reset();
