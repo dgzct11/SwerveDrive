@@ -180,7 +180,7 @@ public class DriveTrain extends SubsystemBase {
     rft.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[2] * Constants.talon_velocity_per_ms*speeds[2]);
     rbt.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[3] * Constants.talon_velocity_per_ms*speeds[3]);
   }
- 
+
 
   public void setDirectionalAngles(double[] angles){
     double[] currentAngles = getAngles();
@@ -300,12 +300,11 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("RF Angle", angles[2]);
     SmartDashboard.putNumber("RB Angle", angles[3]);
     
-    double[] thrustPos = getThrustPositions();
-    SmartDashboard.putNumber("LF Pos", thrustPos[0]);
-    SmartDashboard.putNumber("LB Pos", thrustPos[1]);
-    SmartDashboard.putNumber("RF Pos", thrustPos[2]);
-    SmartDashboard.putNumber("RB Pos", thrustPos[3]);
+   
     //setConstants();
     setDirectionalConstants();
+
+    SmartDashboard.putNumber("Drive Mode", Constants.drive_mode);
+    SmartDashboard.putNumber("Max V", Constants.velocityMax);
   }
 }

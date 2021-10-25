@@ -8,10 +8,12 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.commands.auto_commands.FollowTrajectory;
+import frc.robot.commands.drive_commands.ChangeSpeed;
+import frc.robot.commands.drive_commands.FieldOriented;
 import frc.robot.commands.drive_commands.SwerveDrive;
 import frc.robot.commands.drive_commands.SwitchDriveMode;
 import frc.robot.functional.Circle;
@@ -25,6 +27,7 @@ import frc.robot.subsystems.XboxRemote;
 
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -52,12 +55,15 @@ public class RobotContainer {
   Button rightPad = new POVButton(xboxController, Constants.right_pad_num);
   Button upPad = new POVButton(xboxController, Constants.up_pad_num);
   Button downPad = new POVButton(xboxController, Constants.down_pad_num);
-  Button xButton = new POVButton(xboxController, Constants.x_button_num);
+  
+  Button rightButton = new JoystickButton(xboxController, Constants.rb_button_num);
+  Button leftButton = new JoystickButton(xboxController, Constants.lb_button_num);
+  Button xButton = new JoystickButton(xboxController, Constants.x_button_num);
 
   public RobotContainer() {
     // configures commands
     odometry.setDriveTrain(driveTrain);
-    SwerveDrive sd = new SwerveDrive(driveTrain, xboxRemote);
+    FieldOriented sd = new FieldOriented(driveTrain, xboxRemote);
     sd.addRequirements(driveTrain);
 
     driveTrain.setDefaultCommand(sd);
@@ -72,9 +78,28 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-
+  public Runnable Switch = new Runnable() {
+    @Override 
+    public void run() {
+      SmartDashboard.putBoolean("change D", true);
+      if(Constants.drive_mode == 0){
+        FieldOriented fo = new FieldOriented(driveTrain, xboxRemote);
+        fo.addRequirements(driveTrain);
+        driveTrain.setDefaultCommand(fo);
+  
+        Constants.drive_mode = 1;
+      }
+      else if(Constants.drive_mode == 1){
+        SwerveDrive fo = new SwerveDrive(driveTrain, xboxRemote);
+        fo.addRequirements(driveTrain);
+        driveTrain.setDefaultCommand(fo);
+      }
+    }
+  };
   private void configureButtonBindings() {
    xButton.whenPressed(new SwitchDriveMode(driveTrain, xboxRemote));
+   leftButton.whenPressed(new ChangeSpeed(-0.5));
+   rightButton.whenPressed(new ChangeSpeed(0.5));
   }
 
   /**

@@ -36,6 +36,6 @@ public class XboxRemote extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Drive Mode", Constants.drive_mode);
+    
   }
 }

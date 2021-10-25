@@ -25,15 +25,15 @@ public class JoystickRemote extends XboxRemote {
     return RobotContainer.to360(Math.toDegrees(Math.atan2(y,x)));
   }
   public double getRightAngle(){
-    double y = -rightController.getRawAxis(Constants.right_x_axis);
-    double x = -rightController.getRawAxis(Constants.right_y_axis);
+    double y = -rightController.getRawAxis(Constants.right_j_x_axis);
+    double x = -rightController.getRawAxis(Constants.right_j_y_axis);
     return RobotContainer.to360(Math.toDegrees(Math.atan2(y,x)));
   }
   public double getLeftMagnitude(){
     return Math.sqrt(Math.pow(leftController.getRawAxis(Constants.left_x_axis), 2) + Math.pow(leftController.getRawAxis(Constants.left_y_axis), 2));
   }
   public double getRightX(){
-    return rightController.getRawAxis(Constants.right_x_axis);
+    return rightController.getRawAxis(Constants.right_j_x_axis);
   }
   @Override
   public void periodic() {
