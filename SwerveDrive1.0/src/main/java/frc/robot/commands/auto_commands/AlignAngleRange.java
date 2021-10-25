@@ -48,10 +48,10 @@ public class AlignAngleRange extends CommandBase {
      double speed = Math.min( Math.abs(limelight.getDistanceFromArea(area)-distance)*kpRange, 0.3) * (distance > limelight.getDistanceFromArea(area) ? -1:1);
      double angleError = Math.min( kp * (Math.abs(limelight.getHorizontalAngleDiff())),0.3) * (limelight.getHorizontalAngleDiff()>0 ? -1:1);
      SmartDashboard.putNumber("Speed Align", speed);
-     driveTrain.rotateDrive(strafeAngle, speed, angleError);
+     driveTrain.rotateDriveVelocity(strafeAngle, speed, angleError);
     }
     else{
-      driveTrain.rotateDrive(0, 0, 0.3);
+      driveTrain.rotateDriveVelocity(0, 0, 0.3);
      
     }
   }

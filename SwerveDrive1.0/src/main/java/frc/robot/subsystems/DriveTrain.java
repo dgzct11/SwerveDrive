@@ -88,11 +88,7 @@ public class DriveTrain extends SubsystemBase {
       motor.config_kI(slotIdx, kiDir);
       motor.config_kD(slotIdx, kdDir);
       motor.config_kF(slotIdx, kfDir);
-
-      
     }
-    
-    
     for(int i = 0; i<4; i++){
       TalonFX motor = thrusts[i];
       motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
@@ -103,8 +99,7 @@ public class DriveTrain extends SubsystemBase {
     }
     rft.setInverted(true);
     rbt.setInverted(true);
-    
-    
+     
     lfd.setSelectedSensorPosition(0);
     lft.setSelectedSensorPosition(0);
     lbd.setSelectedSensorPosition(0);
@@ -116,32 +111,7 @@ public class DriveTrain extends SubsystemBase {
     
   }
 
-  public void rotateDrive(double strafeAngle, double speed, double rotateSpeed){
-    //positive rotate speed is left turn, negative rotate speed is right turn
-    double strafeXComponent = -Math.sin(Math.toRadians(strafeAngle))*speed;
-    double strafeYComponent = Math.cos(Math.toRadians(strafeAngle))*speed;
-    double rotationComponent = Constants.rotate_dampaner*rotateSpeed/Math.sqrt(2);;
-
-    double[] leftFrontVector = {strafeXComponent-rotationComponent, strafeYComponent-rotationComponent};
-    double[] leftBackVector = {strafeXComponent + rotationComponent, strafeYComponent-rotationComponent};
-    double[] rightFrontVector = {strafeXComponent-rotationComponent, strafeYComponent + rotationComponent};
-    double[] rightBackVector = {strafeXComponent + rotationComponent, strafeYComponent + rotationComponent};
-     double[] angles = {RobotContainer.stickTo360(leftFrontVector[0], leftFrontVector[1]),
-                       RobotContainer.stickTo360(leftBackVector[0], leftBackVector[1]),
-                       RobotContainer.stickTo360(rightFrontVector[0], rightFrontVector[1]),
-                       RobotContainer.stickTo360(rightBackVector[0], rightBackVector[1])};
-    double[] speeds = {RobotContainer.magnitutde(leftFrontVector),
-                       RobotContainer.magnitutde(leftBackVector),
-                       RobotContainer.magnitutde(rightFrontVector),
-                       RobotContainer.magnitutde(rightBackVector)};
-    setDirectionalAngles(angles);
-    setThrustSpeeds(speeds);
-    SmartDashboard.putNumber("LF turnto", angles[0]);
-    SmartDashboard.putNumber("LB turnto", angles[1]);
-    SmartDashboard.putNumber("RF turnto", angles[2]);
-    SmartDashboard.putNumber("RB turnto", angles[3]);
-  }
-
+  
   public void rotateDriveVelocity(double strafeAngle, double speed, double rotateSpeed){
     //positive rotate speed is left turn, negative rotate speed is right turn
     double strafeXComponent = -Math.sin(Math.toRadians(strafeAngle))*speed;
@@ -168,6 +138,7 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("RF turnto", angles[2]);
     SmartDashboard.putNumber("RB turnto", angles[3]);
   }
+
   public void setThrustSpeeds(double[] speeds){
     lft.set(ControlMode.PercentOutput, thrustCoefficients[0] * Constants.max_motor_percent*speeds[0]);
     lbt.set(ControlMode.PercentOutput,  thrustCoefficients[1] * Constants.max_motor_percent*speeds[1]);
@@ -179,23 +150,25 @@ public class DriveTrain extends SubsystemBase {
     lbt.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[1] * Constants.talon_velocity_per_ms*speeds[1]);
     rft.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[2] * Constants.talon_velocity_per_ms*speeds[2]);
     rbt.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[3] * Constants.talon_velocity_per_ms*speeds[3]);
+    
+    double[] currentSpeeds = getVelocities();
+    SmartDashboard.putNumber("LF V Diff", Math.abs(currentSpeeds[0] - speeds[0]));
+    SmartDashboard.putNumber("LB V Diff", Math.abs(currentSpeeds[1] - speeds[1]));
+    SmartDashboard.putNumber("RF V Diff", Math.abs(currentSpeeds[2] - speeds[2]));
+    SmartDashboard.putNumber("RB V Diff", Math.abs(currentSpeeds[3] - speeds[3]));
   }
-
-
   public void setDirectionalAngles(double[] angles){
     double[] currentAngles = getAngles();
-    SmartDashboard.putNumber("LF Diff", RobotContainer.angleDistance2(currentAngles[0], angles[0]));
-    SmartDashboard.putNumber("LB Diff", RobotContainer.angleDistance2(currentAngles[1], angles[1]));
-    SmartDashboard.putNumber("RF Diff", RobotContainer.angleDistance2(currentAngles[2], angles[2]));
-    SmartDashboard.putNumber("RB Diff", RobotContainer.angleDistance2(currentAngles[3], angles[3]));
+    SmartDashboard.putNumber("LF A Diff", RobotContainer.angleDistance2(currentAngles[0], angles[0]));
+    SmartDashboard.putNumber("LB A Diff", RobotContainer.angleDistance2(currentAngles[1], angles[1]));
+    SmartDashboard.putNumber("RF A Diff", RobotContainer.angleDistance2(currentAngles[2], angles[2]));
+    SmartDashboard.putNumber("RB A Diff", RobotContainer.angleDistance2(currentAngles[3], angles[3]));
     for(int i = 0; i<4; i++){
       TalonFX motor = directionals[i];
-      
         motor.set(TalonFXControlMode.Position, 
               ((motor.getSelectedSensorPosition() + 
               RobotContainer.angleDistance2(angles[i], currentAngles[i])*Constants.pos_units_per_degree * 
-              (RobotContainer.shouldTurnLeft(currentAngles[i], angles[i]) ? 1:-1))));
-      
+              (RobotContainer.shouldTurnLeft(currentAngles[i], angles[i]) ? 1:-1)))); 
     }
   }
   public void stop(){
@@ -204,7 +177,6 @@ public class DriveTrain extends SubsystemBase {
   }
   public void setDirectionalAnglesEff(double[] angles){
     double[] currentAngles = getAngles();
-    
     for(int i = 0; i<4; i++){
       TalonFX motor = directionals[i];
       if(RobotContainer.angleDistance2(angles[i], currentAngles[i]) > 90){
@@ -218,10 +190,10 @@ public class DriveTrain extends SubsystemBase {
               RobotContainer.angleDistance2(angles[i], currentAngles[i])*Constants.pos_units_per_degree * 
               (RobotContainer.shouldTurnLeft(currentAngles[i], angles[i]) ? 1:-1))));
     }
-    SmartDashboard.putNumber("LF Diff", RobotContainer.angleDistance2(currentAngles[0], angles[0]));
-    SmartDashboard.putNumber("LB Diff", RobotContainer.angleDistance2(currentAngles[1], angles[1]));
-    SmartDashboard.putNumber("RF Diff", RobotContainer.angleDistance2(currentAngles[2], angles[2]));
-    SmartDashboard.putNumber("RB Diff", RobotContainer.angleDistance2(currentAngles[3], angles[3]));
+    SmartDashboard.putNumber("LF A Diff", RobotContainer.angleDistance2(currentAngles[0], angles[0]));
+    SmartDashboard.putNumber("LB A Diff", RobotContainer.angleDistance2(currentAngles[1], angles[1]));
+    SmartDashboard.putNumber("RF A Diff", RobotContainer.angleDistance2(currentAngles[2], angles[2]));
+    SmartDashboard.putNumber("RB A Diff", RobotContainer.angleDistance2(currentAngles[3], angles[3]));
   }
 
   public double[] getDirectionalPositions(){
@@ -241,6 +213,13 @@ public class DriveTrain extends SubsystemBase {
     double[] result = getDirectionalPositions();
     for(int i = 0; i<result.length; i++){
       result[i] = RobotContainer.floorMod(result[i]/Constants.pos_units_per_degree, 360);
+    }
+    return result;
+  }
+  public double[] getVelocities(){
+    double[] result = new double[4];
+    for(int i = 0; i<result.length; i++){
+      result[i] = thrusts[i].getSelectedSensorVelocity() / Constants.talon_velocity_per_ms;
     }
     return result;
   }
@@ -265,8 +244,6 @@ public class DriveTrain extends SubsystemBase {
     rbd.config_kD(slotIdx, kdDir);
   }
   public void setConstants(){
-    
-    
     kpTh = kpThEntry.getDouble(kpTh);
     kiTh = kiThEntry.getDouble(kiTh);
     kdTh = kdThEntry.getDouble(kdTh);
@@ -292,19 +269,27 @@ public class DriveTrain extends SubsystemBase {
     rft.config_kF(slotIdx, kfTh);
     rbt.config_kF(slotIdx, kfTh);
   }
+  public void displayValues(){
+    SmartDashboard.putNumber("Drive Mode", Constants.drive_mode);
+    SmartDashboard.putNumber("Max V", Constants.velocityMax);
+
+    //Angle difference in set Directional angles
+    //Velocity difference in set Veloctiy
+
+    double[] velocities = getVelocities();
+    SmartDashboard.putNumber("LF V", velocities[0]);
+    SmartDashboard.putNumber("LB V", velocities[1]);
+    SmartDashboard.putNumber("RF V", velocities[2]);
+    SmartDashboard.putNumber("RB V", velocities[3]);
+  }
   @Override
   public void periodic() {
-    double[] angles = getAngles();
-    SmartDashboard.putNumber("LF Angle", angles[0]);
-    SmartDashboard.putNumber("LB Angle", angles[1]);
-    SmartDashboard.putNumber("RF Angle", angles[2]);
-    SmartDashboard.putNumber("RB Angle", angles[3]);
     
-   
+    
+    displayValues();
     //setConstants();
     setDirectionalConstants();
 
-    SmartDashboard.putNumber("Drive Mode", Constants.drive_mode);
-    SmartDashboard.putNumber("Max V", Constants.velocityMax);
+    
   }
 }

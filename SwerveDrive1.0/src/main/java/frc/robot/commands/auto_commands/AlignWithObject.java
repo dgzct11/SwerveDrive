@@ -41,10 +41,10 @@ public class AlignWithObject extends CommandBase {
    
     if(limelight.inView()){
      double error =Math.min( kp*(Math.abs(limelight.getHorizontalAngleDiff())),0.3);
-       driveTrian.rotateDrive(0, 0, error * (limelight.getHorizontalAngleDiff()>0 ? 1:-1));
+       driveTrian.rotateDriveVelocity(0, 0, error * (limelight.getHorizontalAngleDiff()>0 ? 1:-1));
     }
     else{
-      driveTrian.rotateDrive(0, 0, 0.3);
+      driveTrian.rotateDriveVelocity(0, 0, 0.3);
        }
   }
 

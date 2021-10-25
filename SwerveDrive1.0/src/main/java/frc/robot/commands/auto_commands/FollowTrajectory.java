@@ -4,9 +4,8 @@
 
 package frc.robot.commands.auto_commands;
 
-import frc.robot.functional.Position;
-import frc.robot.functional.Trajectory;
-
+import frc.robot.functional.trajectory.Position;
+import frc.robot.functional.trajectory.TrajectoryCircleLine;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -21,7 +20,7 @@ public class FollowTrajectory extends CommandBase {
   
   DriveTrain driveTrain;
   Odometry odometry;
-  Trajectory trajectory;
+  TrajectoryCircleLine trajectory;
   double acceleration = 1, velocity = 2;
   double previousTime;
   double initialTime;
@@ -30,7 +29,7 @@ public class FollowTrajectory extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     driveTrain = dt;
     odometry = od;
-    trajectory = new Trajectory(points, distances, acceleration, velocity);
+    trajectory = new TrajectoryCircleLine(points, distances, acceleration, velocity);
     
   }
 
@@ -52,13 +51,12 @@ public class FollowTrajectory extends CommandBase {
     Position newPos = trajectory.getPosition(time+timeUnit);
     double[] start = {currentPosition.x, currentPosition.y};
     double[] end = {newPos.x, newPos.y};
-    SmartDashboard.putNumber("X", end[0]);
-    SmartDashboard.putNumber("Y", end[1]);
+   
    
     double angleToPoint = RobotContainer.angleToPoint(start, end);
  
     double speed = RobotContainer.distance(start, end)/timeUnit;
-    SmartDashboard.putNumber("Speed A", speed);
+    
     driveTrain.rotateDriveVelocity((angleToPoint-NavXGyro.ahrs.getAngle() + 360)%360, speed, 0);
     previousTime = time;
   }

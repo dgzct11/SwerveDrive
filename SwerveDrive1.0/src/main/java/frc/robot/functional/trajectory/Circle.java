@@ -1,4 +1,4 @@
-package frc.robot.functional;
+package frc.robot.functional.trajectory;
 import frc.robot.RobotContainer;
 
 // Copyright (c) FIRST and other WPILib contributors.

@@ -21,7 +21,7 @@ public class ChangeSpeed extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    SmartDashboard.putBoolean("changing", true);
+  
     Constants.velocityMax = Math.max(0, Constants.velocityMax+increment);
   }
 }

@@ -25,7 +25,7 @@ public class SwitchDriveMode extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    SmartDashboard.putBoolean("change D", true);
+ 
     if(Constants.drive_mode == 0){
       FieldOriented fo = new FieldOriented(driveTrain, xboxRemote);
       fo.addRequirements(driveTrain);

@@ -32,7 +32,7 @@ public class SwerveDrive extends CommandBase {
   public void execute() {
     if(!Constants.in_auto){
       double strafeAngle = xbox.getLeftAngle();
-      SmartDashboard.putNumber("Strafe Angle", strafeAngle);
+      
       double speed = xbox.getLeftMagnitude();
       double rotateSpeed = xbox.getRightX();
       
