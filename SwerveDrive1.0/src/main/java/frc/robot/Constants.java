@@ -93,7 +93,7 @@ public final class Constants {
    
     public static  double velocityMax = 2;
     
-    public static double max_motor_percent = 0.5;
+    public static double max_motor_percent = 1;
     
     // state variables
     

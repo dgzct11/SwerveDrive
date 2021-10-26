@@ -21,7 +21,7 @@ public class FollowTrajectory extends CommandBase {
   DriveTrain driveTrain;
   Odometry odometry;
   TrajectoryCircleLine trajectory;
-  double acceleration = 1, velocity = 2;
+  double acceleration = 1, velocity = 1;
   double previousTime;
   double initialTime;
   double timeUnit = 0.1;
@@ -38,7 +38,7 @@ public class FollowTrajectory extends CommandBase {
   public void initialize() {
     Constants.in_auto = true;
     odometry.reset();
-    //NavXGyro.ahrs.reset();
+    NavXGyro.ahrs.reset();
     initialTime = System.currentTimeMillis()/1000.;
   }
 
