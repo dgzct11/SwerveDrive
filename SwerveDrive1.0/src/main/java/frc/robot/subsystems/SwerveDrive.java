@@ -136,8 +136,16 @@ public class SwerveDrive extends SubsystemBase{
     for(Wheel el:wheels) {el.drive(0, 0);}
   }
 
-  public double[] getValues() {
-    return wheel.getValues();
+  public double[] getValues(int first, int last ) {
+    double[] positions = new double[8];
+    for (;first < last; first++) {
+      if (first<4) {
+        positions[first] = wheels[first].speed_m.getSelectedSensorPosition()*Constants.distancePP;
+      } else {
+        positions[first] = wheels[first-4].angle_m.getSelectedSensorPosition()/Constants.units_per_degree;
+      }
+    }
+    return positions;
   }
 
   public double getFOAngle(){
