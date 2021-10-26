@@ -15,11 +15,11 @@ public class NavXGyro extends SubsystemBase {
   //TODO
   public static AHRS ahrs = new AHRS(Constants.mxp_port);
   public NavXGyro() {
-    ahrs.reset();
+    
   }
 
   public static double getAngle(){
-    return RobotContainer.navxTo360(ahrs.getAngle());
+    return RobotContainer.navxTo360(ahrs.getAngle())%360;
   }
   @Override
   public void periodic() {

@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.SPI.Port;
 public final class Constants {
 
     //ports
-    public static final int left_joystick_port = 0;
+    public static final int left_joystick_port = 1;
     public static final int right_joystick_port = 0;
 
     public static final int xbox_port = 0;

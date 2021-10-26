@@ -38,7 +38,7 @@ public class FollowTrajectory extends CommandBase {
   public void initialize() {
     Constants.in_auto = true;
     odometry.reset();
-    NavXGyro.ahrs.reset();
+    //NavXGyro.ahrs.reset();
     initialTime = System.currentTimeMillis()/1000.;
   }
 

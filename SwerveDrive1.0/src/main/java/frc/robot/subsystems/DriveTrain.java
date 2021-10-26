@@ -73,7 +73,7 @@ public class DriveTrain extends SubsystemBase {
 
 
   public DriveTrain() {
-    NavXGyro.ahrs.reset();
+    NavXGyro.ahrs.zeroYaw();
     for(int i = 0; i<4; i++){
       TalonFX motor = directionals[i];
       motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
@@ -133,10 +133,6 @@ public class DriveTrain extends SubsystemBase {
     setDirectionalAnglesEff(angles); //TODO add Eff
     setVelocities(speeds);
  
-    SmartDashboard.putNumber("LF turnto", angles[0]);
-    SmartDashboard.putNumber("LB turnto", angles[1]);
-    SmartDashboard.putNumber("RF turnto", angles[2]);
-    SmartDashboard.putNumber("RB turnto", angles[3]);
   }
 
   public void setThrustSpeeds(double[] speeds){
@@ -288,8 +284,8 @@ public class DriveTrain extends SubsystemBase {
     
     displayValues();
     //setConstants();
-    setDirectionalConstants();
-
+    //setDirectionalConstants();
+   
     
   }
 }

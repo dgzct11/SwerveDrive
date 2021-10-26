@@ -62,6 +62,7 @@ public class RobotContainer {
 
   public RobotContainer() {
     // configures commands
+    
     odometry.setDriveTrain(driveTrain);
     FieldOriented sd = new FieldOriented(driveTrain, xboxRemote);
     sd.addRequirements(driveTrain);
@@ -78,24 +79,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  public Runnable Switch = new Runnable() {
-    @Override 
-    public void run() {
-      SmartDashboard.putBoolean("change D", true);
-      if(Constants.drive_mode == 0){
-        FieldOriented fo = new FieldOriented(driveTrain, xboxRemote);
-        fo.addRequirements(driveTrain);
-        driveTrain.setDefaultCommand(fo);
   
-        Constants.drive_mode = 1;
-      }
-      else if(Constants.drive_mode == 1){
-        SwerveDrive fo = new SwerveDrive(driveTrain, xboxRemote);
-        fo.addRequirements(driveTrain);
-        driveTrain.setDefaultCommand(fo);
-      }
-    }
-  };
   private void configureButtonBindings() {
    xButton.whenPressed(new SwitchDriveMode(driveTrain, xboxRemote));
    leftButton.whenPressed(new ChangeSpeed(-0.5));
@@ -113,7 +97,6 @@ public class RobotContainer {
       {0,2},
       {1,2},
       {1,3},
-      {0,3},
       {0,0}
       };
       double[] distances = {

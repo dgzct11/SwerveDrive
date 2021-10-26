@@ -27,8 +27,6 @@ public abstract class Trajectory {
         timeToBreak = (maxVelocity/acceleration);
         distanceToAccelerate = (maxVelocity*maxVelocity/(2*acceleration));
         distanceToBreak = (maxVelocity*maxVelocity/(2*acceleration));
-        totalTime = (totalDistance - distanceToAccelerate - distanceToBreak )/maxVelocity + timeToMax + timeToBreak;
-
         
     }
     public void setMaxAV(double a, double v){
@@ -84,6 +82,9 @@ public abstract class Trajectory {
         for(Segment seg: segments){
            totalDistance += seg.length;
         }
+        totalTime = (totalDistance - distanceToAccelerate - distanceToBreak )/maxVelocity + timeToMax + timeToBreak;
+
+        
       return totalDistance;
     }
     public abstract void initializeSegments();
