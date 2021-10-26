@@ -76,5 +76,8 @@ public final class Constants {
     public static final double limeLightHeight = 0;
     
     public static double max_motor_percent = 0.5;
-	public static double velocityMax = 0.5;
+    public static double velocityMax = 0.5;
+    
+    public static double focus_length = 2.9272781257541;
+    public static double ball_height = 0.5;
 }

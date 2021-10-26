@@ -3,6 +3,8 @@ package frc.robot.functional;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.subsystems.SwerveDrive;
 
 public class LimeLight {
@@ -22,6 +24,7 @@ public class LimeLight {
 
   double x;
   double y;
+  double distance;
   boolean objectInView;
   double area;
   SwerveDrive sd;
@@ -32,18 +35,25 @@ public class LimeLight {
   }
    
   public void updateValues() {
-    x = tx.getDouble(0.0);
-    y = ty.getDouble(0.0);
-    area = ta.getDouble(0.0);
     objectInView = (tv.getDouble(0.0) == 1);
+    if (objectInView) {
+      x = tx.getDouble(0.0);
+      y = ty.getDouble(0.0);
+      area = ta.getDouble(0.0);
+      
+      SmartDashboard.putNumber("Lime Area", area);
+      SmartDashboard.putNumber("Ball Distance", distance);
+      SmartDashboard.putNumber("Ball X", x);
+      SmartDashboard.putNumber("Ball Y", y);
+    }
   }
 
   public void trackBall() {
     if(objectInView) {
-
+      distance = Constants.focus_length/Math.sqrt(area);
+      sd.drive(0, distance, x);
     } else {
-        sd.drive(0,0,0.3);
+      sd.drive(0,0,0.3 * (x<0? -1:1));
     }
   }
-  
 }

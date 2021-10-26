@@ -76,6 +76,14 @@ public class SwerveDrive extends SubsystemBase{
 
     double[][] dir = {{brSpeed, blSpeed, frSpeed, flSpeed},{brAngle, blAngle, frAngle, flAngle}};
 
+    /*
+    double maxS = 0; double maxD = 0;
+    for (short i = 0; i < 4; i++) {
+      if (dir[0][i] > maxS) {maxS = dir[0][i];};
+      if (dir[1][i] > maxD) {maxD = dir[1][i];};
+      dir[0][i] /= maxS; dir[1][i] /= maxD;
+    }
+    */
     return dir;
   }
 
@@ -124,10 +132,6 @@ public class SwerveDrive extends SubsystemBase{
       el.speed_m.config_kD(slotIdx, kdTh);
       el.speed_m.config_kF(slotIdx, kfTh);
     }
-  }
-
-  public Wheel[] getWheels() {
-    return wheels;
   }
 
   public void stop() {
