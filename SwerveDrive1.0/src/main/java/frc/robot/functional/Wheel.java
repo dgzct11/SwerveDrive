@@ -41,11 +41,17 @@ public class Wheel {
 
   public void drive(double speed, double angle) {
     speed_m.set(ControlMode.PercentOutput, speed * Constants.max_motor_percent);
-    angle_m.set(ControlMode.Position, angle * Constants.units_per_degree);
+    double nAngle = angle_m.getSelectedSensorPosition();
+    angle_m.set(ControlMode.Position, angle * (nAngle + Constants.units_per_degree));
+
+    motor.set(TalonFXControlMode.Position, 
+    ((motor.getSelectedSensorPosition() + 
+    RobotContainer.angleDistance2(angles[i], currentAngles[i])*Constants.pos_units_per_degree * 
+    (RobotContainer.shouldTurnLeft(currentAngles[i], angles[i]) ? 1:-1)))); 
   }
 
   public void drive_v(double speed, double angle) {
-    speed_m.set(ControlMode.Velocity, Constants.velocityMax * speed * Constants.talon_velocity_per_ms);
-    angle_m.set(ControlMode.Position, Constants.velocityMax * angle * Constants.units_per_degree);
+    speed_m.set(ControlMode.Velocity, speed * Constants.talon_velocity_per_ms);
+    angle_m.set(ControlMode.Position, angle * Constants.units_per_degree);
   }
 }
