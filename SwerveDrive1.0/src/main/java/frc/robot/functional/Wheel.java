@@ -7,16 +7,39 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants;
 
 public class Wheel {
   public TalonSRX angle_m;
   public TalonSRX speed_m;
-  public int slotIdx=0;
-  public double kpDir=0;
-  public double kiDir=0;
-  public double kdDir=0;
-  public double kfDir=0.5;
+
+  private ShuffleboardTab tab = Shuffleboard.getTab("PID DriveTrain Constants");
+  
+  private NetworkTableEntry kpDirEntry = tab.add("Directional KP", 0).getEntry();
+  private NetworkTableEntry kiDirEntry = tab.add("Directional KI", 0).getEntry();
+  private NetworkTableEntry kdDirEntry = tab.add("Directional KD", 0).getEntry();
+
+  private NetworkTableEntry kpThEntry = tab.add("Thrust KP", 0).getEntry();
+  private NetworkTableEntry kiThEntry = tab.add("Thrust KI", 0).getEntry();
+  private NetworkTableEntry kdThEntry = tab.add("Thrust KD", 0).getEntry();
+  private NetworkTableEntry kfThEntry = tab.add("Thrust KF", 0).getEntry();
+
+  public double kpDir = 0.2;
+  public double kiDir = 0.002;
+  public double kdDir = 0;
+  public double kfDir = 0;
+  public int slotIdx = 0;
+
+  public double kpTh = 0.01;
+  public double kiTh = 0;
+  public double kdTh = 0;
+  public double kfTh = 0.045;
+
+  private PIDControl pidController;
 
   /** Creates a new Wheel. */
   public Wheel(int angle_p, int speed_p) {
@@ -41,12 +64,41 @@ public class Wheel {
 
   public void drive(double speed, double angle) {
     speed_m.set(ControlMode.PercentOutput, speed * Constants.max_motor_percent);
-    double nAngle = angle_m.getSelectedSensorPosition();
-    angle_m.set(ControlMode.Position, angle * (nAngle + Constants.units_per_degree));
+    double setpoint = angle * 6 + 6;
+    if (setpoint < 0) {
+      setpoint = 12 + setpoint;
+    }
+    if (setpoint > 12) {
+        setpoint = setpoint - 12;
+    }
+
+    pidController.setSetpoint(setpoint, angle_m.getSelectedSensorPosition());
+
+    angle_m.set(ControlMode.Position, pidController.getOutput(angle_m.getSelectedSensorPosition()));
   }
 
   public void drive_v(double speed, double angle) {
     speed_m.set(ControlMode.Velocity, speed * Constants.talon_velocity_per_ms);
     angle_m.set(ControlMode.Position, angle * Constants.units_per_degree);
+  }
+
+  public void setPID() {
+    kpDir = kpDirEntry.getDouble(kpDir);
+    kiDir = kiDirEntry.getDouble(kiDir);
+    kdDir = kdDirEntry.getDouble(kdDir);
+
+    kpTh = kpThEntry.getDouble(kpTh);
+    kiTh = kiThEntry.getDouble(kiTh);
+    kdTh = kdThEntry.getDouble(kdTh);
+    kfTh = kfThEntry.getDouble(kfTh);
+
+    angle_m.config_kP(slotIdx, kpDir);
+    angle_m.config_kI(slotIdx, kiDir);
+    angle_m.config_kD(slotIdx, kdDir);
+
+    speed_m.config_kP(slotIdx, kpTh);
+    speed_m.config_kI(slotIdx, kiTh);
+    speed_m.config_kD(slotIdx, kdTh);
+    speed_m.config_kF(slotIdx, kfTh);
   }
 }

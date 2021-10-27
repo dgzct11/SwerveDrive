@@ -13,7 +13,6 @@ public class PIDControl {
         kp = p;
         ki = i;
         kd = d;
-    
     }
     public void setSetpoint(double s, double currentValue){
         setPoint = s;

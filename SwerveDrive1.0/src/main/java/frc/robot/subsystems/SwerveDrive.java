@@ -9,41 +9,15 @@ import frc.robot.functional.Wheel;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 
 /** An example command that uses an example subsystem. */
 public class SwerveDrive extends SubsystemBase{
-  private ShuffleboardTab tab = Shuffleboard.getTab("PID DriveTrain Constants");
-  
-  private NetworkTableEntry kpDirEntry = tab.add("Directional KP", 0).getEntry();
-  private NetworkTableEntry kiDirEntry = tab.add("Directional KI", 0).getEntry();
-  private NetworkTableEntry kdDirEntry = tab.add("Directional KD", 0).getEntry();
-
-  private NetworkTableEntry kpThEntry = tab.add("Thrust KP", 0).getEntry();
-  private NetworkTableEntry kiThEntry = tab.add("Thrust KI", 0).getEntry();
-  private NetworkTableEntry kdThEntry = tab.add("Thrust KD", 0).getEntry();
-  private NetworkTableEntry kfThEntry = tab.add("Thrust KF", 0).getEntry();
-
-  public double kpDir = 0.2;
-  public double kiDir = 0.002;
-  public double kdDir = 0;
-  public double kfDir = 0;
-  public int slotIdx = 0;
-
-  public double kpTh = 0.01;
-  public double kiTh = 0;
-  public double kdTh = 0;
-  public double kfTh = 0.045;
 
   private Wheel[] wheels = new Wheel[4];
-  
   public int[] thrustCoefficients = {1,1,1,1};
-
   public static AHRS ahrs = new AHRS(Constants.mxp_port);
 
   public SwerveDrive (Wheel br, Wheel bl, Wheel fr, Wheel fl) {
@@ -110,28 +84,6 @@ public class SwerveDrive extends SubsystemBase{
     }
   }
 
-  public void setPID() {
-    kpDir = kpDirEntry.getDouble(kpDir);
-    kiDir = kiDirEntry.getDouble(kiDir);
-    kdDir = kdDirEntry.getDouble(kdDir);
-
-    kpTh = kpThEntry.getDouble(kpTh);
-    kiTh = kiThEntry.getDouble(kiTh);
-    kdTh = kdThEntry.getDouble(kdTh);
-    kfTh = kfThEntry.getDouble(kfTh);
-
-    for (Wheel el:wheels) {
-      el.angle_m.config_kP(slotIdx, kpDir);
-      el.angle_m.config_kI(slotIdx, kiDir);
-      el.angle_m.config_kD(slotIdx, kdDir);
-
-      el.speed_m.config_kP(slotIdx, kpTh);
-      el.speed_m.config_kI(slotIdx, kiTh);
-      el.speed_m.config_kD(slotIdx, kdTh);
-      el.speed_m.config_kF(slotIdx, kfTh);
-    }
-  }
-
   public void stop() {
     for(Wheel el:wheels) {el.drive(0, 0);}
   }
@@ -150,5 +102,11 @@ public class SwerveDrive extends SubsystemBase{
 
   public double getFOAngle(){
     return (360-(ahrs.getAngle()+360));
+  }
+
+  public void setPID() {
+    for (Wheel el:wheels) {
+      el.setPID();
+    }
   }
 }
