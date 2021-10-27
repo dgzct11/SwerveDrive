@@ -50,11 +50,17 @@ public class Odometry extends SubsystemBase {
     //get angles of wheels
     double[] angles = driveTrain.getAngles();
     int[] thrustDirections = driveTrain.getThrustCoefficients();
+
     //get how far each wheel traveled since last iteration
     double[] deltaPositions = driveTrain.getThrustPositions();
     //subtracts previous position from total position to get change in position
-    for(int i = 0; i<4; i++)
-      deltaPositions[i] -= thrustDirections[i] * previousPositionsThrust[i];
+    for(int i = 0; i<4; i++){
+      deltaPositions[i] -=  previousPositionsThrust[i];
+      if(thrustDirections[i] == -1){
+        angles[i] = (angles[i] + 180)%360;
+        deltaPositions[i] *= -1;
+      }
+    }
     previousPositionsThrust = driveTrain.getThrustPositions();
 
     double[] strafeVector = new double[2];

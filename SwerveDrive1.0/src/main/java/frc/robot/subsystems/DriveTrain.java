@@ -111,7 +111,10 @@ public class DriveTrain extends SubsystemBase {
     
   }
 
-  
+  public void fieldOrientedDrive(double strafeAngle, double speed, double rotateSpeed){
+    strafeAngle = (RobotContainer.angleDistance2(NavXGyro.getAngle(), strafeAngle) * (RobotContainer.shouldTurnLeft(NavXGyro.getAngle(), strafeAngle)?1:-1) + 360 ) %360;
+    rotateDriveVelocity(strafeAngle, speed, rotateSpeed);
+  }
   public void rotateDriveVelocity(double strafeAngle, double speed, double rotateSpeed){
     //positive rotate speed is left turn, negative rotate speed is right turn
     double strafeXComponent = -Math.sin(Math.toRadians(strafeAngle))*speed;
