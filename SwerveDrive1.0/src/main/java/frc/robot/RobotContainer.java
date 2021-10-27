@@ -64,4 +64,24 @@ public class RobotContainer {
     upPad.whenPressed(foSwitch);
     downPad.whenPressed(admSwitch);
   }
+
+  public static boolean shouldTurnLeft(double currentNavxAngle, double targetAngle){
+    double angle = currentNavxAngle;
+    boolean value = false;
+
+    if(targetAngle <= 180) value = angle<targetAngle || angle> 180+targetAngle;
+    else value = angle<targetAngle && angle> targetAngle-180;
+    return value;
+  }
+
+  public static double angleDistance2(double targetAngle, double angle){
+    double distance = Math.abs(targetAngle - angle)%360;
+    if (distance > 180) distance = 360 - distance;
+    return distance;
+  }
+  public static double floorMod(double x, double y){
+    if(x<0)
+        return y - Math.abs(x)%y;
+    return x%y;
+  }
 }

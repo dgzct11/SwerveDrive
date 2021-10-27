@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.functional.Wheel;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -58,11 +59,25 @@ public class SwerveDrive extends SubsystemBase{
     }
     return dir;
   }
-
+  
+  /* motor.getSelectedSensorPosition() + 
+  RobotContainer.angleDistance2(angles[i], currentAngles[i])*Constants.pos_units_per_degree * 
+  (RobotContainer.shouldTurnLeft(currentAngles[i], angles[i]) ? 1:-1)))); */
   public void drive (double x1, double y1, double x2) {
     double[][] dir = trig(x1, y1, x2);
+    double[] currAngVal = getValues(4, 8);
+    double[] currAng = getCurrAng(); 
     for (short i = 0; i < 4; i++) {
-      wheels[i].drive(dir[0][i], dir[1][i]);
+      if(RobotContainer.angleDistance2(dir[1][i], currAng[i]) > 90){
+        thrustCoefficients[i] = -1;
+        dir[1][i] = (dir[1][i]+180)%360;
+        wheels[i].drive(dir[0][i], dir[1][i], thrustCoefficients[i]);
+      } else {
+        thrustCoefficients[i] = 1;
+        wheels[i].drive(dir[0][i], ((currAngVal[i] + 
+        RobotContainer.angleDistance2(dir[1][i], currAng[i])*Constants.units_per_degree * 
+        (RobotContainer.shouldTurnLeft(currAng[i], dir[1][i]) ? 1:-1))), thrustCoefficients[i]);
+      }
     }
   }
 
@@ -71,21 +86,11 @@ public class SwerveDrive extends SubsystemBase{
     double temp = y1 * Math.cos(foAngle) + x1 * Math.sin(foAngle);
     x1 = -y1 * Math.sin(foAngle) + x1 * Math.cos(foAngle);
     y1 = temp;
-    double[][] dir = trig(x1, y1, x2);
-    for (short i = 0; i < 4; i++) {
-      wheels[i].drive(dir[0][i], dir[1][i]);
-    }
-  }
-
-  public void driveDirectionalAngles(double[] angles) {
-    double[] currentAngles = getValues(4, 8);
-    for(int i = 0; i<4; i++) {
-      wheels[i].drive(0, (currentAngles[i] + angles[i]));
-    }
+    drive(x1,y1,x2);
   }
 
   public void stop() {
-    for(Wheel el:wheels) {el.drive(0, 0);}
+    for(Wheel el:wheels) {el.drive(0, 0, 0);}
   }
 
   public double[] getValues(int first, int last ) {
@@ -98,6 +103,14 @@ public class SwerveDrive extends SubsystemBase{
       }
     }
     return positions;
+  }
+
+  public double[] getCurrAng() {
+    double[] currAng = getValues(4, 8);
+    for(int i = 0; i<4; i++){
+      currAng[i] = RobotContainer.floorMod(currAng[i]/Constants.units_per_degree, 360);
+    }
+    return currAng;
   }
 
   public double getFOAngle(){

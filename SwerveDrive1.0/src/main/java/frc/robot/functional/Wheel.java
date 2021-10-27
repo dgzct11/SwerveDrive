@@ -3,10 +3,10 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.functional;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants;
 
 public class Wheel {
-  public TalonSRX angle_m;
-  public TalonSRX speed_m;
+  public TalonFX angle_m;
+  public TalonFX speed_m;
 
   private ShuffleboardTab tab = Shuffleboard.getTab("PID DriveTrain Constants");
   
@@ -39,12 +39,10 @@ public class Wheel {
   public double kdTh = 0;
   public double kfTh = 0.045;
 
-  private PIDControl pidController;
-
   /** Creates a new Wheel. */
   public Wheel(int angle_p, int speed_p) {
-    angle_m = new TalonSRX(angle_p);
-    speed_m = new TalonSRX(speed_p);
+    angle_m = new TalonFX(angle_p);
+    speed_m = new TalonFX(speed_p);
 
     angle_m.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     angle_m.configAllowableClosedloopError(slotIdx, 1 * Constants.units_per_degree);
@@ -62,24 +60,14 @@ public class Wheel {
     speed_m.setSelectedSensorPosition(0);
   }
 
-  public void drive(double speed, double angle) {
-    speed_m.set(ControlMode.PercentOutput, speed * Constants.max_motor_percent);
-    double setpoint = angle * 6 + 6;
-    if (setpoint < 0) {
-      setpoint = 12 + setpoint;
-    }
-    if (setpoint > 12) {
-        setpoint = setpoint - 12;
-    }
-
-    pidController.setSetpoint(setpoint, angle_m.getSelectedSensorPosition());
-
-    angle_m.set(ControlMode.Position, pidController.getOutput(angle_m.getSelectedSensorPosition()));
+  public void drive(double speed, double angle, double thrustCoefficients) {
+    speed_m.set(TalonFXControlMode.PercentOutput, thrustCoefficients * speed * Constants.max_motor_percent);
+    angle_m.set(TalonFXControlMode.Position, angle);
   }
 
-  public void drive_v(double speed, double angle) {
-    speed_m.set(ControlMode.Velocity, speed * Constants.talon_velocity_per_ms);
-    angle_m.set(ControlMode.Position, angle * Constants.units_per_degree);
+  public void drive_v(double speed, double angle, double thrustCoefficients) {
+    speed_m.set(TalonFXControlMode.Velocity, thrustCoefficients * speed * Constants.talon_velocity_per_ms);
+    angle_m.set(TalonFXControlMode.Position, angle * Constants.units_per_degree);
   }
 
   public void setPID() {
