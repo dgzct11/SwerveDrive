@@ -116,7 +116,9 @@ public class SwerveDrive extends SubsystemBase{
   }
 
   public double getFOAngle(){
-    return (360-(ahrs.getAngle()+360));
+    double angle = ahrs.getAngle();
+    if (angle<=0) angle += 360;
+    return (360-angle)%360;
   }
 
   public void setPID() {
