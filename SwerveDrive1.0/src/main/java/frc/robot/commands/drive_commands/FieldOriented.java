@@ -32,14 +32,14 @@ public class FieldOriented extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-   
+   if(!Constants.in_auto){
       double strafeAngle = xbox.getLeftAngle();
       SmartDashboard.putNumber("Strafe Angle", strafeAngle);
       double speed = xbox.getLeftMagnitude();
       double rotateSpeed = xbox.getRightX();
       strafeAngle = (RobotContainer.angleDistance2(NavXGyro.getAngle(), strafeAngle) * (RobotContainer.shouldTurnLeft(NavXGyro.getAngle(), strafeAngle)?1:-1) + 360 ) %360;
       driveTrain.rotateDriveVelocity(strafeAngle, speed, rotateSpeed);
-     
+   }
     
   }
 

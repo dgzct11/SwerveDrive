@@ -154,6 +154,9 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("RF V Diff", Math.abs(currentSpeeds[2] - speeds[2]));
     SmartDashboard.putNumber("RB V Diff", Math.abs(currentSpeeds[3] - speeds[3]));
   }
+  public int[] getThrustCoefficients(){
+    return thrustCoefficients;
+  }
   public void setDirectionalAngles(double[] angles){
     double[] currentAngles = getAngles();
     SmartDashboard.putNumber("LF A Diff", RobotContainer.angleDistance2(currentAngles[0], angles[0]));
