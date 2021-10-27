@@ -10,25 +10,41 @@ import frc.robot.functional.Wheel;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 
 /** An example command that uses an example subsystem. */
 public class SwerveDrive extends SubsystemBase{
+  private ShuffleboardTab tab = Shuffleboard.getTab("PID DriveTrain Constants");
+    
+  private NetworkTableEntry kpDirEntry = tab.add("Directional KP", 0).getEntry();
+  private NetworkTableEntry kiDirEntry = tab.add("Directional KI", 0).getEntry();
+  private NetworkTableEntry kdDirEntry = tab.add("Directional KD", 0).getEntry();
+
+  private NetworkTableEntry kpThEntry = tab.add("Thrust KP", 0).getEntry();
+  private NetworkTableEntry kiThEntry = tab.add("Thrust KI", 0).getEntry();
+  private NetworkTableEntry kdThEntry = tab.add("Thrust KD", 0).getEntry();
+  private NetworkTableEntry kfThEntry = tab.add("Thrust KF", 0).getEntry();
 
   private Wheel[] wheels = new Wheel[4];
   public int[] thrustCoefficients = {1,1,1,1};
   public static AHRS ahrs = new AHRS(Constants.mxp_port);
 
   public SwerveDrive (Wheel br, Wheel bl, Wheel fr, Wheel fl) {
+    ahrs.reset();
+    ahrs.zeroYaw();
+
     wheels[0] = br;
     wheels[1] = bl;
     wheels[2] = fr;
     wheels[3] = fl;
+    
     br.speed_m.setInverted(true);
     fr.speed_m.setInverted(true);
-    ahrs.reset();
   }
 
   public double[][] trig (double x1, double y1, double x2) {
@@ -123,7 +139,23 @@ public class SwerveDrive extends SubsystemBase{
 
   public void setPID() {
     for (Wheel el:wheels) {
-      el.setPID();
+      el.kpDir = kpDirEntry.getDouble(el.kpDir);
+      el.kiDir = kiDirEntry.getDouble(el.kiDir);
+      el.kdDir = kdDirEntry.getDouble(el.kdDir);
+  
+      el.kpTh = kpThEntry.getDouble(el.kpTh);
+      el.kiTh = kiThEntry.getDouble(el.kiTh);
+      el.kdTh = kdThEntry.getDouble(el.kdTh);
+      el.kfTh = kfThEntry.getDouble(el.kfTh);
+  
+      el.angle_m.config_kP(el.slotIdx, el.kpDir);
+      el.angle_m.config_kI(el.slotIdx, el.kiDir);
+      el.angle_m.config_kD(el.slotIdx, el.kdDir);
+  
+      el.speed_m.config_kP(el.slotIdx, el.kpTh);
+      el.speed_m.config_kI(el.slotIdx, el.kiTh);
+      el.speed_m.config_kD(el.slotIdx, el.kdTh);
+      el.angle_m.config_kF(el.slotIdx, el.kfTh);
     }
   }
 }

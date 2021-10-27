@@ -50,7 +50,7 @@ public class LimeLight {
 
   public void trackBall() {
     if(objectInView) {
-      distance = Constants.focus_length/Math.sqrt(area);
+      distance = Constants.k_length/Math.sqrt(area);
       sd.drive(0, distance, x);
     } else {
       sd.drive(0,0,0.3 * (x<0? -1:1));
