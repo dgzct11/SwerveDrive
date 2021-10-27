@@ -39,17 +39,19 @@ public class SwerveDrive extends SubsystemBase{
     double c = y1 - x2 * sine;
     double d = y1 + x2 * sine;
 
-    double brSpeed = Math.sqrt ((b * b) + (d * d));
-    double blSpeed = Math.sqrt ((b * b) + (c * c));
-    double frSpeed = Math.sqrt ((a * a) + (d * d));
-    double flSpeed = Math.sqrt ((a * a) + (c * c));
+    double[] Speeds = {
+      Math.sqrt ((b * b) + (d * d)),
+      Math.sqrt ((b * b) + (c * c)),
+      Math.sqrt ((a * a) + (d * d)),
+      Math.sqrt ((a * a) + (c * c))};
 
-    double brAngle = Math.toDegrees(Math.atan2 (b, d));
-    double blAngle = Math.toDegrees(Math.atan2 (b, c));
-    double frAngle = Math.toDegrees(Math.atan2 (a, d));
-    double flAngle = Math.toDegrees(Math.atan2 (a, c));
+    double[] Angles = {
+      Math.toDegrees(Math.atan2 (b, d)),
+      Math.toDegrees(Math.atan2 (b, c)),
+      Math.toDegrees(Math.atan2 (a, d)),
+      Math.toDegrees(Math.atan2 (a, c))};
 
-    double[][] dir = {{brSpeed, blSpeed, frSpeed, flSpeed},{brAngle, blAngle, frAngle, flAngle}};
+    double[][] dir = {Speeds, Angles};
 
     double maxS = 0; double maxD = 0;
     for (short i = 0; i < 4; i++) {
@@ -59,7 +61,7 @@ public class SwerveDrive extends SubsystemBase{
     }
     return dir;
   }
-  
+
   /* motor.getSelectedSensorPosition() + 
   RobotContainer.angleDistance2(angles[i], currentAngles[i])*Constants.pos_units_per_degree * 
   (RobotContainer.shouldTurnLeft(currentAngles[i], angles[i]) ? 1:-1)))); */
