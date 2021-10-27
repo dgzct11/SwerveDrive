@@ -59,8 +59,8 @@ public class RobotContainer {
   public Runnable lower = new Runnable() {public void run() {if (Constants.velocityMax != 0||Constants.max_motor_percent != 0) {Constants.velocityMax-=0.5; Constants.max_motor_percent-=0.5;}}};
   public Runnable admSwitch = new Runnable(){public void run() {if (ad.adm < 4) {ad.adm++;} else {ad.adm = 0;}ad.checkAutoDM();}};
   private void configureButtonBindings() {
-    leftPad.whenPressed(raise);
-    rightPad.whenPressed(lower);
+    leftPad.whenPressed(lower);
+    rightPad.whenPressed(raise);
     upPad.whenPressed(foSwitch);
     downPad.whenPressed(admSwitch);
   }
