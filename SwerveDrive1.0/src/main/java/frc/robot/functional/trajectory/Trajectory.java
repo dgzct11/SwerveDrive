@@ -20,14 +20,20 @@ public abstract class Trajectory {
     public double totalTime = 0;
     public double distanceToAccelerate;
     public double distanceToBreak;
-    public Trajectory(double a, double mv){
+
+    public int currentIndex = 0;
+    public double[] angles;
+    public Trajectory(double a, double mv, double[] ang){
         acceleration = a;
         maxVelocity = mv;
         timeToMax = maxVelocity/acceleration;
         timeToBreak = (maxVelocity/acceleration);
         distanceToAccelerate = (maxVelocity*maxVelocity/(2*acceleration));
         distanceToBreak = (maxVelocity*maxVelocity/(2*acceleration));
-        
+        angles = ang;
+    }
+    public double getCurrentAngle(){
+        return segments.get(currentIndex).angle;
     }
     public void setMaxAV(double a, double v){
         acceleration = a;
@@ -48,6 +54,7 @@ public abstract class Trajectory {
         double distance;
         if(time>totalTime){
             Segment seg = segments.get(segments.size()-1);
+            currentIndex = segments.size()-1;
             return new Position(seg.endPoint, RobotContainer.angleFromSlope(seg.startPoint, seg.endPoint));
         }
         if(time <= timeToMax){
@@ -61,6 +68,7 @@ public abstract class Trajectory {
         }
         if(distance>totalDistance){
             Segment seg = segments.get(segments.size()-1);
+            currentIndex = segments.size()-1;
             return new Position(seg.endPoint, RobotContainer.angleFromSlope(seg.startPoint, seg.endPoint));
         }
         double currentDistance = 0;
@@ -69,6 +77,7 @@ public abstract class Trajectory {
             currentDistance += segments.get(index).length;   
             index ++;
         }
+        currentIndex = index;
         return segments.get(index).getPosition(distance - currentDistance );
         //turn currentDistance into position
     }

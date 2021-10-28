@@ -11,10 +11,11 @@ import frc.robot.RobotContainer;
 public class TrajectoryCircleLine extends Trajectory{
     double[][] points;
     double[] distances;
+
    
    
-    public TrajectoryCircleLine(double[][] points, double[] distances, double a, double mv){
-        super(a, mv); 
+    public TrajectoryCircleLine(double[][] points, double[] distances, double[] angles, double a, double mv){
+        super(a, mv, angles); 
         this.points = points;
         this.distances = distances;
        initializeSegments();
@@ -24,7 +25,7 @@ public class TrajectoryCircleLine extends Trajectory{
     public void initializeSegments(){
         segments = new ArrayList<Segment>();
         double[] startPoint = points[0];
-
+        int angleIndex = 0;
         for(int i = 0; i<points.length-2; i++){
             //establish points
             
@@ -43,20 +44,28 @@ public class TrajectoryCircleLine extends Trajectory{
             double firstPerpendicular = -1/firstSlope;
             double secondSlope = (nextCorner[1]-cornerPoint[1])/(nextCorner[0]-cornerPoint[0]);
             double secondPerpendicular = -1/secondSlope;
+
             Line line1 = new Line(circleStart , firstPerpendicular);
+           
             //fix circle end;
             Line line2 = new Line(circleEnd,  secondPerpendicular);
-            
+           
+
             double[] center = line1.getIntersection(line2);
             double radius = RobotContainer.distance(center, circleStart);
            
             Circle circle = new Circle(center, radius, circleStart, circleEnd);
             Line line = new Line(startPoint, circleStart);
+            line.angle = angles[angleIndex];
+            angleIndex ++;
+            circle.angle = angles[angleIndex];
             segments.add(line);
             segments.add(circle);
             startPoint = circleEnd;
         }
-        segments.add(new Line(startPoint, points[points.length-1]));
+        Line line = new Line(startPoint, points[points.length-1]);
+        line.angle = angles[angles.length-1];
+        segments.add(line);
 
 
 

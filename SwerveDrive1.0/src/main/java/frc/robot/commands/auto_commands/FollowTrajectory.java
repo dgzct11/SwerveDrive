@@ -21,15 +21,17 @@ public class FollowTrajectory extends CommandBase {
   DriveTrain driveTrain;
   Odometry odometry;
   TrajectoryCircleLine trajectory;
-  double acceleration = 1, velocity = 1;
+  
   double previousTime;
   double initialTime;
   double timeUnit = 0.1;
-  public FollowTrajectory(double[][] points, double[] distances, DriveTrain dt, Odometry od) {
+  double finalAngle = 0;
+  public FollowTrajectory(TrajectoryCircleLine t, DriveTrain dt, Odometry od, double fa) {
     // Use addRequirements() here to declare subsystem dependencies.
     driveTrain = dt;
     odometry = od;
-    trajectory = new TrajectoryCircleLine(points, distances, acceleration, velocity);
+    trajectory = t;
+    finalAngle = fa;
     
   }
 
@@ -45,19 +47,12 @@ public class FollowTrajectory extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Position currentPosition = odometry.getPosition();
+    double[] currentPosition = odometry.getPosition().point;
     double time = System.currentTimeMillis()/1000. - initialTime;
-   
-    Position newPos = trajectory.getPosition(time+timeUnit);
-    double[] start = {currentPosition.x, currentPosition.y};
-    double[] end = {newPos.x, newPos.y};
-   
-   
-    double angleToPoint = RobotContainer.angleToPoint(start, end);
- 
-    double speed = RobotContainer.distance(start, end)/timeUnit;
-    
-    driveTrain.rotateDriveVelocity((angleToPoint-NavXGyro.ahrs.getAngle() + 360)%360, speed, 0);
+    double[] newPos = trajectory.getPosition(time+timeUnit).point;
+    double angleToPoint = RobotContainer.angleToPoint(currentPosition, newPos);
+    double speed = RobotContainer.distance(currentPosition, newPos)/timeUnit; 
+    driveTrain.alignDrive(angleToPoint, speed, finalAngle);
     previousTime = time;
   }
 

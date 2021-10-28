@@ -76,7 +76,9 @@ public class DriveTrain extends SubsystemBase {
   public double kdTh = 0;
   public double kfTh = 0.045;
 
-
+  //algining with angle constant
+  public double alignKP = 0.03;
+  public double alignAngleSpeed = 0.3;
   public int[] thrustCoefficients = {1,1,1,1};
 
   int timeout = 0;
@@ -87,7 +89,7 @@ public class DriveTrain extends SubsystemBase {
 
 
   public DriveTrain() {
-    NavXGyro.ahrs.zeroYaw();
+    NavXGyro.ahrs.reset();
 
     //dir motors
     for(int i = 0; i<4; i++){
@@ -109,16 +111,16 @@ public class DriveTrain extends SubsystemBase {
     for(int i = 0; i<4; i++){
       TalonFX thMotor = thrusts[i];
       thMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-      thMotor.config_kP(0, kpThPos);
-      thMotor.config_kI(0, kiThPos);
-      thMotor.config_kD(0, kdThPos);
+      thMotor.config_kP(1, kpThPos);
+      thMotor.config_kI(1, kiThPos);
+      thMotor.config_kD(1, kdThPos);
       
       thMotor.configAllowableClosedloopError(0, errorPos, 0);
 
-      thMotor.config_kP(1, kpTh);
-      thMotor.config_kI(1, kiTh);
-      thMotor.config_kD(1, kdTh);
-      thMotor.config_kF(1, kfTh);
+      thMotor.config_kP(0, kpTh);
+      thMotor.config_kI(0, kiTh);
+      thMotor.config_kD(0, kdTh);
+      thMotor.config_kF(0, kfTh);
       thMotor.setNeutralMode(NeutralMode.Brake);
     }
 
@@ -136,6 +138,10 @@ public class DriveTrain extends SubsystemBase {
     
   }
 
+  public void alignDrive(double strafeAngle, double speed, double angle){
+    double error = Math.min( alignKP*RobotContainer.angleDistance2(angle, NavXGyro.getAngle()), alignAngleSpeed);
+    fieldOrientedDrive(strafeAngle, speed, error * (RobotContainer.shouldTurnLeft(NavXGyro.getAngle(), angle) ? 1:-1));
+  }
   public void driveDistance(double angle, double distance){
     distance *= Constants.pos_units_per_meter;
     double[] angles = {angle, angle, angle, angle};
@@ -182,6 +188,7 @@ public class DriveTrain extends SubsystemBase {
     rbt.set(ControlMode.PercentOutput, thrustCoefficients[3] * Constants.max_motor_percent*speeds[3]);
   }
   public void setVelocities(double[] speeds){
+   
     lft.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[0] * Constants.talon_velocity_per_ms*speeds[0]);
     lbt.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[1] * Constants.talon_velocity_per_ms*speeds[1]);
     rft.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[2] * Constants.talon_velocity_per_ms*speeds[2]);
@@ -285,14 +292,14 @@ public class DriveTrain extends SubsystemBase {
 
     for(short i = 0; i<4; i ++){
       TalonFX thMotor = thrusts[i];
-      thMotor.config_kP(0, kpThPos);
-      thMotor.config_kI(0, kiThPos);
-      thMotor.config_kD(0, kdThPos);
+      thMotor.config_kP(1, kpThPos);
+      thMotor.config_kI(1, kiThPos);
+      thMotor.config_kD(1, kdThPos);
 
-      thMotor.config_kP(1, kpTh);
-      thMotor.config_kI(1, kiTh);
-      thMotor.config_kD(1, kdTh);
-      thMotor.config_kF(1, kfTh);
+      thMotor.config_kP(0, kpTh);
+      thMotor.config_kI(0, kiTh);
+      thMotor.config_kD(0, kdTh);
+      thMotor.config_kF(0, kfTh);
     }
    
   }
@@ -316,7 +323,7 @@ public class DriveTrain extends SubsystemBase {
     displayValues();
     //setConstants();
     //setDirectionalConstants();
-   
+    
     
   }
 }

@@ -7,6 +7,7 @@ package frc.robot.functional.trajectory;
 public class Segment {
     public double[] startPoint, endPoint;
     public double startTime, endTime, length, midTime;
+    public double angle;
     public void setModeToRamp(){
         midTime = -1;
     }

@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import frc.robot.commands.ResetGyro;
 import frc.robot.commands.auto_commands.FollowTrajectory;
 import frc.robot.commands.drive_commands.ChangeSpeed;
 import frc.robot.commands.drive_commands.FieldOriented;
@@ -18,6 +18,7 @@ import frc.robot.commands.drive_commands.SwerveDrive;
 import frc.robot.commands.drive_commands.SwitchDriveMode;
 import frc.robot.functional.trajectory.Circle;
 import frc.robot.functional.trajectory.Line;
+import frc.robot.functional.trajectory.TrajectoryCircleLine;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.JoystickRemote;
 import frc.robot.subsystems.LimeLight;
@@ -60,9 +61,10 @@ public class RobotContainer {
   Button leftButton = new JoystickButton(xboxController, Constants.lb_button_num);
   Button xButton = new JoystickButton(xboxController, Constants.x_button_num);
 
+  Button startButton = new JoystickButton(xboxController, Constants.start_button_num);
   public RobotContainer() {
     // configures commands
-    
+    NavXGyro.ahrs.reset();
     odometry.setDriveTrain(driveTrain);
     FieldOriented sd = new FieldOriented(driveTrain, xboxRemote);
     sd.addRequirements(driveTrain);
@@ -84,6 +86,7 @@ public class RobotContainer {
    xButton.whenPressed(new SwitchDriveMode(driveTrain, xboxRemote));
    leftButton.whenPressed(new ChangeSpeed(-0.5));
    rightButton.whenPressed(new ChangeSpeed(0.5));
+   startButton.whenPressed(new ResetGyro());
   }
 
   /**
@@ -105,7 +108,14 @@ public class RobotContainer {
       0.4,
       0.4
         };
-    return new FollowTrajectory(points, distances, driveTrain, odometry);//new AutonomusCommands(driveTrain);
+      double[] angles = {
+        0,0,0,0
+      };
+        double acceleration = 1;
+        double velocity = 1;
+      TrajectoryCircleLine trajectory = new TrajectoryCircleLine(points, distances, angles, acceleration, velocity);
+      double finalAngle = 0;
+    return new FollowTrajectory(trajectory, driveTrain, odometry,finalAngle);
         //return new DriveStraightDistance(1, 1, driveTrain);
         
       //return new AlignAngleRange(driveTrain, limeLight);
