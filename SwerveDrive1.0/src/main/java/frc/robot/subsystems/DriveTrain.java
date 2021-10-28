@@ -32,6 +32,11 @@ public class DriveTrain extends SubsystemBase {
   private NetworkTableEntry kiDirEntry = tab.add("Directional KI", 0).getEntry();
   private NetworkTableEntry kdDirEntry = tab.add("Directional KD", 0).getEntry();
  
+  private NetworkTableEntry kpThPosEntry = tab.add("Thrust KP Pos", 0).getEntry();
+  private NetworkTableEntry kiThPosEntry = tab.add("Thrust KI Pos", 0).getEntry();
+  private NetworkTableEntry kdThPosEntry = tab.add("Thrust KD Pos", 0).getEntry();
+
+
   private NetworkTableEntry kpThEntry = tab.add("Thrust KP", 0).getEntry();
   private NetworkTableEntry kiThEntry = tab.add("Thrust KI", 0).getEntry();
   private NetworkTableEntry kdThEntry = tab.add("Thrust KD", 0).getEntry();
@@ -53,20 +58,29 @@ public class DriveTrain extends SubsystemBase {
   public TalonFX[] directionals = {lfd, lbd, rfd, rbd};
   public TalonFX[] thrusts = {lft, lbt, rft, rbt};
 
+  //dir index 0
   public double kpDir = 0.2;
   public double kiDir = 0.002;
   public double kdDir = 0;
-  public double kfDir = 0;
-  public int slotIdx = 0;
+ 
+  double errorDeg = 0.01;
 
+  //thrust index 0 position
+  public double kpThPos = 0.2;
+  public double kiThPos = 0;
+  public double kdThPos = 0;
+  double errorPos = 10;
+//thrust index 1 velocity
   public double kpTh = 0.01;
   public double kiTh = 0;
   public double kdTh = 0;
   public double kfTh = 0.045;
+
+
   public int[] thrustCoefficients = {1,1,1,1};
 
   int timeout = 0;
-  double errorDeg = 0.01;
+ 
   double motionVelociy = 500;
   double motionAcceleration = 1000;
 
@@ -74,29 +88,40 @@ public class DriveTrain extends SubsystemBase {
 
   public DriveTrain() {
     NavXGyro.ahrs.zeroYaw();
-    for(int i = 0; i<4; i++){
-      TalonFX motor = directionals[i];
-      motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-      
-      motor.configAllowableClosedloopError(slotIdx, errorDeg*Constants.pos_units_per_degree);
-    
-      motor.setNeutralMode(NeutralMode.Brake);
-      motor.configMotionCruiseVelocity(motionVelociy);
-      motor.configMotionAcceleration(motionAcceleration);
 
-      motor.config_kP(slotIdx, kpDir);
-      motor.config_kI(slotIdx, kiDir);
-      motor.config_kD(slotIdx, kdDir);
-      motor.config_kF(slotIdx, kfDir);
-    }
+    //dir motors
     for(int i = 0; i<4; i++){
-      TalonFX motor = thrusts[i];
-      motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
-      motor.config_kP(slotIdx, kpTh);
-      motor.config_kI(slotIdx, kiTh);
-      motor.config_kD(slotIdx, kdTh);
-      motor.config_kF(slotIdx, kfTh);
+      TalonFX dirMotor = directionals[i];
+      dirMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+      
+      dirMotor.configAllowableClosedloopError(0, errorDeg*Constants.pos_units_per_degree);
+    
+      dirMotor.setNeutralMode(NeutralMode.Brake);
+     
+
+      dirMotor.config_kP(0, kpDir);
+      dirMotor.config_kI(0, kiDir);
+      dirMotor.config_kD(0, kdDir);
+
     }
+
+    //thrust motors
+    for(int i = 0; i<4; i++){
+      TalonFX thMotor = thrusts[i];
+      thMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+      thMotor.config_kP(0, kpThPos);
+      thMotor.config_kI(0, kiThPos);
+      thMotor.config_kD(0, kdThPos);
+      
+      thMotor.configAllowableClosedloopError(0, errorPos, 0);
+
+      thMotor.config_kP(1, kpTh);
+      thMotor.config_kI(1, kiTh);
+      thMotor.config_kD(1, kdTh);
+      thMotor.config_kF(1, kfTh);
+      thMotor.setNeutralMode(NeutralMode.Brake);
+    }
+
     rft.setInverted(true);
     rbt.setInverted(true);
      
@@ -111,6 +136,17 @@ public class DriveTrain extends SubsystemBase {
     
   }
 
+  public void driveDistance(double angle, double distance){
+    distance *= Constants.pos_units_per_meter;
+    double[] angles = {angle, angle, angle, angle};
+    setDirectionalAngles(angles);
+    
+    for(short i = 0; i<4; i++){
+      TalonFX motor = thrusts[i];
+      double newPos = motor.getSelectedSensorPosition() + distance*thrustCoefficients[i];
+      motor.set(TalonFXControlMode.Position, newPos);
+    }
+  }
   public void fieldOrientedDrive(double strafeAngle, double speed, double rotateSpeed){
     strafeAngle = (RobotContainer.angleDistance2(NavXGyro.getAngle(), strafeAngle) * (RobotContainer.shouldTurnLeft(NavXGyro.getAngle(), strafeAngle)?1:-1) + 360 ) %360;
     rotateDriveVelocity(strafeAngle, speed, rotateSpeed);
@@ -230,47 +266,35 @@ public class DriveTrain extends SubsystemBase {
     kpDir = kpDirEntry.getDouble(kpDir);
     kiDir = kiDirEntry.getDouble(kiDir);
     kdDir = kdDirEntry.getDouble(kdDir);
-  
-    lfd.config_kP(slotIdx, kpDir);
-    lbd.config_kP(slotIdx, kpDir);
-    rfd.config_kP(slotIdx, kpDir);
-    rbd.config_kP(slotIdx, kpDir);
-
-    lfd.config_kI(slotIdx, kiDir);
-    lbd.config_kI(slotIdx, kiDir);
-    rfd.config_kI(slotIdx, kiDir);
-    rbd.config_kI(slotIdx, kiDir);
-
-    lfd.config_kD(slotIdx, kdDir);
-    lbd.config_kD(slotIdx, kdDir);
-    rfd.config_kD(slotIdx, kdDir);
-    rbd.config_kD(slotIdx, kdDir);
+    for(int i = 0; i<4; i++){
+      TalonFX dirMotor = directionals[i];
+      dirMotor.config_kI(0, kiDir);
+      dirMotor.config_kP(0, kpDir);
+      dirMotor.config_kD(0, kdDir);
+    }
   }
-  public void setConstants(){
+  public void setThrustConstants(){
+    kpThPos = kpThPosEntry.getDouble(kpThPos);
+    kiThPos = kiThPosEntry.getDouble(kiThPos);
+    kdThPos = kdThPosEntry.getDouble(kdThPos);
+
     kpTh = kpThEntry.getDouble(kpTh);
     kiTh = kiThEntry.getDouble(kiTh);
     kdTh = kdThEntry.getDouble(kdTh);
     kfTh = kfThEntry.getDouble(kfTh);
 
-    lft.config_kP(slotIdx, kpTh);
-    lbt.config_kP(slotIdx, kpTh);
-    rft.config_kP(slotIdx, kpTh);
-    rbt.config_kP(slotIdx, kpTh);
+    for(short i = 0; i<4; i ++){
+      TalonFX thMotor = thrusts[i];
+      thMotor.config_kP(0, kpThPos);
+      thMotor.config_kI(0, kiThPos);
+      thMotor.config_kD(0, kdThPos);
 
-    lft.config_kI(slotIdx, kiTh);
-    lbt.config_kI(slotIdx, kiTh);
-    rft.config_kI(slotIdx, kiTh);
-    rbt.config_kI(slotIdx, kiTh);
-
-    lft.config_kD(slotIdx, kdTh);
-    lbt.config_kD(slotIdx, kdTh);
-    rft.config_kD(slotIdx, kdTh);
-    rbt.config_kD(slotIdx, kdTh);
-
-    lft.config_kF(slotIdx, kfTh);
-    lbt.config_kF(slotIdx, kfTh);
-    rft.config_kF(slotIdx, kfTh);
-    rbt.config_kF(slotIdx, kfTh);
+      thMotor.config_kP(1, kpTh);
+      thMotor.config_kI(1, kiTh);
+      thMotor.config_kD(1, kdTh);
+      thMotor.config_kF(1, kfTh);
+    }
+   
   }
   public void displayValues(){
     SmartDashboard.putNumber("Drive Mode", Constants.drive_mode);

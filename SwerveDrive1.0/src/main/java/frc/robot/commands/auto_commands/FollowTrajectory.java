@@ -64,7 +64,14 @@ public class FollowTrajectory extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    double[] currentPosition = odometry.getPosition().point;
+    double[] newPos = trajectory.getEndPoint().point;
+    double angleToPoint = RobotContainer.angleToPoint(currentPosition, newPos);
+    double distance = RobotContainer.distance(currentPosition, newPos);
+
+    driveTrain.driveDistance(angleToPoint, distance);
     Constants.in_auto = false;
+
   }
 
   // Returns true when the command should end.
