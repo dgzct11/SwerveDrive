@@ -68,13 +68,6 @@ public class SwerveDrive extends SubsystemBase{
       Math.toDegrees(Math.atan2 (a, c))};
 
     double[][] dir = {Speeds, Angles};
-
-    double maxS = 0; double maxD = 0;
-    for (short i = 0; i < 4; i++) {
-      if (dir[0][i] > maxS) {maxS = dir[0][i];};
-      if (dir[1][i] > maxD) {maxD = dir[1][i];};
-      dir[0][i] /= maxS; dir[1][i] /= maxD;
-    }
     return dir;
   }
 
