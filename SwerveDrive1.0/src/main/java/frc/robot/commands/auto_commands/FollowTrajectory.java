@@ -52,7 +52,7 @@ public class FollowTrajectory extends CommandBase {
     double[] newPos = trajectory.getPosition(time+timeUnit).point;
     double angleToPoint = RobotContainer.angleToPoint(currentPosition, newPos);
     double speed = RobotContainer.distance(currentPosition, newPos)/timeUnit; 
-    driveTrain.alignDrive(angleToPoint, speed, finalAngle);
+    driveTrain.rotateDriveVelocity(angleToPoint, speed, 0);
     previousTime = time;
   }
 
@@ -64,7 +64,7 @@ public class FollowTrajectory extends CommandBase {
     double angleToPoint = RobotContainer.angleToPoint(currentPosition, newPos);
     double distance = RobotContainer.distance(currentPosition, newPos);
 
-    driveTrain.driveDistance(angleToPoint, distance);
+    //driveTrain.driveDistance(angleToPoint, distance);
     Constants.in_auto = false;
 
   }

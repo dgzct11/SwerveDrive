@@ -315,6 +315,12 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("LB V", velocities[1]);
     SmartDashboard.putNumber("RF V", velocities[2]);
     SmartDashboard.putNumber("RB V", velocities[3]);
+
+    double[] angles = getAngles();
+    SmartDashboard.putNumber("LF A", angles[0]);
+    SmartDashboard.putNumber("LB A", angles[1]);
+    SmartDashboard.putNumber("RF A", angles[2]);
+    SmartDashboard.putNumber("RB A", angles[3]);
   }
   @Override
   public void periodic() {

@@ -66,13 +66,14 @@ public class Odometry extends SubsystemBase {
     double[] strafeVector = new double[2];
     //vector for each wheel rpresenting x y movement
     double[][] displacementVectors = new double[4][2];
-    double avgRotationMag = 0;
-
+    
+ 
+    double currentAngle = NavXGyro.getAngle();
     for(int i = 0; i<4; i++){
 
       //each displacemenet vector is vector for each wheel
-      displacementVectors[i][0] = -Math.sin(Math.toRadians(angles[i])) * Math.abs(deltaPositions[i]);
-      displacementVectors[i][1] =  Math.cos(Math.toRadians(angles[i])) * Math.abs(deltaPositions[i]);
+      displacementVectors[i][0] = -Math.sin(Math.toRadians(angles[i] + currentAngle)) * Math.abs(deltaPositions[i]);
+      displacementVectors[i][1] =  Math.cos(Math.toRadians(angles[i] + currentAngle)) * Math.abs(deltaPositions[i]);
 
       //adds x and y to avarage vector
       // avarage vector represents movement of center, since the sum of all rotation vectors should be zero
@@ -80,17 +81,10 @@ public class Odometry extends SubsystemBase {
       strafeVector[1] += displacementVectors[i][1]/4;
     }
 
-    for(int i = 0; i<4; i++){
-      //removes the average vector from each vector of the wheel
-      //the rotation vectors remain
-      displacementVectors[i][0] -= strafeVector[0];
-      displacementVectors[i][1] -= strafeVector[1];
-      avgRotationMag += RobotContainer.magnitutde(displacementVectors[i])/4;
-    }
-    double angleDiff = Math.toDegrees(avgRotationMag/Constants.pos_units_per_meter/Constants.distance_wheel_center);
-    if(displacementVectors[0][0]>0 && displacementVectors[0][1]>0) avgRotationMag *= -1;
+    
+
     currentPosition.add(strafeVector[0]/Constants.pos_units_per_meter, strafeVector[1]/Constants.pos_units_per_meter);
-    currentPosition.addAngle(-angleDiff);
+   
     
   
     

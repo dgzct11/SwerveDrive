@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.ResetGyro;
+import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.auto_commands.FollowTrajectory;
 import frc.robot.commands.drive_commands.ChangeSpeed;
 import frc.robot.commands.drive_commands.FieldOriented;
@@ -48,6 +49,7 @@ public class RobotContainer {
   public XboxRemote xboxRemote = new XboxRemote(xboxController);
   public Odometry odometry = new Odometry();
   public NavXGyro navx = new NavXGyro();
+  
  public LimeLight limeLight = new LimeLight(odometry);
   //buttons
 
@@ -62,6 +64,7 @@ public class RobotContainer {
   Button xButton = new JoystickButton(xboxController, Constants.x_button_num);
 
   Button startButton = new JoystickButton(xboxController, Constants.start_button_num);
+  Button backButton = new JoystickButton(xboxController, Constants.back_button_num);
   public RobotContainer() {
     // configures commands
     NavXGyro.ahrs.reset();
@@ -87,6 +90,7 @@ public class RobotContainer {
    leftButton.whenPressed(new ChangeSpeed(-0.5));
    rightButton.whenPressed(new ChangeSpeed(0.5));
    startButton.whenPressed(new ResetGyro());
+   backButton.whenPressed(new ResetOdometry(odometry));
   }
 
   /**
@@ -100,19 +104,22 @@ public class RobotContainer {
       {0,2},
       {1,2},
       {1,3},
+      {0,3},
       {0,0}
+     
       };
       double[] distances = {
-      0.4,
-      0.4,
-      0.4,
-      0.4
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4
         };
       double[] angles = {
-        0,0,0,0
+        0,0,0,0,0
       };
-        double acceleration = 1;
-        double velocity = 1;
+        double acceleration = 0.5;
+        double velocity = 0.5;
       TrajectoryCircleLine trajectory = new TrajectoryCircleLine(points, distances, angles, acceleration, velocity);
       double finalAngle = 0;
     return new FollowTrajectory(trajectory, driveTrain, odometry,finalAngle);
