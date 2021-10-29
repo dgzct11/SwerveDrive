@@ -42,6 +42,7 @@ public class FollowTrajectory extends CommandBase {
     odometry.reset();
     NavXGyro.ahrs.reset();
     initialTime = System.currentTimeMillis()/1000.;
+    Constants.velocityMax = 1;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -64,7 +65,7 @@ public class FollowTrajectory extends CommandBase {
     double angleToPoint = RobotContainer.angleToPoint(currentPosition, newPos);
     double distance = RobotContainer.distance(currentPosition, newPos);
 
-    //driveTrain.driveDistance(angleToPoint, distance);
+    driveTrain.driveDistance(angleToPoint, distance);
     Constants.in_auto = false;
 
   }
@@ -75,3 +76,6 @@ public class FollowTrajectory extends CommandBase {
     return  (System.currentTimeMillis()/1000 - initialTime )>=trajectory.totalTime;
   }
 }
+
+
+

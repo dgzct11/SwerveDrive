@@ -91,7 +91,7 @@ public final class Constants {
     public static final double ball_area = 0;
    
    
-    public static  double velocityMax = 2;
+    public static  double velocityMax = 1;
     
     public static double max_motor_percent = 1;
     

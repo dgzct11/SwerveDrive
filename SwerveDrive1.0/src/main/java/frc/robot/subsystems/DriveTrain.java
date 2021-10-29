@@ -65,12 +65,12 @@ public class DriveTrain extends SubsystemBase {
  
   double errorDeg = 0.01;
 
-  //thrust index 0 position
+  //thrust index 1 position
   public double kpThPos = 0.2;
   public double kiThPos = 0;
   public double kdThPos = 0;
   double errorPos = 10;
-//thrust index 1 velocity
+//thrust index 0 velocity
   public double kpTh = 0.01;
   public double kiTh = 0;
   public double kdTh = 0;
@@ -149,8 +149,10 @@ public class DriveTrain extends SubsystemBase {
     
     for(short i = 0; i<4; i++){
       TalonFX motor = thrusts[i];
+      motor.selectProfileSlot(1, 0);
       double newPos = motor.getSelectedSensorPosition() + distance*thrustCoefficients[i];
       motor.set(TalonFXControlMode.Position, newPos);
+      
     }
   }
   public void fieldOrientedDrive(double strafeAngle, double speed, double rotateSpeed){
@@ -188,11 +190,15 @@ public class DriveTrain extends SubsystemBase {
     rbt.set(ControlMode.PercentOutput, thrustCoefficients[3] * Constants.max_motor_percent*speeds[3]);
   }
   public void setVelocities(double[] speeds){
-   
-    lft.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[0] * Constants.talon_velocity_per_ms*speeds[0]);
+    for(short i = 0; i<4; i++){
+      TalonFX motor = thrusts[i];
+      motor.selectProfileSlot(0, 0);
+      motor.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[i] * Constants.talon_velocity_per_ms*speeds[i]);
+    }
+    /*lft.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[0] * Constants.talon_velocity_per_ms*speeds[0]);
     lbt.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[1] * Constants.talon_velocity_per_ms*speeds[1]);
     rft.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[2] * Constants.talon_velocity_per_ms*speeds[2]);
-    rbt.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[3] * Constants.talon_velocity_per_ms*speeds[3]);
+    rbt.set(ControlMode.Velocity,  Constants.velocityMax * thrustCoefficients[3] * Constants.talon_velocity_per_ms*speeds[3]);*/
     
     double[] currentSpeeds = getVelocities();
     SmartDashboard.putNumber("LF V Diff", Math.abs(currentSpeeds[0] - speeds[0]));
