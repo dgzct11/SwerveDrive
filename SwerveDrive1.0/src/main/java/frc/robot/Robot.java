@@ -56,7 +56,6 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    CommandScheduler.getInstance().cancelAll();
     sd.setDefaultCommand(ad);
   }
 
@@ -66,7 +65,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    CommandScheduler.getInstance().cancelAll();
     sd.setDefaultCommand(td);
   }
 

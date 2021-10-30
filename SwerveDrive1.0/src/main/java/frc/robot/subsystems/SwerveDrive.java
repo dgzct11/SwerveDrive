@@ -25,6 +25,10 @@ public class SwerveDrive extends SubsystemBase{
   private NetworkTableEntry kiDirEntry = tab.add("Directional KI", 0).getEntry();
   private NetworkTableEntry kdDirEntry = tab.add("Directional KD", 0).getEntry();
 
+  private NetworkTableEntry kpThPosEntry = tab.add("Thrust KP Pos", 0).getEntry();
+  private NetworkTableEntry kiThPosEntry = tab.add("Thrust KI Pos", 0).getEntry();
+  private NetworkTableEntry kdThPosEntry = tab.add("Thrust KD Pos", 0).getEntry();
+
   private NetworkTableEntry kpThEntry = tab.add("Thrust KP", 0).getEntry();
   private NetworkTableEntry kiThEntry = tab.add("Thrust KI", 0).getEntry();
   private NetworkTableEntry kdThEntry = tab.add("Thrust KD", 0).getEntry();
@@ -42,9 +46,9 @@ public class SwerveDrive extends SubsystemBase{
     wheels[1] = bl;
     wheels[2] = fr;
     wheels[3] = fl;
-    
-    br.speed_m.setInverted(true);
+
     fr.speed_m.setInverted(true);
+    br.speed_m.setInverted(true);
   }
 
   public double[][] trig (double x1, double y1, double x2) {
@@ -56,38 +60,42 @@ public class SwerveDrive extends SubsystemBase{
     double d = y1 + x2 * sine;
 
     double[] Speeds = {
-      Math.sqrt ((b * b) + (d * d)),
-      Math.sqrt ((b * b) + (c * c)),
+      Math.sqrt ((a * a) + (c * c)),
       Math.sqrt ((a * a) + (d * d)),
-      Math.sqrt ((a * a) + (c * c))};
+      Math.sqrt ((b * b) + (c * c)),
+      Math.sqrt ((b * d) + (d * d))};
 
     double[] Angles = {
-      Math.toDegrees(Math.atan2 (b, d)),
-      Math.toDegrees(Math.atan2 (b, c)),
+      Math.toDegrees(Math.atan2 (a, c)),
       Math.toDegrees(Math.atan2 (a, d)),
-      Math.toDegrees(Math.atan2 (a, c))};
+      Math.toDegrees(Math.atan2 (b, c)),
+      Math.toDegrees(Math.atan2 (b, d))};
 
     double[][] dir = {Speeds, Angles};
     return dir;
   }
 
-  /* motor.getSelectedSensorPosition() + 
-  RobotContainer.angleDistance2(angles[i], currentAngles[i])*Constants.pos_units_per_degree * 
-  (RobotContainer.shouldTurnLeft(currentAngles[i], angles[i]) ? 1:-1)))); */
+  /* 
+    for(int i = 0; i<4; i++){
+      TalonFX motor = directionals[i];
+        motor.set(TalonFXControlMode.Position, 
+              ((motor.getSelectedSensorPosition() + 
+              RobotContainer.angleDistance2(angles[i], currentAngles[i])*Constants.pos_units_per_degree * 
+              (RobotContainer.shouldTurnLeft(currentAngles[i], angles[i]) ? 1:-1)))); */
+
   public void drive (double x1, double y1, double x2) {
     double[][] dir = trig(x1, y1, x2);
-    double[] currAngVal = getValues(4, 8);
-    double[] currAng = getCurrAng(); 
+    double[] currAngVal = getValues(4, 12);
     for (short i = 0; i < 4; i++) {
-      if(RobotContainer.angleDistance2(dir[1][i], currAng[i]) > 90){
+      if(RobotContainer.angleDistance2(dir[1][i], currAngVal[i+4]) > 90){
         thrustCoefficients[i] = -1;
         dir[1][i] = (dir[1][i]+180)%360;
         wheels[i].drive(dir[0][i], dir[1][i], thrustCoefficients[i]);
       } else {
         thrustCoefficients[i] = 1;
         wheels[i].drive(dir[0][i], ((currAngVal[i] + 
-        RobotContainer.angleDistance2(dir[1][i], currAng[i])*Constants.units_per_degree * 
-        (RobotContainer.shouldTurnLeft(currAng[i], dir[1][i]) ? 1:-1))), thrustCoefficients[i]);
+        RobotContainer.angleDistance2(dir[1][i], currAngVal[i+4])*Constants.units_per_degree * 
+        (RobotContainer.shouldTurnLeft(currAngVal[i+4], dir[1][i]) ? 1:-1))), thrustCoefficients[i]);
       }
     }
   }
@@ -101,30 +109,25 @@ public class SwerveDrive extends SubsystemBase{
   }
 
   public void stop() {
-    for(Wheel el:wheels) {el.drive(0, 0, 0);}
+    double[] currAngVal = getValues(4, 8);
+    for(short i=0;i<4;i++) {wheels[i].drive(0, -currAngVal[i], 1);}
   }
 
   public double[] getValues(int first, int last ) {
-    double[] positions = new double[8];
+    double[] positions = new double[12];
     for (;first < last; first++) {
       if (first<4) {
         positions[first] = wheels[first].speed_m.getSelectedSensorPosition()*Constants.distancePP;
-      } else {
+      } else if (first<8) {
         positions[first] = wheels[first-4].angle_m.getSelectedSensorPosition()/Constants.units_per_degree;
+      } else {
+        positions[first] =  RobotContainer.floorMod(getValues(4, 8)[first]/Constants.units_per_degree, 360);
       }
     }
     return positions;
   }
 
-  public double[] getCurrAng() {
-    double[] currAng = getValues(4, 8);
-    for(int i = 0; i<4; i++){
-      currAng[i] = RobotContainer.floorMod(currAng[i]/Constants.units_per_degree, 360);
-    }
-    return currAng;
-  }
-
-  public double getFOAngle(){
+  public double getFOAngle() {
     double angle = ahrs.getAngle();
     if (angle<=0) angle += 360;
     return (360-angle)%360;
@@ -135,20 +138,17 @@ public class SwerveDrive extends SubsystemBase{
       el.kpDir = kpDirEntry.getDouble(el.kpDir);
       el.kiDir = kiDirEntry.getDouble(el.kiDir);
       el.kdDir = kdDirEntry.getDouble(el.kdDir);
+
+      el.kpThPos = kpThPosEntry.getDouble(el.kpThPos);
+      el.kiThPos = kiThPosEntry.getDouble(el.kiThPos);
+      el.kdThPos = kdThPosEntry.getDouble(el.kdThPos);
   
       el.kpTh = kpThEntry.getDouble(el.kpTh);
       el.kiTh = kiThEntry.getDouble(el.kiTh);
       el.kdTh = kdThEntry.getDouble(el.kdTh);
       el.kfTh = kfThEntry.getDouble(el.kfTh);
-  
-      el.angle_m.config_kP(el.slotIdx, el.kpDir);
-      el.angle_m.config_kI(el.slotIdx, el.kiDir);
-      el.angle_m.config_kD(el.slotIdx, el.kdDir);
-  
-      el.speed_m.config_kP(el.slotIdx, el.kpTh);
-      el.speed_m.config_kI(el.slotIdx, el.kiTh);
-      el.speed_m.config_kD(el.slotIdx, el.kdTh);
-      el.angle_m.config_kF(el.slotIdx, el.kfTh);
+
+      el.setPID();
     }
   }
 }
