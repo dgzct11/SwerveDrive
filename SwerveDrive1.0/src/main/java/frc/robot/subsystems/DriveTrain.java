@@ -139,8 +139,10 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void alignDrive(double strafeAngle, double speed, double angle){
-    double error = Math.min( alignKP*RobotContainer.angleDistance2(angle, NavXGyro.getAngle()), alignAngleSpeed);
-    fieldOrientedDrive(strafeAngle, speed, error * (RobotContainer.shouldTurnLeft(NavXGyro.getAngle(), angle) ? 1:-1));
+    double error = Math.min( alignKP*RobotContainer.angleDistance2(angle, NavXGyro.getAngle()), alignAngleSpeed) *(RobotContainer.shouldTurnLeft( NavXGyro.getAngle(), angle) ? 1:-1) ;
+    SmartDashboard.putNumber("AD Error", error);
+    
+    fieldOrientedDrive(strafeAngle, speed, error );
   }
   public void driveDistance(double angle, double distance){
     distance *= Constants.pos_units_per_meter;

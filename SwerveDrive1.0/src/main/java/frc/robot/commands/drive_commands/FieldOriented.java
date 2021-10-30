@@ -33,12 +33,18 @@ public class FieldOriented extends CommandBase {
   @Override
   public void execute() {
    if(!Constants.in_auto){
+     double angle = xbox.getRightAngle();
+     SmartDashboard.putNumber("Xbox angle", angle);
+      //driveTrain.fieldOrientedDrive(xbox.getLeftAngle(), xbox.getLeftMagnitude(), error);
+      driveTrain.fieldOrientedDrive(xbox.getLeftAngle(), xbox.getLeftMagnitude(), xbox.getRightX());
       double strafeAngle = xbox.getLeftAngle();
-      SmartDashboard.putNumber("Strafe Angle", strafeAngle);
+      
+  
       double speed = xbox.getLeftMagnitude();
       double rotateSpeed = xbox.getRightX();
       strafeAngle = (RobotContainer.angleDistance2(NavXGyro.getAngle(), strafeAngle) * (RobotContainer.shouldTurnLeft(NavXGyro.getAngle(), strafeAngle)?1:-1) + 360 ) %360;
-      driveTrain.rotateDriveVelocity(strafeAngle, speed, rotateSpeed);
+      
+      //driveTrain.rotateDriveVelocity(strafeAngle, speed, rotateSpeed);
    }
     
   }

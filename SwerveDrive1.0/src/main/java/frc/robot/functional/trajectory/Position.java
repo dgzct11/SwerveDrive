@@ -26,6 +26,8 @@ public class Position {
     public void add(double dx, double dy){
         x += dx;
         y += dy;
+        point[0] = x;
+        point[1] = y;
     }
     public boolean equals(Position pos){
         return pos.x == x && pos.y == y && pos.angle == angle;

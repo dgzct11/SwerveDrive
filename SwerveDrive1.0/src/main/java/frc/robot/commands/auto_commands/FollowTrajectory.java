@@ -48,12 +48,14 @@ public class FollowTrajectory extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double[] currentPosition = odometry.getPosition().point;
+    double[] currentPosition = odometry.currentPosition.point;
     double time = System.currentTimeMillis()/1000. - initialTime;
     double[] newPos = trajectory.getPosition(time+timeUnit).point;
     double angleToPoint = RobotContainer.angleToPoint(currentPosition, newPos);
     double speed = RobotContainer.distance(currentPosition, newPos)/timeUnit; 
-    driveTrain.rotateDriveVelocity(angleToPoint, speed, 0);
+    double angle = trajectory.getCurrentAngle();
+    
+    driveTrain.alignDrive(angleToPoint, speed, angle);
     previousTime = time;
   }
 
@@ -65,7 +67,7 @@ public class FollowTrajectory extends CommandBase {
     double angleToPoint = RobotContainer.angleToPoint(currentPosition, newPos);
     double distance = RobotContainer.distance(currentPosition, newPos);
 
-    driveTrain.driveDistance(angleToPoint, distance);
+    //driveTrain.driveDistance(angleToPoint, distance);
     Constants.in_auto = false;
 
   }

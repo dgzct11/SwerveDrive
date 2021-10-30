@@ -8,14 +8,14 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.auto_commands.FollowTrajectory;
 import frc.robot.commands.drive_commands.ChangeSpeed;
 import frc.robot.commands.drive_commands.FieldOriented;
-import frc.robot.commands.drive_commands.SwerveDrive;
+
 import frc.robot.commands.drive_commands.SwitchDriveMode;
 import frc.robot.functional.trajectory.Circle;
 import frc.robot.functional.trajectory.Line;
@@ -101,10 +101,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     double[][] points = {
       {0,0},
-      {0,2},
-      {1,2},
-      {1,3},
-      {0,3},
+      {0,4.5},
+      {3,4.5},
+      {3,1.5},
+      {0,1.5},
       {0,0}
      
       };
@@ -116,10 +116,10 @@ public class RobotContainer {
         0.4
         };
       double[] angles = {
-        0,0,0,0,0
+        0,90,180,270,0
       };
         double acceleration = 0.5;
-        double velocity = 0.5;
+        double velocity = 1;
       TrajectoryCircleLine trajectory = new TrajectoryCircleLine(points, distances, angles, acceleration, velocity);
       double finalAngle = 0;
     return new FollowTrajectory(trajectory, driveTrain, odometry,finalAngle);
