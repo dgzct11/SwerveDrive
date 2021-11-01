@@ -51,8 +51,8 @@ public class SwerveDrive extends SubsystemBase{
     br.speed_m.setInverted(true);
   }
 
-  public double[][] trig (double x1, double y1, double x2) {
-    double sine = Constants.side_over_radius;
+  public static double[][] trig (double x1, double y1, double x2) {
+    double sine = 0.707106781187;
 
     double a = x1 - x2 * sine;
     double b = x1 + x2 * sine;
@@ -60,17 +60,23 @@ public class SwerveDrive extends SubsystemBase{
     double d = y1 + x2 * sine;
 
     double[] Speeds = {
-      Math.sqrt ((a * a) + (c * c)),
-      Math.sqrt ((a * a) + (d * d)),
-      Math.sqrt ((b * b) + (c * c)),
-      Math.sqrt ((b * d) + (d * d))};
+    Math.sqrt ((a * a) + (d * d)) , //RB
+    Math.sqrt ((b * b) + (c * c)),//LB
+    Math.sqrt ((b * b) + (d * d)), //RF
+    Math.sqrt ((a *a) + (c * c)),//LF
+     
 
+     
+    };
     double[] Angles = {
-      Math.toDegrees(Math.atan2 (a, c)),
-      Math.toDegrees(Math.atan2 (a, d)),
-      Math.toDegrees(Math.atan2 (b, c)),
-      Math.toDegrees(Math.atan2 (b, d))};
-
+        Math.toDegrees(Math.atan2 (-d, b)), //RB
+        Math.toDegrees(Math.atan2 ( -c, b)),//LB,
+        
+      Math.toDegrees(Math.atan2 ( -d, a) ),//RF,
+      Math.toDegrees(Math.atan2 ( -c, a)),//LF,
+ 
+    
+    };
     double[][] dir = {Speeds, Angles};
     return dir;
   }
