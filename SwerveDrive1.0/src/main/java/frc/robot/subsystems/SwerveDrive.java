@@ -60,9 +60,9 @@ public class SwerveDrive extends SubsystemBase{
     double d = y1 + x2 * sine;
 
     double[] Speeds = {
-    Math.sqrt ((a * a) + (d * d)) , //RB
+    Math.sqrt ((d * d) + (b * b)) , //RB
     Math.sqrt ((b * b) + (c * c)),//LB
-    Math.sqrt ((b * b) + (d * d)), //RF
+    Math.sqrt ((a * a) + (d * d)), //RF
     Math.sqrt ((a *a) + (c * c)),//LF
      
 
