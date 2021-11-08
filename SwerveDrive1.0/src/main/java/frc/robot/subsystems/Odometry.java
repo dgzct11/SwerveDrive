@@ -17,21 +17,21 @@ public class Odometry extends SubsystemBase {
   //the position of every Talon thrust
   double[] previousPositionsThrust = new double[4];
   //the position of every Talon directional
-  double[] previousPositionsDirectional = new double[4];
+  double[] previousAngles = new double[4];
   public Odometry(){
 
   }
 
   public void setDriveTrain(DriveTrain dt){
     driveTrain = dt;
-    previousPositionsDirectional = driveTrain.getDirectionalPositions();
+    previousAngles =  driveTrain.getAngles(); 
     previousPositionsThrust = driveTrain.getThrustPositions();
   }
 
   public Odometry(DriveTrain dt) {
     driveTrain = dt;
-    previousPositionsDirectional = driveTrain.getDirectionalPositions();
-    previousPositionsThrust = driveTrain.getThrustPositions();
+   previousPositionsThrust = driveTrain.getThrustPositions();
+   previousAngles = driveTrain.getAngles();
   }
 
   public void reset(){
@@ -49,6 +49,11 @@ public class Odometry extends SubsystemBase {
 
     //get angles of wheels
     double[] angles = driveTrain.getAngles();
+    double[] temp = angles;
+    for(int i = 0; i<4; i++){
+      angles[i] = (angles[i] + previousAngles[i])/2;
+    }
+    previousAngles = temp;
     int[] thrustDirections = driveTrain.getThrustCoefficients();
 
     //get how far each wheel traveled since last iteration
