@@ -32,6 +32,7 @@ public abstract class Trajectory {
         distanceToBreak = (maxVelocity*maxVelocity/(2*acceleration));
         angles = ang;
     }
+
     public double getCurrentAngle(){
         return segments.get(currentIndex).angle;
     }

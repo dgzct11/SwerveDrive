@@ -3,14 +3,16 @@ package frc.robot.functional.files;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
-
 public class FileReader {
     private ArrayList<double[]> points, velocity;
+    private ArrayList<Double> distances, angles;
     private double totalDistance;
 
     public FileReader() {
         points = new ArrayList<double[]>();
         velocity = new ArrayList<double[]>();
+        distances = new ArrayList<Double>();
+        angles = new ArrayList<Double>();
         try {
             Scanner sp = new Scanner(new File ("points.txt"));
             while (sp.hasNextLine()) {
@@ -28,11 +30,16 @@ public class FileReader {
             }
             Scanner sd = new Scanner(new File("distance.txt"));
             totalDistance = Double.parseDouble(sd.nextLine());
+            for (int i = 0; i < points.size() - 1; i++) {
+                distances.add(Math.sqrt(Math.pow(points.get(i)[0] - points.get(i+1)[0], 2) + Math.pow(points.get(i)[1] - points.get(i+1)[1], 2)));
+                angles.add(Math.atan((points.get(i+1)[1] - points.get(i)[1]) - (points.get(i+1)[0] - points.get(i)[0])));
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
         }
     }
+    
     public ArrayList<double[]> getPoints() {
         return points;
     }
@@ -41,5 +48,12 @@ public class FileReader {
     }
     public double getDistance() {
         return totalDistance;
+    }
+    public ArrayList<Double> getDistances() {
+        return distances;
+    }
+
+    public ArrayList<Double> getAngles() {
+        return angles;
     }
 }

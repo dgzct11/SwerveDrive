@@ -6,6 +6,8 @@ package frc.robot;
 
 
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 
@@ -17,6 +19,7 @@ import frc.robot.commands.drive_commands.ChangeSpeed;
 import frc.robot.commands.drive_commands.FieldOriented;
 
 import frc.robot.commands.drive_commands.SwitchDriveMode;
+import frc.robot.functional.files.FileReader;
 import frc.robot.functional.trajectory.Circle;
 import frc.robot.functional.trajectory.Line;
 import frc.robot.functional.trajectory.TrajectoryCircleLine;
@@ -99,7 +102,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    double[][] points = {
+    /*double[][] points = {
       {0,0},
       {0,4.5},
       {3,4.5},
@@ -120,9 +123,29 @@ public class RobotContainer {
       };
         double acceleration = 0.5;
         double velocity = 1;
-      TrajectoryCircleLine trajectory = new TrajectoryCircleLine(points, distances, angles, acceleration, velocity);
+      TrajectoryCircleLine trajectory = new TrajectoryCircleLine(points, distances, angles, acceleration, velocity);*/
       double finalAngle = 0;
-    return new FollowTrajectory(trajectory, driveTrain, odometry,finalAngle);
+      FileReader f = new FileReader();
+        ArrayList<double[]> pArray = f.getPoints();
+        double[][] points = new double[pArray.size()][2];
+        for (int i = 0; i < pArray.size(); i++) {
+            points[i][0] = pArray.get(i)[0];
+            points[i][1] = pArray.get(i)[1];
+        }
+        ArrayList<Double> dArray = f.getDistances();
+        double[] distances = new double[dArray.size()];
+        for (int i = 0; i < dArray.size(); i++) {
+            distances[i] = dArray.get(i);
+        }
+        ArrayList<Double> aArray = f.getAngles();
+        double[] angles = new double[aArray.size()];
+        for (int i = 0; i < aArray.size(); i++) {
+            angles[i] = aArray.get(i);
+        }
+        double acceleration = 0.5;
+        double velocity = 1;
+        TrajectoryCircleLine trajectory = new TrajectoryCircleLine(points, distances, angles, acceleration, velocity);
+        return new FollowTrajectory(trajectory, driveTrain, odometry, finalAngle);
         //return new DriveStraightDistance(1, 1, driveTrain);
         
       //return new AlignAngleRange(driveTrain, limeLight);
