@@ -37,6 +37,7 @@ public class Kinematics {
         while(segments.get(index).totalTime+timeSum<time){
             timeSum += segments.get(index).totalTime;
             distanceSum += segments.get(index).distance;
+            index ++;
         }
         return segments.get(index).getDistance(time-timeSum)+distanceSum;
     }
