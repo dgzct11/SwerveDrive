@@ -1,38 +1,51 @@
 package frc.robot.functional.files;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import edu.wpi.first.wpilibj.Filesystem;
+
+
 public class FileReader {
     private ArrayList<double[]> points, velocity;
     private ArrayList<Double> distances;
     public ArrayList<SCSetPoint> setPoints = new ArrayList<SCSetPoint>();
-
+    
+    public String currentPath = Filesystem.getDeployDirectory().toString() +"/";
+   
     public FileReader() {
+     
+
         points = new ArrayList<double[]>();
         velocity = new ArrayList<double[]>();
         distances = new ArrayList<Double>();
-       
+        
         try {
-            Scanner sp = new Scanner(new File ("points.txt"));
+            Scanner sp = new Scanner(new File (currentPath + "points.txt"));
             while (sp.hasNextLine()) {
-                int index = sp.nextLine().indexOf(",");
-                String point1 = sp.nextLine().substring(0, index);
-                String point2 = sp.nextLine().substring(index + 1);
+                String line = sp.nextLine();
+                int index = line.indexOf(",");
+                String point1 = line.substring(0, index);
+                String point2 = line.substring(index + 1);
                 points.add(new double[]{Double.parseDouble(point1), Double.parseDouble(point2)});
             }
-            Scanner sv = new Scanner(new File("velocity.txt"));
+            Scanner sv = new Scanner(new File(currentPath + "velocity.txt"));
             while (sv.hasNextLine()) {
-                int index = sv.nextLine().indexOf(",");
-                String point1 = sv.nextLine().substring(0, index);
-                String point2 = sv.nextLine().substring(index + 1);
+                String line = sv.nextLine();
+                int index = line.indexOf(",");
+                String point1 = line.substring(0, index);
+                String point2 = line.substring(index + 1);
                 velocity.add(new double[]{Double.parseDouble(point1), Double.parseDouble(point2)});
             }
-            Scanner sd = new Scanner(new File("distance.txt"));
-            while (sv.hasNextLine()) {
+            Scanner sd = new Scanner(new File(currentPath + "distances.txt"));
+            while (sd.hasNextLine()) {
                 distances.add(Double.parseDouble(sd.nextLine()));
             }
-            Scanner ss = new Scanner(new File("Subsystems.txt"));
+            /*
+            Scanner ss = new Scanner(new File(currentPath + "subsystems.txt"));
             while(ss.hasNextLine()){
                 int indexFirst = ss.nextLine().indexOf(":");
                 int indexLast = ss.nextLine().lastIndexOf(":");
@@ -45,12 +58,12 @@ public class FileReader {
                 }
                 setPoints.add(point);
             }
+            */
         }
         catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
     public double[][] getPoints() {
         double[][] result = new double[points.size()][points.get(0).length];
         for(int i = 0; i<points.size(); i++){

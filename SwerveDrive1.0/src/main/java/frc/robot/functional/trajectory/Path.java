@@ -37,7 +37,10 @@ public class Path {
             angles[i] = 0;
         }
         setPoints = f.getSetPoints();
+        initializeSegments();
+        getTotalDistance();
         kinematics = new Kinematics(this, f.getVelocity());
+        
     }
     public SCSetPoint getSetPoint(double time){
         double distance = kinematics.getDistance(time);

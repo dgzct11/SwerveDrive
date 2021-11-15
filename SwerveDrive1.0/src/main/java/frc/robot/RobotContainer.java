@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetOdometry;
+import frc.robot.commands.auto_commands.FollowPathFromFile;
 import frc.robot.commands.auto_commands.FollowTrajectory;
 import frc.robot.commands.drive_commands.ChangeSpeed;
 import frc.robot.commands.drive_commands.FieldOriented;
@@ -124,28 +125,7 @@ public class RobotContainer {
         double acceleration = 0.5;
         double velocity = 1;
       TrajectoryCircleLine trajectory = new TrajectoryCircleLine(points, distances, angles, acceleration, velocity);*/
-      double finalAngle = 0;
-      FileReader f = new FileReader();
-        ArrayList<double[]> pArray = f.getPoints();
-        double[][] points = new double[pArray.size()][2];
-        for (int i = 0; i < pArray.size(); i++) {
-            points[i][0] = pArray.get(i)[0];
-            points[i][1] = pArray.get(i)[1];
-        }
-        ArrayList<Double> dArray = f.getDistances();
-        double[] distances = new double[dArray.size()];
-        for (int i = 0; i < dArray.size(); i++) {
-            distances[i] = dArray.get(i);
-        }
-        ArrayList<Double> aArray = f.getAngles();
-        double[] angles = new double[aArray.size()];
-        for (int i = 0; i < aArray.size(); i++) {
-            angles[i] = aArray.get(i);
-        }
-        double acceleration = 0.5;
-        double velocity = 1;
-        TrajectoryCircleLine trajectory = new TrajectoryCircleLine(points, distances, angles, acceleration, velocity);
-        return new FollowTrajectory(trajectory, driveTrain, odometry, finalAngle);
+      return new FollowPathFromFile(driveTrain, odometry);
         //return new DriveStraightDistance(1, 1, driveTrain);
         
       //return new AlignAngleRange(driveTrain, limeLight);

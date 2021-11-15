@@ -4,9 +4,11 @@
 
 package frc.robot.commands.auto_commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+
 import frc.robot.functional.files.SCSetPoint;
 import frc.robot.functional.trajectory.Path;
 import frc.robot.functional.trajectory.Position;
@@ -25,6 +27,8 @@ public class FollowPathFromFile extends CommandBase {
   public FollowPathFromFile(DriveTrain dt, Odometry od) {
     // Use addRequirements() here to declare subsystem dependencies.
     path = new Path();
+    odometry = od;
+    driveTrain = dt;
   }
 
   // Called when the command is initially scheduled.
@@ -47,9 +51,15 @@ public class FollowPathFromFile extends CommandBase {
     double angleToPoint = RobotContainer.angleToPoint(currentPosition, newPos);
     double speed = RobotContainer.distance(currentPosition, newPos)/timeUnit; 
     SCSetPoint subsytemSetting = path.getSetPoint(time + timeUnit);
+    SmartDashboard.putNumber("speed", speed);
+    if(speed>2) speed = 2;
     
+    SmartDashboard.putNumber("new Pos X", newPos[0]);
+    SmartDashboard.putNumber("new Pos Y", newPos[1]);
+    driveTrain.fieldOrientedDrive(angleToPoint, speed, 0);
+    /*
     if(subsytemSetting == null){
-      driveTrain.fieldOrientedDrive(angleToPoint, speed, 0);
+      
     }
     else if(subsytemSetting.subsystemIdentifier.equals("navx")){
         driveTrain.alignDrive(angleToPoint, speed, subsytemSetting.inputs.get(0));
@@ -59,7 +69,7 @@ public class FollowPathFromFile extends CommandBase {
          driveTrain.fieldOrientedDrive(angleToPoint, speed, 0);
     }
 
-    
+    */
     
 
 
