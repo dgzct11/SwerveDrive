@@ -26,17 +26,10 @@ public class TrajectoryCircleLine extends Trajectory{
     public TrajectoryCircleLine(double a, double mv, double[] angles) {
         super(a, mv, angles);
         FileReader f = new FileReader();
-        ArrayList<double[]> pArray = f.getPoints();
-        points = new double[pArray.size()][2];
-        for (int i = 0; i < pArray.size(); i++) {
-            points[i][0] = pArray.get(i)[0];
-            points[i][1] = pArray.get(i)[1];
-        }
-        ArrayList<Double> dArray = f.getDistances();
-        distances = new double[dArray.size()];
-        for (int i = 0; i < dArray.size(); i++) {
-            distances[i] = dArray.get(i);
-        }
+        points = f.getPoints();
+       
+       distances = f.getDistances();
+      
         
     }
   

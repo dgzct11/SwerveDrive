@@ -12,7 +12,7 @@ public class Kinematics {
     public double[][] velocities;
     public ArrayList<KinematicSegment> segments = new ArrayList<KinematicSegment>();
     int currentIndex = 0;
-    double totalTime;
+    public double totalTime;
     public Kinematics(Path path, double[][] v){
         velocities = v;
         initializeSegments();

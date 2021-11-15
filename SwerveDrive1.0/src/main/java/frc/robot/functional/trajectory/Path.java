@@ -8,17 +8,18 @@ import java.util.ArrayList;
 
 import frc.robot.RobotContainer;
 import frc.robot.functional.files.FileReader;
+import frc.robot.functional.files.SCSetPoint;
 
 /** Add your docs here. */
 public class Path {
     double[][] points;
     double[] distances;
-    ArrayList<Segment> segments;
+    public ArrayList<Segment> segments;
     public double totalDistance = 0;
     public int currentIndex = 0;
     public double[] angles;
-    
-   
+    public ArrayList<SCSetPoint> setPoints;
+    public Kinematics kinematics;
    
     public Path(double[][] pts, double[] dist, double[] ang){
         points = pts;
@@ -29,22 +30,21 @@ public class Path {
 
     public Path() {
         FileReader f = new FileReader();
-        ArrayList<double[]> pArray = f.getPoints();
-        points = new double[pArray.size()][2];
-        for (int i = 0; i < pArray.size(); i++) {
-            points[i][0] = pArray.get(i)[0];
-            points[i][1] = pArray.get(i)[1];
+        points = f.getPoints();
+        distances = f.getDistances();
+         angles = new double[distances.length+1];
+        for (int i = 0; i < angles.length; i++) {
+            angles[i] = 0;
         }
-        ArrayList<Double> dArray = f.getDistances();
-        distances = new double[dArray.size()];
-        for (int i = 0; i < dArray.size(); i++) {
-            distances[i] = dArray.get(i);
+        setPoints = f.getSetPoints();
+        kinematics = new Kinematics(this, f.getVelocity());
+    }
+    public SCSetPoint getSetPoint(double time){
+        double distance = kinematics.getDistance(time);
+        for(SCSetPoint setPoint: setPoints){
+            if(distance >=setPoint.startDistance && distance <= setPoint.endDistance) return setPoint;
         }
-        ArrayList<Double> aArray = f.getAngles();
-        angles = new double[aArray.size()];
-        for (int i = 0; i < aArray.size(); i++) {
-            angles[i] = aArray.get(i);
-        }
+        return null;
     }
   
     public void initializeSegments(){
@@ -128,7 +128,10 @@ public class Path {
         return segments.get(index).getPosition(distance - currentDistance );
         //turn currentDistance into position
     }
-  
+    
+    public Position getPositionFromTime(double time){
+        return getPosition(kinematics.getDistance(time));
+    }
     public double getTotalDistance(){
         for(Segment seg: segments){
            totalDistance += seg.length;

@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.Scanner;
 public class FileReader {
     private ArrayList<double[]> points, velocity;
-    private ArrayList<Double> distances, angles;
-    private double totalDistance;
+    private ArrayList<Double> distances;
+    public ArrayList<SCSetPoint> setPoints = new ArrayList<SCSetPoint>();
 
     public FileReader() {
         points = new ArrayList<double[]>();
         velocity = new ArrayList<double[]>();
         distances = new ArrayList<Double>();
-        angles = new ArrayList<Double>();
+       
         try {
             Scanner sp = new Scanner(new File ("points.txt"));
             while (sp.hasNextLine()) {
@@ -29,10 +29,21 @@ public class FileReader {
                 velocity.add(new double[]{Double.parseDouble(point1), Double.parseDouble(point2)});
             }
             Scanner sd = new Scanner(new File("distance.txt"));
-            totalDistance = Double.parseDouble(sd.nextLine());
-            for (int i = 0; i < points.size() - 1; i++) {
-                distances.add(Math.sqrt(Math.pow(points.get(i)[0] - points.get(i+1)[0], 2) + Math.pow(points.get(i)[1] - points.get(i+1)[1], 2)));
-                angles.add(Math.atan((points.get(i+1)[1] - points.get(i)[1]) - (points.get(i+1)[0] - points.get(i)[0])));
+            while (sv.hasNextLine()) {
+                distances.add(Double.parseDouble(sd.nextLine()));
+            }
+            Scanner ss = new Scanner(new File("Subsystems.txt"));
+            while(ss.hasNextLine()){
+                int indexFirst = ss.nextLine().indexOf(":");
+                int indexLast = ss.nextLine().lastIndexOf(":");
+                String subsytemId = ss.nextLine().substring(0, ss.nextLine().indexOf(":"));
+                String[] startEndPoint = ss.nextLine().substring(indexFirst+1, indexLast).split(",");
+                SCSetPoint point = new SCSetPoint(Double.parseDouble(startEndPoint[0]), Double.parseDouble(startEndPoint[1]), subsytemId);
+                String[] values = ss.nextLine().substring(indexLast + 1, ss.nextLine().lastIndexOf(",")).split(",");
+                for(String value: values){
+                    point.inputs.add(Double.parseDouble(value));
+                }
+                setPoints.add(point);
             }
         }
         catch (Exception e) {
@@ -40,20 +51,29 @@ public class FileReader {
         }
     }
     
-    public ArrayList<double[]> getPoints() {
-        return points;
+    public double[][] getPoints() {
+        double[][] result = new double[points.size()][points.get(0).length];
+        for(int i = 0; i<points.size(); i++){
+            result[i] = points.get(i);
+        }
+        return result;
     }
-    public ArrayList<double[]> getVelocity() {
-        return velocity;
-    }
-    public double getDistance() {
-        return totalDistance;
-    }
-    public ArrayList<Double> getDistances() {
-        return distances;
+    public double[][] getVelocity() {
+        double[][] result = new double[velocity.size()][velocity.get(0).length];
+        for(int i = 0; i<velocity.size(); i++){
+            result[i] = velocity.get(i);
+        }
+        return result;
     }
 
-    public ArrayList<Double> getAngles() {
-        return angles;
+    public double[] getDistances() {
+        double[] result = new double[distances.size()];
+        for(int i = 0; i<distances.size(); i++){
+            result[i] = distances.get(i);
+        }
+        return result;
+    }
+    public ArrayList<SCSetPoint>  getSetPoints(){
+        return setPoints;
     }
 }

@@ -138,6 +138,7 @@ public class DriveTrain extends SubsystemBase {
     
   }
 
+  
   public void alignDrive(double strafeAngle, double speed, double angle){
     double error = Math.min( alignKP*RobotContainer.angleDistance2(angle, NavXGyro.getAngle()), alignAngleSpeed) *(RobotContainer.shouldTurnLeft( NavXGyro.getAngle(), angle) ? 1:-1) ;
     SmartDashboard.putNumber("AD Error", error);
