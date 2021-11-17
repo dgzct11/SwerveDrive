@@ -8,9 +8,9 @@ package frc.robot.functional.trajectory;
 public class KinematicSegment{
     public double[] start;
     public double[] end;
-    double totalTime;
-    double acceleration;
-    double distance;
+   public  double totalTime;
+    public double acceleration;
+    public double distance;
     public KinematicSegment(double[] s, double[] e){
         start = s;
         end = e;
