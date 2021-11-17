@@ -47,7 +47,7 @@ public class FollowPathFromFile extends CommandBase {
   public void execute() {
     double[] currentPosition = odometry.currentPosition.point;
     double time = System.currentTimeMillis()/1000. - initialTime;
-    double[] newPos = path.getPosition(time+timeUnit).point;
+    double[] newPos = path.getPositionFromTime(time+timeUnit).point;
     double angleToPoint = RobotContainer.angleToPoint(currentPosition, newPos);
     double speed = RobotContainer.distance(currentPosition, newPos)/timeUnit; 
     SCSetPoint subsytemSetting = path.getSetPoint(time + timeUnit);
