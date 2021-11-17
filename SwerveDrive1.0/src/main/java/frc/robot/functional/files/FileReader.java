@@ -14,7 +14,7 @@ public class FileReader {
     private ArrayList<Double> distances;
     public ArrayList<SCSetPoint> setPoints = new ArrayList<SCSetPoint>();
     
-    public String currentPath = Filesystem.getDeployDirectory().toString() +"/";
+    public String currentPath = Filesystem.getDeployDirectory().toString() +"/path_files/";
    
     public FileReader() {
      
