@@ -18,6 +18,8 @@ public class Position {
         y = pos[1];
         point = pos;
         angle = _angle;
+        point[0] = x;
+        point[1] = y;
     }
 
     public void addAngle(double a){

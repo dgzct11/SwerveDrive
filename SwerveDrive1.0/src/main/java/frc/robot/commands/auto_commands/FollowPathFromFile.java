@@ -51,9 +51,11 @@ public class FollowPathFromFile extends CommandBase {
     double angleToPoint = RobotContainer.angleToPoint(currentPosition, newPos);
     double speed = RobotContainer.distance(currentPosition, newPos)/timeUnit; 
     SCSetPoint subsytemSetting = path.getSetPoint(time + timeUnit);
+    System.out.println("__________________" + path.kinematics.totalTime);
+
     SmartDashboard.putNumber("speed", speed);
     if(speed>2) speed = 2;
-    
+    SmartDashboard.putNumber("time", time);
     SmartDashboard.putNumber("new Pos X", newPos[0]);
     SmartDashboard.putNumber("new Pos Y", newPos[1]);
     driveTrain.fieldOrientedDrive(angleToPoint, speed, 0);
