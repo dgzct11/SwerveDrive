@@ -59,19 +59,21 @@ public class FollowPathFromFile extends CommandBase {
     SmartDashboard.putNumber("new Pos X", newPos[0]);
     SmartDashboard.putNumber("new Pos Y", newPos[1]);
    //driveTrain.fieldOrientedDrive(angleToPoint, speed, 0);
-    /*
+    
     if(subsytemSetting == null){
-      
+      driveTrain.fieldOrientedDrive(angleToPoint, speed, 0);
     }
     else if(subsytemSetting.subsystemIdentifier.equals("navx")){
         driveTrain.alignDrive(angleToPoint, speed, subsytemSetting.inputs.get(0));
     }
-    
+    else if(subsytemSetting.subsystemIdentifier.equals("limelight")){
+      
+    }
     else{
          driveTrain.fieldOrientedDrive(angleToPoint, speed, 0);
     }
 
-    */
+    
     
 
 
