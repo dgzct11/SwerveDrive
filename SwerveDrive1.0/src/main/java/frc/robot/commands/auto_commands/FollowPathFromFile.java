@@ -39,7 +39,7 @@ public class FollowPathFromFile extends CommandBase {
     odometry.reset();
     double[] start =  path.segments.get(0).startPoint;
     double[] startPoint = {6.5,1.5};
-    odometry.currentPosition = new Position(startPoint, 0);
+    odometry.currentPosition = new Position((double[])(path.segments.get(0).startPoint.clone()), 0);
     NavXGyro.ahrs.reset();
     initialTime = System.currentTimeMillis()/1000.;
     Constants.velocityMax = 1;
