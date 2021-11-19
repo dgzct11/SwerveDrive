@@ -6,12 +6,14 @@ package frc.robot.functional.trajectory;
 
 import java.util.ArrayList;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /** Add your docs here. */
 public class Kinematics {
     Path path;
     public double[][] velocities;
     public ArrayList<KinematicSegment> segments = new ArrayList<KinematicSegment>();
-    int currentIndex = 0;
+    public int currentIndex = 0;
     public double totalTime;
     public Kinematics(Path path, double[][] v){
         velocities = v;
@@ -39,6 +41,7 @@ public class Kinematics {
             distanceSum += segments.get(index).distance;
             index ++;
         }
+      currentIndex = index;
         return segments.get(index).getDistance(time-timeSum)+distanceSum;
     }
 }

@@ -6,6 +6,7 @@ package frc.robot.functional.trajectory;
 
 import java.util.ArrayList;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotContainer;
 import frc.robot.functional.files.FileReader;
 import frc.robot.functional.files.SCSetPoint;
@@ -126,13 +127,16 @@ public class Path {
         while(index<segments.size()-1 && currentDistance +segments.get(index).length <= distance){
             currentDistance += segments.get(index).length;   
             index ++;
+           
         }
-        currentIndex = index;
+        //currentIndex = index;
+      
         return segments.get(index).getPosition(distance - currentDistance );
         //turn currentDistance into position
     }
     
     public Position getPositionFromTime(double time){
+       
         return getPosition(kinematics.getDistance(time));
     }
     public double getTotalDistance(){

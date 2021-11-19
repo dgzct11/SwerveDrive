@@ -27,4 +27,8 @@ public class KinematicSegment{
         return start[1]*time + acceleration * time*time/2;
     }
 
+    public String toString(){
+        return String.format("start: %f %f \n end: %f %f \n totalTime: %f \n acceleration: %f \n distance: %f", start[0], start[1],end[0], end[1],  totalTime, acceleration, distance);
+    }
+
 }

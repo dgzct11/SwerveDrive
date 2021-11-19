@@ -10,6 +10,7 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 import frc.robot.functional.files.SCSetPoint;
+import frc.robot.functional.trajectory.KinematicSegment;
 import frc.robot.functional.trajectory.Path;
 import frc.robot.functional.trajectory.Position;
 import frc.robot.subsystems.DriveTrain;
@@ -36,7 +37,9 @@ public class FollowPathFromFile extends CommandBase {
   public void initialize() {
     Constants.in_auto = true;
     odometry.reset();
-    odometry.currentPosition = new Position(path.segments.get(0).startPoint, 0);
+    double[] start =  path.segments.get(0).startPoint;
+    double[] startPoint = {6.5,1.5};
+    odometry.currentPosition = new Position(startPoint, 0);
     NavXGyro.ahrs.reset();
     initialTime = System.currentTimeMillis()/1000.;
     Constants.velocityMax = 1;
@@ -47,33 +50,36 @@ public class FollowPathFromFile extends CommandBase {
   public void execute() {
     double[] currentPosition = odometry.currentPosition.point;
     double time = System.currentTimeMillis()/1000. - initialTime;
-    double[] newPos = path.getPositionFromTime(time+timeUnit).point;
+    Position newPosP = path.getPositionFromTime(time + timeUnit);
+    double[] newPos = newPosP.point;
     double angleToPoint = RobotContainer.angleToPoint(currentPosition, newPos);
     double speed = RobotContainer.distance(currentPosition, newPos)/timeUnit; 
-    SCSetPoint subsytemSetting = path.getSetPoint(time + timeUnit);
-    System.out.println("__________________" + path.kinematics.totalTime);
-   // SmartDashboard.putNumber("Acceleration", path.kinematics.segments.get(0).acceleration);
+    //SCSetPoint subsytemSetting = path.getSetPoint(time + timeUnit);
+   
+   
     SmartDashboard.putNumber("speed", speed);
     if(speed>2) speed = 2;
-    SmartDashboard.putNumber("time", time);
+    SmartDashboard.putNumber("time", time + timeUnit);
     SmartDashboard.putNumber("new Pos X", newPos[0]);
     SmartDashboard.putNumber("new Pos Y", newPos[1]);
-   //driveTrain.fieldOrientedDrive(angleToPoint, speed, 0);
+
+    KinematicSegment segment = path.kinematics.segments.get(path.kinematics.currentIndex);
     
+    
+    driveTrain.fieldOrientedDrive(angleToPoint, speed, 0);
+    /*
     if(subsytemSetting == null){
-      driveTrain.fieldOrientedDrive(angleToPoint, speed, 0);
+      
     }
     else if(subsytemSetting.subsystemIdentifier.equals("navx")){
         driveTrain.alignDrive(angleToPoint, speed, subsytemSetting.inputs.get(0));
     }
-    else if(subsytemSetting.subsystemIdentifier.equals("limelight")){
-      
-    }
+    
     else{
          driveTrain.fieldOrientedDrive(angleToPoint, speed, 0);
     }
 
-    
+    */
     
 
 

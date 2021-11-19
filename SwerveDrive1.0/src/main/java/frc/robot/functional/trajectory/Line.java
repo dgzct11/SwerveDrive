@@ -1,4 +1,5 @@
 package frc.robot.functional.trajectory;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotContainer;
 
 // Copyright (c) FIRST and other WPILib contributors.
@@ -52,6 +53,7 @@ public class Line extends Segment{
         return result; 
     }
     public Position getPosition(double distance){
+        
         return new Position(distance/length * (endPoint[0]-startPoint[0]) + startPoint[0], 
         distance/length * (endPoint[1]-startPoint[1]) + startPoint[1],
          RobotContainer.angleFromSlope(startPoint, endPoint));
