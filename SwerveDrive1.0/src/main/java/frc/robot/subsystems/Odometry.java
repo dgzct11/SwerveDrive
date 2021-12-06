@@ -18,6 +18,7 @@ public class Odometry extends SubsystemBase {
   double[] previousPositionsThrust = new double[4];
   //the position of every Talon directional
   double[] previousAngles = new double[4];
+  double previousTime = 0;
   public Odometry(){
 
   }
@@ -50,9 +51,10 @@ public class Odometry extends SubsystemBase {
     //get angles of wheels
     double[] angles = driveTrain.getAngles();
     double[] temp = angles;
+    /*
     for(int i = 0; i<4; i++){
       angles[i] = (angles[i] + previousAngles[i])/2;
-    }
+    }*/
     previousAngles = temp;
     int[] thrustDirections = driveTrain.getThrustCoefficients();
 
@@ -105,5 +107,7 @@ public class Odometry extends SubsystemBase {
     SmartDashboard.putNumber("Od Angle", currentPosition.angle);
     SmartDashboard.putNumber("Od X", currentPosition.x);
     SmartDashboard.putNumber("Od Y", currentPosition.y);
+    SmartDashboard.putNumber("Od Time Change", System.currentTimeMillis()/1000. - previousTime);
+    previousTime = System.currentTimeMillis()/1000.;
   }
 }
