@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.functional.trajectory.Position;
 
@@ -19,6 +20,9 @@ public class Odometry extends SubsystemBase {
   //the position of every Talon directional
   double[] previousAngles = new double[4];
   double previousTime = 0;
+
+  double[][] currentPoses = new double[4][3];
+
   public Odometry(){
 
   }
@@ -44,18 +48,52 @@ public class Odometry extends SubsystemBase {
   public double getAngle(){
     return currentPosition.angle;
   }
+  public void updateIndividualPose(){
+    double[] angles = driveTrain.getAngles();
+    int[] thrustDirections = driveTrain.getThrustCoefficients();
+    double[] deltaPositions = driveTrain.getThrustPositions();
+    double heading = NavXGyro.getAngle();
+    
+    for(int i = 0; i<4; i++){
+      deltaPositions[i] -=  previousPositionsThrust[i];
+      if(thrustDirections[i] == -1){
+        angles[i] = (angles[i] + 180)%360;
+        deltaPositions[i] *= -1;
+      }
+      angles[i] = (angles[i] + heading)%360;
+      double angleDiff = RobotContainer.angleDistance2(currentPoses[i][2], angles[i]);
+      double radius = deltaPositions[i] * 360 / ((double)(angleDiff*2*Math.PI));
+      double[] circleCenter = {
+        currentPoses[i][0]-radius*Math.sin(Math.toRadians(currentPoses[i][2] - 90)),
+        currentPoses[i][1] + radius*Math.cos(Math.toRadians(currentPoses[i][2] - 90))
+       };
+      double[] newPose = {
+        -radius*Math.sin(Math.toRadians(angles[i])) + circleCenter[0],
+        radius*Math.cos(Math.toRadians(angles[i])) + circleCenter[1]
+      };
+      currentPoses[i][0] = newPose[0];
+      currentPoses[i][1] = newPose[1];
+      currentPoses[i][2] = angles[i];
+
+    }
+    previousPositionsThrust = driveTrain.getThrustPositions();
+
+    
+  }
+
+
   public void updatePosition(){
     //get current Vector for center 
     //avarage of all vectors removes rotational component
 
     //get angles of wheels
     double[] angles = driveTrain.getAngles();
-    double[] temp = angles;
+    
     /*
     for(int i = 0; i<4; i++){
       angles[i] = (angles[i] + previousAngles[i])/2;
     }*/
-    previousAngles = temp;
+    
     int[] thrustDirections = driveTrain.getThrustCoefficients();
 
     //get how far each wheel traveled since last iteration
@@ -99,14 +137,30 @@ public class Odometry extends SubsystemBase {
 
   }
 
+  public double[] getAveragePose(){
+    double[] result = new double[2];
+    for(int i = 0; i<4; i++){
+      result[0] += currentPoses[i][0];
+      result[1] += currentPoses[i][1];
+    
+    }
+    result[0] /= 4;
+    result[1] /= 4;
+    return result;
+  }
  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     updatePosition();
-    SmartDashboard.putNumber("Od Angle", currentPosition.angle);
+    updateIndividualPose();
+    double[] pose = getAveragePose();
+   
     SmartDashboard.putNumber("Od X", currentPosition.x);
     SmartDashboard.putNumber("Od Y", currentPosition.y);
+
+    SmartDashboard.putNumber("New Od X", pose[0]);
+    SmartDashboard.putNumber("New Od Y", pose[1]);
     SmartDashboard.putNumber("Od Time Change", System.currentTimeMillis()/1000. - previousTime);
     previousTime = System.currentTimeMillis()/1000.;
   }

@@ -13,7 +13,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -91,6 +91,7 @@ public class DriveTrain extends SubsystemBase {
   public DriveTrain() {
     NavXGyro.ahrs.reset();
 
+   
     //dir motors
     for(int i = 0; i<4; i++){
       TalonFX dirMotor = directionals[i];
@@ -99,7 +100,7 @@ public class DriveTrain extends SubsystemBase {
       dirMotor.configAllowableClosedloopError(0, errorDeg*Constants.pos_units_per_degree);
     
       dirMotor.setNeutralMode(NeutralMode.Brake);
-     
+      
 
       dirMotor.config_kP(0, kpDir);
       dirMotor.config_kI(0, kiDir);
