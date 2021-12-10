@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetOdometry;
 import frc.robot.commands.auto_commands.AlignAngleRange;
+import frc.robot.commands.auto_commands.AlignWheels;
 import frc.robot.commands.auto_commands.AlignWithObject;
 import frc.robot.commands.auto_commands.FollowPathFromFile;
 import frc.robot.commands.auto_commands.FollowTrajectory;
@@ -69,7 +70,7 @@ public class RobotContainer {
   Button leftButton = new JoystickButton(xboxController, Constants.lb_button_num);
   Button xButton = new JoystickButton(xboxController, Constants.x_button_num);
   Button aButton = new JoystickButton(xboxController, Constants.a_button_num);
-
+  Button bButton = new JoystickButton(xboxController, Constants.b_button_num); 
   Button startButton = new JoystickButton(xboxController, Constants.start_button_num);
   Button backButton = new JoystickButton(xboxController, Constants.back_button_num);
   public RobotContainer() {
@@ -97,6 +98,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
    xButton.whenPressed(new SwitchDriveMode(driveTrain, xboxRemote));
    aButton.whenHeld(new AlignWithObject(driveTrain, limeLight));
+   bButton.whenPressed(new AlignAllWheels(driveTrain));
    leftButton.whenPressed(new ChangeSpeed(-0.5));
    rightButton.whenPressed(new ChangeSpeed(0.5));
    startButton.whenPressed(new ResetGyro());

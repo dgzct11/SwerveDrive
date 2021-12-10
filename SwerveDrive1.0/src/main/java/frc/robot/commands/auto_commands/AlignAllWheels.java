@@ -4,49 +4,33 @@
 
 package frc.robot.commands.auto_commands;
 
-
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.functional.PIDControl;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.LimeLight;
 
-public class AlignWithObject extends CommandBase {
-  /** Creates a new AlignWithObject. */
-  double angle;
-  double kp = 0.03;
-  double ki = 0;
-  double kd = 0;
-  double errorDiff = 0.01;
-  DriveTrain driveTrian;
-  PIDControl pid = new PIDControl(kp, ki, kd);
-  LimeLight limelight;
-  public AlignWithObject(DriveTrain dt, LimeLight lt) {
+public class AlignAllWheels extends CommandBase {
+  DriveTrain driveTrain;
+  double initialTime;
+  public AlignAllWheels(DriveTrain dt) {
     // Use addRequirements() here to declare subsystem dependencies.
-    driveTrian = dt;
-    limelight = lt;
-   
+    driveTrain = dt;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     Constants.in_auto = true;
+    int[] coeff = {1,1,1,1};
+    double[] angles = {0,0,0,0};
+    driveTrain.thrustCoefficients = coeff;
+    driveTrain.setDirectionalAngles(angles);
+    initialTime = System.currentTimeMillis();
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-   
-    if(limelight.inView()){
-     double error =Math.min( kp*(Math.abs(limelight.getHorizontalAngleDiff())),0.3);
-       driveTrian.rotateDriveVelocity(0, 0, error * (limelight.getHorizontalAngleDiff()>0 ? -1:1));
-    }
-    else{
-      driveTrian.rotateDriveVelocity(0, 0, 0.6);
-       }
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -57,6 +41,6 @@ public class AlignWithObject extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return System.currentTimeMillis() - initialTime > 1000;
   }
 }
