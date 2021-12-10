@@ -63,7 +63,7 @@ public class DriveTrain extends SubsystemBase {
   public double kiDir = 0.002;
   public double kdDir = 0;
  
-  double errorDeg = 0.01;
+  double errorDeg = 0.1;
 
   //thrust index 1 position
   public double kpThPos = 0.2;

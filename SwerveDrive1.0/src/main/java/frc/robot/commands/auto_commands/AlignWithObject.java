@@ -15,7 +15,7 @@ import frc.robot.subsystems.LimeLight;
 public class AlignWithObject extends CommandBase {
   /** Creates a new AlignWithObject. */
   double angle;
-  double kp = 0.03;
+  double kp = 0.05;
   double ki = 0;
   double kd = 0;
   double errorDiff = 0.01;
@@ -41,10 +41,10 @@ public class AlignWithObject extends CommandBase {
    
     if(limelight.inView()){
      double error =Math.min( kp*(Math.abs(limelight.getHorizontalAngleDiff())),0.3);
-       driveTrian.rotateDriveVelocity(0, 0, error * (limelight.getHorizontalAngleDiff()>0 ? 1:-1));
+       driveTrian.rotateDriveVelocity(0, 0, error * (limelight.getHorizontalAngleDiff()>0 ? -1:1));
     }
     else{
-      driveTrian.rotateDriveVelocity(0, 0, 0.3);
+      driveTrian.rotateDriveVelocity(0, 0, 0.6);
        }
   }
 

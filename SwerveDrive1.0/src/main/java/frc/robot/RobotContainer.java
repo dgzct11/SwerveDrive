@@ -14,11 +14,13 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetOdometry;
+import frc.robot.commands.auto_commands.AlignAngleRange;
+import frc.robot.commands.auto_commands.AlignWithObject;
 import frc.robot.commands.auto_commands.FollowPathFromFile;
 import frc.robot.commands.auto_commands.FollowTrajectory;
 import frc.robot.commands.drive_commands.ChangeSpeed;
 import frc.robot.commands.drive_commands.FieldOriented;
-
+import frc.robot.commands.drive_commands.SwerveDrive;
 import frc.robot.commands.drive_commands.SwitchDriveMode;
 import frc.robot.functional.files.FileReader;
 import frc.robot.functional.trajectory.Circle;
@@ -66,6 +68,7 @@ public class RobotContainer {
   Button rightButton = new JoystickButton(xboxController, Constants.rb_button_num);
   Button leftButton = new JoystickButton(xboxController, Constants.lb_button_num);
   Button xButton = new JoystickButton(xboxController, Constants.x_button_num);
+  Button aButton = new JoystickButton(xboxController, Constants.a_button_num);
 
   Button startButton = new JoystickButton(xboxController, Constants.start_button_num);
   Button backButton = new JoystickButton(xboxController, Constants.back_button_num);
@@ -74,9 +77,11 @@ public class RobotContainer {
     NavXGyro.ahrs.reset();
     odometry.setDriveTrain(driveTrain);
     FieldOriented sd = new FieldOriented(driveTrain, xboxRemote);
+    SwerveDrive s = new SwerveDrive(driveTrain, xboxRemote);
     sd.addRequirements(driveTrain);
+    s.addRequirements(driveTrain);
 
-    driveTrain.setDefaultCommand(sd);
+    driveTrain.setDefaultCommand(s);
     
     
     configureButtonBindings();
@@ -91,6 +96,7 @@ public class RobotContainer {
   
   private void configureButtonBindings() {
    xButton.whenPressed(new SwitchDriveMode(driveTrain, xboxRemote));
+   aButton.whenHeld(new AlignWithObject(driveTrain, limeLight));
    leftButton.whenPressed(new ChangeSpeed(-0.5));
    rightButton.whenPressed(new ChangeSpeed(0.5));
    startButton.whenPressed(new ResetGyro());
@@ -125,10 +131,11 @@ public class RobotContainer {
         double acceleration = 0.5;
         double velocity = 1;
       TrajectoryCircleLine trajectory = new TrajectoryCircleLine(points, distances, angles, acceleration, velocity);*/
-      return new FollowPathFromFile(driveTrain, odometry);
+      //return new FollowPathFromFile(driveTrain, odometry);
         //return new DriveStraightDistance(1, 1, driveTrain);
         
-      //return new AlignAngleRange(driveTrain, limeLight);
+      return new AlignAngleRange(driveTrain, limeLight);
+      //return new AlignWithObject(driveTrain, limeLight);
   }
 
   public static double navxTo360(double angle){
