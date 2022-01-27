@@ -14,8 +14,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.ResetOdometry;
+import frc.robot.commands.auto_commands.AlignAllWheels;
 import frc.robot.commands.auto_commands.AlignAngleRange;
-import frc.robot.commands.auto_commands.AlignWheels;
+
 import frc.robot.commands.auto_commands.AlignWithObject;
 import frc.robot.commands.auto_commands.FollowPathFromFile;
 import frc.robot.commands.auto_commands.FollowTrajectory;
@@ -97,7 +98,7 @@ public class RobotContainer {
   
   private void configureButtonBindings() {
    xButton.whenPressed(new SwitchDriveMode(driveTrain, xboxRemote));
-   aButton.whenHeld(new AlignWithObject(driveTrain, limeLight));
+   aButton.whenHeld(new AlignWithObject(driveTrain, limeLight, xboxRemote));
    bButton.whenPressed(new AlignAllWheels(driveTrain));
    leftButton.whenPressed(new ChangeSpeed(-0.5));
    rightButton.whenPressed(new ChangeSpeed(0.5));
